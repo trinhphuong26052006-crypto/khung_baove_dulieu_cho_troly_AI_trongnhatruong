@@ -1,0 +1,21 @@
+CHƯƠNG TRÌNH KHỞI NGHIỆP VÀ ĐỔI MỚI SÁNG TẠO SINH VIÊN
+Mã tài liệu: DOC-P033
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Thủ Dầu Một
+Nguồn tham khảo: https://tdmu.edu.vn/khoi-nghiep/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. TÔN CHỈ VÀ MỤC ĐÍCH
+Chương trình nhằm thúc đẩy tinh thần khởi nghiệp, phát hiện và hỗ trợ hiện thực hóa các ý tưởng sáng tạo có tiềm năng thương mại hóa của sinh viên trong các lĩnh vực công nghệ thông tin, công nghệ sinh học, giáo dục và chuyển đổi số.
+
+2. CÁC HÌNH THỨC HỖ TRỢ
+Các nhóm dự án đạt giải trong cuộc thi khởi nghiệp cấp trường sẽ được tiếp nhận vào vườn ươm doanh nghiệp, được hỗ trợ không gian làm việc miễn phí, cố vấn bởi các chuyên gia doanh nghiệp và nhận tài trợ kinh phí ươm tạo từ quỹ khởi nghiệp trường.
+
+3. TIÊU CHÍ TUYỂN CHỌN DỰ ÁN
+Dự án tham gia phải đảm bảo tính mới, có khả năng áp dụng thực tiễn, có mô hình kinh doanh rõ ràng và có tác động tích cực đến cộng đồng xã hội. Mỗi nhóm sinh viên tham gia có từ 3 đến 5 thành viên thuộc nhiều ngành nghề kết hợp.
+
+4. CƠ HỘI KẾT NỐI ĐẦU TƯ
+Nhà trường tổ chức ngày hội kết nối đầu tư định kỳ hàng năm (Demo Day) để các nhóm khởi nghiệp giới thiệu sản phẩm thử nghiệm (MVP) tới các quỹ đầu tư mạo hiểm, doanh nghiệp đối tác và nhà tài trợ trong nước và quốc tế.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Hệ thống AI cung cấp cho sinh viên thông tin về các cuộc thi sáng tạo công nghệ, điều kiện đăng ký ươm tạo và mạng lưới chuyên gia cố vấn khởi nghiệp.

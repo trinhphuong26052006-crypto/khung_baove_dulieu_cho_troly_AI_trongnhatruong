@@ -2,7 +2,7 @@
   {
     "doc_id": "DOC-P001",
     "title": "Quy chế đào tạo đại học",
-    "file_path": "data/documents/public/DOC-P001_quy_che_dao_tao_dai_hoc_nam_2026.txt",
+    "file_path": "data/documents/public/DOC-P001_quy_che_dao_tao.txt",
     "classification": "Public",
     "allowed_roles": [
       "SinhVien",
@@ -956,5 +956,885 @@
     "data_origin": "synthetic_based_on_public_context",
     "is_synthetic": true,
     "word_count": 380
+  },
+  {
+    "doc_id": "DOC-P021",
+    "title": "Lịch thi kết thúc học phần học kỳ 2",
+    "file_path": "data/documents/public/DOC-P021_lich_thi_hoc_ky_2.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Khảo thí và Đảm bảo chất lượng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Thông báo lịch thi chính thức các môn học đại cương và chuyên ngành kỳ 2",
+    "source_url": "https://daotao.ut.edu.vn/lich-thi/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 382
+  },
+  {
+    "doc_id": "DOC-P022",
+    "title": "Quy định chuẩn đầu ra tin học ứng dụng",
+    "file_path": "data/documents/public/DOC-P022_quy_dinh_chuan_dau_ra_tin_hoc.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Đào tạo",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy định điều kiện chứng chỉ chuẩn đầu ra tin học trước khi xét tốt nghiệp",
+    "source_url": "https://daotao.hcmus.edu.vn/chuan-dau-ra/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 345
+  },
+  {
+    "doc_id": "DOC-P023",
+    "title": "Thông báo tuyển sinh đào tạo trình độ thạc sĩ",
+    "file_path": "data/documents/public/DOC-P023_thong_bao_tuyen_sinh_sau_dai_hoc.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Sau đại học",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Kế hoạch tuyển sinh các ngành đào tạo thạc sĩ năm học mới",
+    "source_url": "https://sdh.ou.edu.vn/tuyen-sinh/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 335
+  },
+  {
+    "doc_id": "DOC-P024",
+    "title": "Hướng dẫn quy trình phúc khảo và khiếu nại điểm thi",
+    "file_path": "data/documents/public/DOC-P024_huong_dan_khieu_nai_diem_thi.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Khảo thí và Đảm bảo chất lượng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Trình tự gửi đơn phúc khảo và xử lý khiếu nại bài thi kết thúc học phần",
+    "source_url": "https://daotao.ut.edu.vn/phuc-khao/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 337
+  },
+  {
+    "doc_id": "DOC-P025",
+    "title": "Hướng dẫn thanh toán học phí qua cổng dịch vụ trực tuyến",
+    "file_path": "data/documents/public/DOC-P025_huong_dan_thanh_toan_hoc_phi_truc_tuyen.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Kế hoạch Tài chính",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Phương thức thanh toán học phí trực tuyến an toàn và xuất hóa đơn điện tử",
+    "source_url": "https://tdmu.edu.vn/hoc-phi/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 309
+  },
+  {
+    "doc_id": "DOC-P026",
+    "title": "Thông tin chương trình trao đổi sinh viên quốc tế",
+    "file_path": "data/documents/public/DOC-P026_thong_tin_chuong_trinh_trao_doi_sinh_vien.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Hợp tác Quốc tế",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Các chương trình học kỳ trao đổi sinh viên và học bổng du học ngắn hạn",
+    "source_url": "https://hcmus.edu.vn/hop-tac-quoc-te/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 318
+  },
+  {
+    "doc_id": "DOC-P027",
+    "title": "Quy chế đào tạo chương trình chất lượng cao",
+    "file_path": "data/documents/public/DOC-P027_quy_che_dao_tao_chat_luong_cao.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Đào tạo",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy định đào tạo tăng cường tiếng Anh và thực hành trong chương trình chất lượng cao",
+    "source_url": "https://daotao.ut.edu.vn/chat-luong-cao/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 311
+  },
+  {
+    "doc_id": "DOC-P028",
+    "title": "Sổ tay hướng dẫn hoạt động câu lạc bộ và đội nhóm",
+    "file_path": "data/documents/public/DOC-P028_so_tay_hoat_dong_cau_lac_bo.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Công tác Sinh viên",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Hướng dẫn thành lập, tổ chức sự kiện và quản lý tài chính cho CLB sinh viên",
+    "source_url": "https://ou.edu.vn/cong-tac-sinh-vien/clb/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 331
+  },
+  {
+    "doc_id": "DOC-P029",
+    "title": "Chính sách vay vốn tín dụng ưu đãi học tập",
+    "file_path": "data/documents/public/DOC-P029_chinh_sach_vay_von_tin_dung_hoc_tap.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Công tác Sinh viên",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Hướng dẫn thủ tục xác nhận vay vốn sinh viên tại Ngân hàng Chính sách Xã hội",
+    "source_url": "https://tdmu.edu.vn/tin-dung-hoc-tap/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 314
+  },
+  {
+    "doc_id": "DOC-P030",
+    "title": "Nội quy thư viện và không gian học tập chung",
+    "file_path": "data/documents/public/DOC-P030_noi_quy_thu_vien_va_khong_gian_hoc_tap.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trung tâm Học liệu và Thư viện",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy định mượn trả tài liệu, sử dụng phòng đọc và cơ sở dữ liệu điện tử",
+    "source_url": "https://thuvien.hcmus.edu.vn/noi-quy/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 314
+  },
+  {
+    "doc_id": "DOC-P031",
+    "title": "Quy chế xét và công nhận tốt nghiệp đại học",
+    "file_path": "data/documents/public/DOC-P031_quy_che_xet_tot_nghiep_dai_hoc.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Đào tạo",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Điều kiện công nhận tốt nghiệp, xếp hạng bằng và cấp văn bằng cử nhân, kỹ sư",
+    "source_url": "https://daotao.ut.edu.vn/xet-tot-nghiep/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 306
+  },
+  {
+    "doc_id": "DOC-P032",
+    "title": "Chính sách bảo hiểm y tế bắt buộc cho sinh viên",
+    "file_path": "data/documents/public/DOC-P032_chinh_sach_bao_hiem_y_te_sinh_vien.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trạm Y tế - Phòng Công tác Sinh viên",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy định mức đóng, quyền lợi khám chữa bệnh và thời hạn sử dụng thẻ BHYT",
+    "source_url": "https://ou.edu.vn/y-te-hoc-duong/bhyt/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 319
+  },
+  {
+    "doc_id": "DOC-P033",
+    "title": "Chương trình khởi nghiệp và đổi mới sáng tạo sinh viên",
+    "file_path": "data/documents/public/DOC-P033_chuong_trinh_khoi_nghiep_doi_moi_sang_tao.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trung tâm Đổi mới Sáng tạo và Chuyển giao Công nghệ",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Các chính sách hỗ trợ vốn, ươm tạo dự án và không gian sáng tạo cho sinh viên",
+    "source_url": "https://tdmu.edu.vn/khoi-nghiep/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 311
+  },
+  {
+    "doc_id": "DOC-P034",
+    "title": "Hướng dẫn tự đánh giá điểm rèn luyện trực tuyến",
+    "file_path": "data/documents/public/DOC-P034_huong_dan_danh_gia_ren_luyen_truc_tuyen.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Công tác Sinh viên",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy trình tự chấm điểm rèn luyện, minh chứng hoạt động và các mốc thời gian",
+    "source_url": "https://ctsv.hcmus.edu.vn/diem-ren-luyen/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 314
+  },
+  {
+    "doc_id": "DOC-P035",
+    "title": "Quy định sử dụng email trường và an toàn thông tin mạng",
+    "file_path": "data/documents/public/DOC-P035_quy_dinh_ve_an_toan_thong_tin_va_email.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trung tâm Công nghệ Thông tin",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy định quản lý hòm thư điện tử tên miền trường và trách nhiệm an toàn mạng",
+    "source_url": "https://it.ut.edu.vn/an-toan-thong-tin/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 324
+  },
+  {
+    "doc_id": "DOC-P036",
+    "title": "Thông tin đăng ký chỗ ở ký túc xá sinh viên",
+    "file_path": "data/documents/public/DOC-P036_thong_tin_nha_o_ky_tuc_xa_sinh_vien.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Ban Quản lý Ký túc xá",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Điều kiện xét duyệt chỗ ở ký túc xá, chi phí nội trú và quy chế trật tự",
+    "source_url": "https://ou.edu.vn/ky-tuc-xa/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 326
+  },
+  {
+    "doc_id": "DOC-P037",
+    "title": "Hướng dẫn thực hiện khóa luận và đồ án tốt nghiệp",
+    "file_path": "data/documents/public/DOC-P037_huong_dan_khoa_luan_va_do_an_tot_nghiep.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Đào tạo",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Quy định điều kiện làm khóa luận, phân công người hướng dẫn và bảo vệ đồ án",
+    "source_url": "https://tdmu.edu.vn/do-an-tot-nghiep/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 308
+  },
+  {
+    "doc_id": "DOC-P038",
+    "title": "Hướng dẫn thủ tục xin tạm hoãn và bảo lưu kết quả học tập",
+    "file_path": "data/documents/public/DOC-P038_huong_dan_bao_luu_ket_qua_hoc_tap.txt",
+    "classification": "Public",
+    "allowed_roles": [
+      "SinhVien",
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Đào tạo",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 365,
+    "created_date": "2026-10-30",
+    "description": "Điều kiện, hồ sơ và thời hạn tối đa được bảo lưu chương trình đào tạo đại học",
+    "source_url": "https://daotao.hcmus.edu.vn/bao-luu/",
+    "data_origin": "official_public_paraphrase",
+    "is_synthetic": false,
+    "word_count": 340
+  },
+  {
+    "doc_id": "DOC-I019",
+    "title": "Kế hoạch tổ chức thi kết thúc học phần nội bộ",
+    "file_path": "data/documents/internal/DOC-I019_ke_hoach_to_chuc_thi_ket_thuc_hoc_phan.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Khảo thí mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Kế hoạch điều phối phòng thi, in sao đề và phân công cán bộ coi thi",
+    "source_url": "https://daotao.ut.edu.vn/lich-thi/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 345
+  },
+  {
+    "doc_id": "DOC-I020",
+    "title": "Báo cáo phân tích kết quả học tập giữa kỳ",
+    "file_path": "data/documents/internal/DOC-I020_bao_cao_phan_tich_ket_qua_hoc_tap.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Ban Đảm bảo chất lượng mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Báo cáo tổng hợp phổ điểm và tỷ lệ đạt của các môn học cơ sở khối kỹ thuật",
+    "source_url": "https://daotao.hcmus.edu.vn/thong-ke/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 343
+  },
+  {
+    "doc_id": "DOC-I021",
+    "title": "Biên bản họp hội đồng khoa học xét duyệt đề tài",
+    "file_path": "data/documents/internal/DOC-I021_bien_ban_hop_hoi_dong_khoa_hoc_de_tai.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Quản lý Khoa học mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Biên bản đánh giá tính khả thi và cấp kinh phí cho các đề tài nghiên cứu cấp trường",
+    "source_url": "https://sdh.ou.edu.vn/nghien-cuu-khoa-hoc/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 330
+  },
+  {
+    "doc_id": "DOC-I022",
+    "title": "Kế hoạch nâng cấp hạ tầng mạng phòng máy",
+    "file_path": "data/documents/internal/DOC-I022_ke_hoach_nang_cap_ha_tang_phong_may.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trung tâm Quản trị Hạ tầng mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Kế hoạch thay thế thiết bị switch, bổ sung đường truyền cáp quang phòng máy thực hành",
+    "source_url": "https://tdmu.edu.vn/ha-tang-it/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 327
+  },
+  {
+    "doc_id": "DOC-I023",
+    "title": "Báo cáo giám sát an ninh trật tự khuôn viên trường",
+    "file_path": "data/documents/internal/DOC-I023_bao_cao_giam_sat_an_ninh_khuon_vien.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Tổ Bảo vệ và Quản trị Tài sản mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Báo cáo tổng kết công tác tuần tra, camera an ninh và quản lý phương tiện tháng 10",
+    "source_url": "https://ut.edu.vn/an-ninh-trat-tu/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 321
+  },
+  {
+    "doc_id": "DOC-I024",
+    "title": "Kế hoạch kiểm tra tiến độ đồ án tốt nghiệp",
+    "file_path": "data/documents/internal/DOC-I024_ke_hoach_kiem_tra_tien_do_do_an.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Khoa Công nghệ Thông tin mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Lịch rà soát báo cáo tiến độ đợt 1 các nhóm sinh viên làm khóa luận tốt nghiệp",
+    "source_url": "https://fit.hcmus.edu.vn/tien-do-do-an/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 341
+  },
+  {
+    "doc_id": "DOC-I025",
+    "title": "Báo cáo tiếp nhận và xử lý ý kiến giảng viên",
+    "file_path": "data/documents/internal/DOC-I025_bao_cao_xu_ly_y_kien_giang_vien.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Văn phòng Đảng ủy - Công đoàn mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Tổng hợp góp ý của cán bộ giảng viên về chế độ công tác và cơ sở vật chất giảng dạy",
+    "source_url": "https://ou.edu.vn/cong-doan/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 319
+  },
+  {
+    "doc_id": "DOC-I026",
+    "title": "Kế hoạch bồi dưỡng chuyên môn nghiệp vụ giảng viên",
+    "file_path": "data/documents/internal/DOC-I026_ke_hoach_boi_duong_chuyen_mon_giang_vien.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Tổ chức Cán bộ mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Chương trình tập huấn phương pháp giảng dạy hiện đại và ứng dụng AI trong giáo dục",
+    "source_url": "https://tdmu.edu.vn/to-chuc-can-bo/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 312
+  },
+  {
+    "doc_id": "DOC-I027",
+    "title": "Báo cáo kiểm toán dữ liệu học vụ định kỳ",
+    "file_path": "data/documents/internal/DOC-I027_bao_cao_kiem_toan_du_lieu_hoc_vu.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Thanh tra Pháp chế mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Rà soát tính nhất quán giữa điểm số trên phần mềm và bảng điểm gốc lưu trữ",
+    "source_url": "https://ut.edu.vn/thanh-tra-phap-che/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 319
+  },
+  {
+    "doc_id": "DOC-I028",
+    "title": "Kế hoạch diễn tập phòng cháy chữa cháy trường học",
+    "file_path": "data/documents/internal/DOC-I028_ke_hoach_dien_tap_phong_chay_chua_chay.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Ban Chỉ đạo PCCC mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Kế hoạch phối hợp diễn tập phương án thoát hiểm và cứu nạn cứu hộ định kỳ",
+    "source_url": "https://hcmus.edu.vn/pccc/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 321
+  },
+  {
+    "doc_id": "DOC-I029",
+    "title": "Biên bản kiểm kê thiết bị phòng thí nghiệm chuyên sâu",
+    "file_path": "data/documents/internal/DOC-I029_bien_ban_kiem_ke_thiet_bi_phong_thi_nghiem.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Khoa Hóa học mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Biên bản kiểm tra hiện trạng máy móc, hóa chất tiêu hao và dụng cụ đo lường",
+    "source_url": "https://ou.edu.vn/phong-thi-nghiem/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 305
+  },
+  {
+    "doc_id": "DOC-I030",
+    "title": "Kế hoạch tiếp đoàn đánh giá ngoài kiểm định chất lượng",
+    "file_path": "data/documents/internal/DOC-I030_ke_hoach_tiep_doan_danh_gia_ngoai.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Phòng Đảm bảo Chất lượng mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Lịch trình làm việc và phân công phụ trách minh chứng phục vụ kiểm định chương trình",
+    "source_url": "https://tdmu.edu.vn/kiem-dinh/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 312
+  },
+  {
+    "doc_id": "DOC-I031",
+    "title": "Báo cáo tiến độ nghiệm thu phần mềm quản lý giảng dạy",
+    "file_path": "data/documents/internal/DOC-I031_bao_cao_nghiem_thu_phan_mem_giang_day.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trung tâm Ứng dụng CNTT mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Đánh giá kết quả kiểm thử tính năng điểm danh nhận diện khuôn mặt và nộp bài tập",
+    "source_url": "https://it.ut.edu.vn/phan-mem/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 307
+  },
+  {
+    "doc_id": "DOC-I032",
+    "title": "Kế hoạch khảo sát tình hình việc làm cựu sinh viên",
+    "file_path": "data/documents/internal/DOC-I032_ke_hoach_khao_sat_viec_lam_cuu_sinh_vien.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Trung tâm Quan hệ Doanh nghiệp mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Kế hoạch thu thập thông tin tỷ lệ có việc làm sau 1 năm tốt nghiệp của các ngành học",
+    "source_url": "https://hcmus.edu.vn/viec-lam/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 314
+  },
+  {
+    "doc_id": "DOC-I033",
+    "title": "Báo cáo rà soát và thanh lý giáo trình lỗi thời",
+    "file_path": "data/documents/internal/DOC-I033_bao_cao_ra_soat_giao_trinh_thu_vien.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Thư viện mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Danh mục sách rách nát, nội dung không còn phù hợp đề xuất thanh lý",
+    "source_url": "https://thuvien.ou.edu.vn/thanh-ly-sach/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 299
+  },
+  {
+    "doc_id": "DOC-I034",
+    "title": "Kế hoạch tổ chức hội nghị khoa học công nghệ trẻ",
+    "file_path": "data/documents/internal/DOC-I034_ke_hoach_hoi_nghi_khoa_hoc_tre.txt",
+    "classification": "Internal",
+    "allowed_roles": [
+      "GiangVien",
+      "QuanTri"
+    ],
+    "department": "Đoàn Thanh niên - Hội Sinh viên mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 180,
+    "created_date": "2026-10-30",
+    "description": "Kế hoạch tổ chức diễn đàn học thuật thường niên và chấm bài báo khoa học",
+    "source_url": "https://tdmu.edu.vn/hoi-nghi-khoa-hoc/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 324
+  },
+  {
+    "doc_id": "DOC-R013",
+    "title": "Hồ sơ xét tốt nghiệp đặc cách cá nhân",
+    "file_path": "data/documents/restricted/DOC-R013_ho_so_xet_tot_nghiep_dac_cach.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Hội đồng Xét tốt nghiệp mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Hồ sơ đề nghị cứu xét điều kiện chứng chỉ ngoại ngữ của học viên SV-G013",
+    "source_url": "https://daotao.ut.edu.vn/xet-tot-nghiep/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 394
+  },
+  {
+    "doc_id": "DOC-R014",
+    "title": "Hồ sơ kỷ luật đình chỉ học tập sinh viên",
+    "file_path": "data/documents/restricted/DOC-R014_ho_so_ky_luat_dinh_chi_hoc_tap.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Hội đồng Kỷ luật mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Biên bản và quyết định xử lý hành vi gian lận thi cử có tổ chức của hồ sơ SV-G014",
+    "source_url": "https://ctsv.hcmus.edu.vn/ky-luat/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 368
+  },
+  {
+    "doc_id": "DOC-R015",
+    "title": "Hồ sơ y tế sinh viên diện bệnh án đặc biệt",
+    "file_path": "data/documents/restricted/DOC-R015_ho_so_y_te_sinh_vien_benh_an.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Trạm Y tế mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Bệnh án theo dõi sức khỏe dài hạn và miễn học giáo dục thể chất của SV-G015",
+    "source_url": "https://ou.edu.vn/y-te/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 368
+  },
+  {
+    "doc_id": "DOC-R016",
+    "title": "Hồ sơ miễn giảm học phí con thương binh liệt sĩ",
+    "file_path": "data/documents/restricted/DOC-R016_ho_so_mien_giam_hoc_phi_chinh_sach.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Phòng Công tác Sinh viên mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Giấy tờ xác nhận gia đình chính sách và trợ cấp xã hội của hồ sơ SV-G016",
+    "source_url": "https://tdmu.edu.vn/chinh-sach-mien-giam/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 336
+  },
+  {
+    "doc_id": "DOC-R017",
+    "title": "Hồ sơ tố cáo sai phạm tài chính học vụ",
+    "file_path": "data/documents/restricted/DOC-R017_ho_so_to_cao_sai_pham_hoc_vu.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Ban Thanh tra Nhân dân mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Đơn phản ánh nặc danh về hành vi thu tiền quỹ lớp trái quy định của hồ sơ SV-G017",
+    "source_url": "https://ut.edu.vn/thanh-tra-hoc-vu/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 342
+  },
+  {
+    "doc_id": "DOC-R018",
+    "title": "Hồ sơ tranh chấp kết quả nghiên cứu khoa học",
+    "file_path": "data/documents/restricted/DOC-R018_ho_so_tranh_chap_ban_quyen_de_tai.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Hội đồng Liêm chính Khoa học mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Khiếu nại về quyền tác giả bài báo quốc tế của nhóm nghiên cứu liên quan SV-G018",
+    "source_url": "https://hcmus.edu.vn/liem-chinh-khoa-hoc/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 344
+  },
+  {
+    "doc_id": "DOC-R019",
+    "title": "Hồ sơ xác minh gian lận văn bằng tuyển sinh",
+    "file_path": "data/documents/restricted/DOC-R019_ho_so_xac_minh_gian_lan_bang_cap.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Phòng Khảo thí và Kiểm định mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Kết quả hậu kiểm bằng tốt nghiệp THPT nghi vấn không hợp pháp của SV-G019",
+    "source_url": "https://ou.edu.vn/tuyen-sinh-xac-minh/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 336
+  },
+  {
+    "doc_id": "DOC-R020",
+    "title": "Hồ sơ vi phạm bản quyền dữ liệu đồ án",
+    "file_path": "data/documents/restricted/DOC-R020_ho_so_vi_pham_ban_quyen_do_an.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Bộ môn Chuyên ngành mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Kết quả quét tỷ lệ trùng lặp 68% không trích dẫn của đồ án tốt nghiệp SV-G020",
+    "source_url": "https://tdmu.edu.vn/kiem-tra-dao-van/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 329
+  },
+  {
+    "doc_id": "DOC-R021",
+    "title": "Hồ sơ công nợ học phí khó thu hồi đặc biệt",
+    "file_path": "data/documents/restricted/DOC-R021_ho_so_cong_no_kho_thu_hoi.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Phòng Kế hoạch Tài chính mô phỏng",
+    "university": "Trường Đại học Giao thông vận tải TP.HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Báo cáo nợ học phí quá hạn kéo dài 4 học kỳ của học viên giả định SV-G021",
+    "source_url": "https://daotao.ut.edu.vn/hoc-phi-no/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 351
+  },
+  {
+    "doc_id": "DOC-R022",
+    "title": "Hồ sơ đề nghị trợ cấp đột xuất do tai nạn giao thông",
+    "file_path": "data/documents/restricted/DOC-R022_ho_so_tro_cap_dot_xuat_tai_nan.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Quỹ Hỗ trợ Sinh viên mô phỏng",
+    "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Đơn xin hỗ trợ chi phí phẫu thuật và bảo lưu học tập khẩn cấp của SV-G022",
+    "source_url": "https://ctsv.hcmus.edu.vn/tro-cap-kho-khan/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 348
+  },
+  {
+    "doc_id": "DOC-R023",
+    "title": "Hồ sơ vi phạm an ninh thông tin mạng nội bộ",
+    "file_path": "data/documents/restricted/DOC-R023_ho_so_vi_pham_an_ninh_mang.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Trung tâm An ninh Mạng mô phỏng",
+    "university": "Trường Đại học Mở TP.HCM",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Nhật ký điều tra vụ tấn công từ chối dịch vụ (DDoS) xuất phát từ tài khoản SV-G023",
+    "source_url": "https://it.ou.edu.vn/an-ninh-mang/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 346
+  },
+  {
+    "doc_id": "DOC-R024",
+    "title": "Hồ sơ cứu xét hủy kết quả kỷ luật buộc thôi học",
+    "file_path": "data/documents/restricted/DOC-R024_ho_so_cuu_xet_huy_ky_luat.txt",
+    "classification": "Restricted",
+    "allowed_roles": [
+      "QuanTri"
+    ],
+    "department": "Ban Giám hiệu mô phỏng",
+    "university": "Trường Đại học Thủ Dầu Một",
+    "retention_days": 90,
+    "created_date": "2026-10-30",
+    "description": "Đơn khiếu nại quyết định buộc thôi học có tình tiết giảm nhẹ mới của SV-G024",
+    "source_url": "https://tdmu.edu.vn/cuu-xet-ky-luat/",
+    "data_origin": "synthetic_based_on_public_context",
+    "is_synthetic": true,
+    "word_count": 355
   }
 ]

@@ -1,0 +1,21 @@
+LỊCH THI KẾT THÚC HỌC PHẦN HỌC KỲ 2
+Mã tài liệu: DOC-P021
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Giao thông vận tải TP.HCM
+Nguồn tham khảo: https://daotao.ut.edu.vn/lich-thi/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. MỤC ĐÍCH VÀ PHẠM VI
+Văn bản thông báo về việc công bố lịch thi kết thúc học phần học kỳ 2 dành cho sinh viên chính quy toàn trường. Sinh viên chủ động tra cứu lịch thi để lên kế hoạch ôn tập chu đáo, tham dự thi đúng phòng và thời gian theo quy định chung của nhà trường.
+
+2. HƯỚNG DẪN TRA CỨU
+Sinh viên sử dụng tài khoản cá nhân đăng nhập cổng thông tin sinh viên tại trang đào tạo của nhà trường. Vào mục Lịch thi học kỳ để xem danh sách môn thi, số báo danh, ngày thi, ca thi và phòng thi được bố trí. Mọi thắc mắc về ca thi cần phản hồi trước ngày khai thi ít nhất 3 ngày làm việc.
+
+3. QUY ĐỊNH KHI THAM DỰ KỲ THI
+Khi vào phòng thi, thí sinh bắt buộc xuất trình thẻ sinh viên hoặc giấy tờ tùy thân có dán ảnh hợp lệ do cơ quan có thẩm quyền cấp. Tuyệt đối không mang tài liệu, điện thoại di động hoặc các thiết bị công nghệ truyền tin vào phòng thi trừ các môn thi được quy định đề mở. Thí sinh đến trễ quá 15 phút sau khi phát đề sẽ không được tham dự buổi thi.
+
+4. TRƯỜNG HỢP HOÃN THI VÀ THI BỔ SUNG
+Sinh viên gặp lý do bất khả kháng như ốm đau, tai nạn có xác nhận bệnh viện tuyến quận huyện trở lên phải nộp đơn xin hoãn thi trong vòng 48 giờ kể từ ca thi. Phòng Đào tạo sẽ xem xét giải quyết tổ chức thi bổ sung vào kỳ thi tiếp theo theo đúng quy chế đào tạo tín chỉ.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Trợ lý AI hỗ trợ giải đáp thời gian tra cứu lịch thi, quy định mang vật dụng vào phòng thi và quy trình hoãn thi cho sinh viên, giảng viên và quản trị viên một cách chuẩn xác, minh bạch.

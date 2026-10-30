@@ -1,0 +1,24 @@
+BÁO CÁO TIẾP NHẬN VÀ XỬ LÝ Ý KIẾN GIẢNG VIÊN
+Mã tài liệu: DOC-I025
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Mở TP.HCM
+Nguồn tham khảo: https://ou.edu.vn/cong-doan/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. BỐI CẢNH GIẢ LẬP
+Văn phòng Công đoàn trường tổng hợp các đề xuất, kiến nghị của cán bộ giảng viên trong hội nghị cán bộ viên chức đầu năm học giả định 2026. Các góp ý tập trung vào cải thiện thiết bị trợ giảng, bổ sung điều hòa phòng nghỉ và quy trình số hóa biểu mẫu thanh toán.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Tham khảo thông tin hoạt động công đoàn cơ sở và quy chế dân chủ cơ sở trong nhà trường của Trường Đại học Mở TP.HCM.
+
+3. NỘI DUNG Ý KIẾN CHÍNH
+Có 15 lượt ý kiến đề nghị bổ sung micro không dây chất lượng cao tại các giảng đường lớn; 08 ý kiến đề xuất tinh giản quy trình ký duyệt tài chính cho hoạt động nghiên cứu khoa học; 12 ý kiến phản ánh tốc độ mạng tại văn phòng khoa vào giờ cao điểm.
+
+4. TIẾN ĐỘ PHỐI HỢP GIẢI QUYẾT
+Phòng Quản trị thiết bị đã triển khai lắp mới 30 bộ micro sạc pin; Trung tâm CNTT bổ sung 02 bộ phát sóng wifi chuyên dụng; Phòng Tài chính đã đưa vào áp dụng hệ thống ký số nội bộ từ tháng 11/2026.
+
+5. KIỂM SOÁT TRUY CẬP
+Phân loại Internal, cấp quyền truy cập cho GiangVien và QuanTri. Quyền SinhVien không thuộc phạm vi tiếp nhận văn bản tổng hợp ý kiến công đoàn giảng viên.
+
+6. KẾT LUẬN
+Bản ghi phục vụ kiểm thử hệ thống AI hỗ trợ quản trị nội bộ nhà trường, không chứa dữ liệu khiếu nại cá nhân có thật.
