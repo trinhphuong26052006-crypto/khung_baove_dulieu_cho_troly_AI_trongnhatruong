@@ -4,11 +4,7 @@
     "title": "Quy chế đào tạo đại học",
     "file_path": "data/documents/public/DOC-P001_quy_che_dao_tao.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 365,
@@ -24,11 +20,7 @@
     "title": "Hướng dẫn đăng ký học phần trực tuyến",
     "file_path": "data/documents/public/DOC-P002_huong_dan_dang_ky_hoc_phan_truc_tuyen.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -44,11 +36,7 @@
     "title": "Hướng dẫn đăng ký giấy xác nhận sinh viên",
     "file_path": "data/documents/public/DOC-P003_huong_dan_dang_ky_giay_xac_nhan_sinh_vien.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -64,11 +52,7 @@
     "title": "Hướng dẫn nhận bằng tốt nghiệp",
     "file_path": "data/documents/public/DOC-P004_huong_dan_nhan_bang_tot_nghiep.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -84,11 +68,7 @@
     "title": "Thông báo đăng ký học phần theo học kỳ",
     "file_path": "data/documents/public/DOC-P005_thong_bao_dang_ky_hoc_phan_theo_hoc_ky.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -104,11 +84,7 @@
     "title": "Hướng dẫn học lại và học cải thiện",
     "file_path": "data/documents/public/DOC-P006_huong_dan_hoc_lai_va_hoc_cai_thien.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -124,11 +100,7 @@
     "title": "Biểu mẫu xác nhận kết quả học tập",
     "file_path": "data/documents/public/DOC-P007_bieu_mau_xac_nhan_ket_qua_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -144,11 +116,7 @@
     "title": "Biểu mẫu giới thiệu thực tập",
     "file_path": "data/documents/public/DOC-P008_bieu_mau_gioi_thieu_thuc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -164,11 +132,7 @@
     "title": "Hướng dẫn thủ tục miễn giảm học phí",
     "file_path": "data/documents/public/DOC-P009_huong_dan_thu_tuc_mien_giam_hoc_phi.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -184,11 +148,7 @@
     "title": "Hướng dẫn hỗ trợ chi phí học tập",
     "file_path": "data/documents/public/DOC-P010_huong_dan_ho_tro_chi_phi_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -204,11 +164,7 @@
     "title": "Quy chế công tác sinh viên",
     "file_path": "data/documents/public/DOC-P011_quy_che_cong_tac_sinh_vien.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -224,11 +180,7 @@
     "title": "Quy định đánh giá kết quả rèn luyện",
     "file_path": "data/documents/public/DOC-P012_quy_dinh_danh_gia_ket_qua_ren_luyen.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -244,11 +196,7 @@
     "title": "Quy định cố vấn học tập",
     "file_path": "data/documents/public/DOC-P013_quy_dinh_co_van_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -264,11 +212,7 @@
     "title": "Quy định ban cán sự lớp",
     "file_path": "data/documents/public/DOC-P014_quy_dinh_ban_can_su_lop.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -284,11 +228,7 @@
     "title": "Văn hóa ứng xử người học",
     "file_path": "data/documents/public/DOC-P015_van_hoa_ung_xu_nguoi_hoc.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -304,11 +244,7 @@
     "title": "Quy chế học bổng",
     "file_path": "data/documents/public/DOC-P016_quy_che_hoc_bong.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -324,11 +260,7 @@
     "title": "Quy chế đào tạo theo tín chỉ",
     "file_path": "data/documents/public/DOC-P017_quy_che_dao_tao_theo_tin_chi.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -344,11 +276,7 @@
     "title": "Quy chế công tác cố vấn học tập",
     "file_path": "data/documents/public/DOC-P018_quy_che_cong_tac_co_van_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -364,11 +292,7 @@
     "title": "Chuẩn đầu ra ngoại ngữ và tin học",
     "file_path": "data/documents/public/DOC-P019_chuan_dau_ra_ngoai_ngu_va_tin_hoc.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -384,11 +308,7 @@
     "title": "Kế hoạch đào tạo và lịch học năm học",
     "file_path": "data/documents/public/DOC-P020_ke_hoach_dao_tao_va_lich_hoc_nam_hoc.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -404,10 +324,7 @@
     "title": "Kế hoạch phân công giảng dạy học kỳ",
     "file_path": "data/documents/internal/DOC-I001_ke_hoach_phan_cong_giang_day_hoc_ky.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -423,10 +340,7 @@
     "title": "Biên bản họp tổ bộ môn",
     "file_path": "data/documents/internal/DOC-I002_bien_ban_hop_to_bo_mon.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 180,
@@ -442,10 +356,7 @@
     "title": "Báo cáo tiến độ đăng ký học phần",
     "file_path": "data/documents/internal/DOC-I003_bao_cao_tien_do_dang_ky_hoc_phan.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -461,10 +372,7 @@
     "title": "Kế hoạch tư vấn cố vấn học tập",
     "file_path": "data/documents/internal/DOC-I004_ke_hoach_tu_van_co_van_hoc_tap.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -480,10 +388,7 @@
     "title": "Danh sách phân công cố vấn lớp",
     "file_path": "data/documents/internal/DOC-I005_danh_sach_phan_cong_co_van_lop.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -499,10 +404,7 @@
     "title": "Báo cáo rà soát học bổng",
     "file_path": "data/documents/internal/DOC-I006_bao_cao_ra_soat_hoc_bong.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -518,10 +420,7 @@
     "title": "Kế hoạch kiểm tra học phần",
     "file_path": "data/documents/internal/DOC-I007_ke_hoach_kiem_tra_hoc_phan.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -537,10 +436,7 @@
     "title": "Biên bản rà soát đề cương môn học",
     "file_path": "data/documents/internal/DOC-I008_bien_ban_ra_soat_de_cuong_mon_hoc.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 180,
@@ -556,10 +452,7 @@
     "title": "Báo cáo sử dụng phòng máy",
     "file_path": "data/documents/internal/DOC-I009_bao_cao_su_dung_phong_may.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -575,10 +468,7 @@
     "title": "Kế hoạch hỗ trợ tân sinh viên",
     "file_path": "data/documents/internal/DOC-I010_ke_hoach_ho_tro_tan_sinh_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -594,10 +484,7 @@
     "title": "Báo cáo tổng hợp yêu cầu giấy xác nhận",
     "file_path": "data/documents/internal/DOC-I011_bao_cao_tong_hop_yeu_cau_giay_xac_nhan.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -613,10 +500,7 @@
     "title": "Kế hoạch tập huấn ban cán sự lớp",
     "file_path": "data/documents/internal/DOC-I012_ke_hoach_tap_huan_ban_can_su_lop.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -632,10 +516,7 @@
     "title": "Báo cáo tiến độ công tác rèn luyện",
     "file_path": "data/documents/internal/DOC-I013_bao_cao_tien_do_cong_tac_ren_luyen.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -651,10 +532,7 @@
     "title": "Biên bản họp xét điều chỉnh lịch học",
     "file_path": "data/documents/internal/DOC-I014_bien_ban_hop_xet_dieu_chinh_lich_hoc.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -670,10 +548,7 @@
     "title": "Kế hoạch quản lý hồ sơ thực tập",
     "file_path": "data/documents/internal/DOC-I015_ke_hoach_quan_ly_ho_so_thuc_tap.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -689,10 +564,7 @@
     "title": "Báo cáo lỗi hệ thống đăng ký môn",
     "file_path": "data/documents/internal/DOC-I016_bao_cao_loi_he_thong_dang_ky_mon.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -708,10 +580,7 @@
     "title": "Kế hoạch kiểm tra dữ liệu học vụ",
     "file_path": "data/documents/internal/DOC-I017_ke_hoach_kiem_tra_du_lieu_hoc_vu.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -727,10 +596,7 @@
     "title": "Báo cáo tổng hợp phản hồi sinh viên",
     "file_path": "data/documents/internal/DOC-I018_bao_cao_tong_hop_phan_hoi_sinh_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đơn vị học vụ mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -746,9 +612,7 @@
     "title": "Bảng điểm học kỳ sinh viên giả lập",
     "file_path": "data/documents/restricted/DOC-R001_bang_diem_hoc_ky_sinh_vien_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 90,
@@ -764,9 +628,7 @@
     "title": "Hồ sơ cảnh báo học vụ giả lập",
     "file_path": "data/documents/restricted/DOC-R002_ho_so_canh_bao_hoc_vu_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 90,
@@ -782,9 +644,7 @@
     "title": "Hồ sơ xét học bổng cá nhân giả lập",
     "file_path": "data/documents/restricted/DOC-R003_ho_so_xet_hoc_bong_ca_nhan_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 90,
@@ -800,9 +660,7 @@
     "title": "Hồ sơ miễn giảm học phí giả lập",
     "file_path": "data/documents/restricted/DOC-R004_ho_so_mien_giam_hoc_phi_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -818,9 +676,7 @@
     "title": "Hồ sơ công nợ học phí giả lập",
     "file_path": "data/documents/restricted/DOC-R005_ho_so_cong_no_hoc_phi_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -836,9 +692,7 @@
     "title": "Hồ sơ kỷ luật sinh viên giả lập",
     "file_path": "data/documents/restricted/DOC-R006_ho_so_ky_luat_sinh_vien_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 90,
@@ -854,9 +708,7 @@
     "title": "Hồ sơ xin bảo lưu kết quả học tập",
     "file_path": "data/documents/restricted/DOC-R007_ho_so_xin_bao_luu_ket_qua_hoc_tap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -872,9 +724,7 @@
     "title": "Hồ sơ điều chỉnh điểm giả lập",
     "file_path": "data/documents/restricted/DOC-R008_ho_so_dieu_chinh_diem_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -890,9 +740,7 @@
     "title": "Hồ sơ hỗ trợ hoàn cảnh khó khăn",
     "file_path": "data/documents/restricted/DOC-R009_ho_so_ho_tro_hoan_canh_kho_khan.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 90,
@@ -908,9 +756,7 @@
     "title": "Hồ sơ cấp văn bằng giả lập",
     "file_path": "data/documents/restricted/DOC-R010_ho_so_cap_van_bang_gia_lap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -926,9 +772,7 @@
     "title": "Phiếu đánh giá rèn luyện cá nhân",
     "file_path": "data/documents/restricted/DOC-R011_phieu_danh_gia_ren_luyen_ca_nhan.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 90,
@@ -944,9 +788,7 @@
     "title": "Hồ sơ khiếu nại kết quả học tập",
     "file_path": "data/documents/restricted/DOC-R012_ho_so_khieu_nai_ket_qua_hoc_tap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -962,11 +804,7 @@
     "title": "Lịch thi kết thúc học phần học kỳ 2",
     "file_path": "data/documents/public/DOC-P021_lich_thi_hoc_ky_2.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Khảo thí và Đảm bảo chất lượng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -982,11 +820,7 @@
     "title": "Quy định chuẩn đầu ra tin học ứng dụng",
     "file_path": "data/documents/public/DOC-P022_quy_dinh_chuan_dau_ra_tin_hoc.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 365,
@@ -1002,11 +836,7 @@
     "title": "Thông báo tuyển sinh đào tạo trình độ thạc sĩ",
     "file_path": "data/documents/public/DOC-P023_thong_bao_tuyen_sinh_sau_dai_hoc.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Sau đại học",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -1022,11 +852,7 @@
     "title": "Hướng dẫn quy trình phúc khảo và khiếu nại điểm thi",
     "file_path": "data/documents/public/DOC-P024_huong_dan_khieu_nai_diem_thi.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Khảo thí và Đảm bảo chất lượng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -1042,11 +868,7 @@
     "title": "Hướng dẫn thanh toán học phí qua cổng dịch vụ trực tuyến",
     "file_path": "data/documents/public/DOC-P025_huong_dan_thanh_toan_hoc_phi_truc_tuyen.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Kế hoạch Tài chính",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -1062,11 +884,7 @@
     "title": "Thông tin chương trình trao đổi sinh viên quốc tế",
     "file_path": "data/documents/public/DOC-P026_thong_tin_chuong_trinh_trao_doi_sinh_vien.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Hợp tác Quốc tế",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 365,
@@ -1082,11 +900,7 @@
     "title": "Quy chế đào tạo chương trình chất lượng cao",
     "file_path": "data/documents/public/DOC-P027_quy_che_dao_tao_chat_luong_cao.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -1102,11 +916,7 @@
     "title": "Sổ tay hướng dẫn hoạt động câu lạc bộ và đội nhóm",
     "file_path": "data/documents/public/DOC-P028_so_tay_hoat_dong_cau_lac_bo.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Công tác Sinh viên",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -1122,11 +932,7 @@
     "title": "Chính sách vay vốn tín dụng ưu đãi học tập",
     "file_path": "data/documents/public/DOC-P029_chinh_sach_vay_von_tin_dung_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Công tác Sinh viên",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -1142,11 +948,7 @@
     "title": "Nội quy thư viện và không gian học tập chung",
     "file_path": "data/documents/public/DOC-P030_noi_quy_thu_vien_va_khong_gian_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Trung tâm Học liệu và Thư viện",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 365,
@@ -1162,11 +964,7 @@
     "title": "Quy chế xét và công nhận tốt nghiệp đại học",
     "file_path": "data/documents/public/DOC-P031_quy_che_xet_tot_nghiep_dai_hoc.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -1182,11 +980,7 @@
     "title": "Chính sách bảo hiểm y tế bắt buộc cho sinh viên",
     "file_path": "data/documents/public/DOC-P032_chinh_sach_bao_hiem_y_te_sinh_vien.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Trạm Y tế - Phòng Công tác Sinh viên",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -1202,11 +996,7 @@
     "title": "Chương trình khởi nghiệp và đổi mới sáng tạo sinh viên",
     "file_path": "data/documents/public/DOC-P033_chuong_trinh_khoi_nghiep_doi_moi_sang_tao.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Trung tâm Đổi mới Sáng tạo và Chuyển giao Công nghệ",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -1222,11 +1012,7 @@
     "title": "Hướng dẫn tự đánh giá điểm rèn luyện trực tuyến",
     "file_path": "data/documents/public/DOC-P034_huong_dan_danh_gia_ren_luyen_truc_tuyen.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Công tác Sinh viên",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 365,
@@ -1242,11 +1028,7 @@
     "title": "Quy định sử dụng email trường và an toàn thông tin mạng",
     "file_path": "data/documents/public/DOC-P035_quy_dinh_ve_an_toan_thong_tin_va_email.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Trung tâm Công nghệ Thông tin",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 365,
@@ -1262,11 +1044,7 @@
     "title": "Thông tin đăng ký chỗ ở ký túc xá sinh viên",
     "file_path": "data/documents/public/DOC-P036_thong_tin_nha_o_ky_tuc_xa_sinh_vien.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Ban Quản lý Ký túc xá",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 365,
@@ -1282,11 +1060,7 @@
     "title": "Hướng dẫn thực hiện khóa luận và đồ án tốt nghiệp",
     "file_path": "data/documents/public/DOC-P037_huong_dan_khoa_luan_va_do_an_tot_nghiep.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 365,
@@ -1302,11 +1076,7 @@
     "title": "Hướng dẫn thủ tục xin tạm hoãn và bảo lưu kết quả học tập",
     "file_path": "data/documents/public/DOC-P038_huong_dan_bao_luu_ket_qua_hoc_tap.txt",
     "classification": "Public",
-    "allowed_roles": [
-      "SinhVien",
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
     "department": "Phòng Đào tạo",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 365,
@@ -1322,10 +1092,7 @@
     "title": "Kế hoạch tổ chức thi kết thúc học phần nội bộ",
     "file_path": "data/documents/internal/DOC-I019_ke_hoach_to_chuc_thi_ket_thuc_hoc_phan.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Phòng Khảo thí mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -1341,10 +1108,7 @@
     "title": "Báo cáo phân tích kết quả học tập giữa kỳ",
     "file_path": "data/documents/internal/DOC-I020_bao_cao_phan_tich_ket_qua_hoc_tap.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Ban Đảm bảo chất lượng mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 180,
@@ -1360,10 +1124,7 @@
     "title": "Biên bản họp hội đồng khoa học xét duyệt đề tài",
     "file_path": "data/documents/internal/DOC-I021_bien_ban_hop_hoi_dong_khoa_hoc_de_tai.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Phòng Quản lý Khoa học mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -1379,10 +1140,7 @@
     "title": "Kế hoạch nâng cấp hạ tầng mạng phòng máy",
     "file_path": "data/documents/internal/DOC-I022_ke_hoach_nang_cap_ha_tang_phong_may.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Trung tâm Quản trị Hạ tầng mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -1398,10 +1156,7 @@
     "title": "Báo cáo giám sát an ninh trật tự khuôn viên trường",
     "file_path": "data/documents/internal/DOC-I023_bao_cao_giam_sat_an_ninh_khuon_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Tổ Bảo vệ và Quản trị Tài sản mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -1417,10 +1172,7 @@
     "title": "Kế hoạch kiểm tra tiến độ đồ án tốt nghiệp",
     "file_path": "data/documents/internal/DOC-I024_ke_hoach_kiem_tra_tien_do_do_an.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Khoa Công nghệ Thông tin mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 180,
@@ -1436,10 +1188,7 @@
     "title": "Báo cáo tiếp nhận và xử lý ý kiến giảng viên",
     "file_path": "data/documents/internal/DOC-I025_bao_cao_xu_ly_y_kien_giang_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Văn phòng Đảng ủy - Công đoàn mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -1455,10 +1204,7 @@
     "title": "Kế hoạch bồi dưỡng chuyên môn nghiệp vụ giảng viên",
     "file_path": "data/documents/internal/DOC-I026_ke_hoach_boi_duong_chuyen_mon_giang_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Phòng Tổ chức Cán bộ mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -1474,10 +1220,7 @@
     "title": "Báo cáo kiểm toán dữ liệu học vụ định kỳ",
     "file_path": "data/documents/internal/DOC-I027_bao_cao_kiem_toan_du_lieu_hoc_vu.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Phòng Thanh tra Pháp chế mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -1493,10 +1236,7 @@
     "title": "Kế hoạch diễn tập phòng cháy chữa cháy trường học",
     "file_path": "data/documents/internal/DOC-I028_ke_hoach_dien_tap_phong_chay_chua_chay.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Ban Chỉ đạo PCCC mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 180,
@@ -1512,10 +1252,7 @@
     "title": "Biên bản kiểm kê thiết bị phòng thí nghiệm chuyên sâu",
     "file_path": "data/documents/internal/DOC-I029_bien_ban_kiem_ke_thiet_bi_phong_thi_nghiem.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Khoa Hóa học mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -1531,10 +1268,7 @@
     "title": "Kế hoạch tiếp đoàn đánh giá ngoài kiểm định chất lượng",
     "file_path": "data/documents/internal/DOC-I030_ke_hoach_tiep_doan_danh_gia_ngoai.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Phòng Đảm bảo Chất lượng mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -1550,10 +1284,7 @@
     "title": "Báo cáo tiến độ nghiệm thu phần mềm quản lý giảng dạy",
     "file_path": "data/documents/internal/DOC-I031_bao_cao_nghiem_thu_phan_mem_giang_day.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Trung tâm Ứng dụng CNTT mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 180,
@@ -1569,10 +1300,7 @@
     "title": "Kế hoạch khảo sát tình hình việc làm cựu sinh viên",
     "file_path": "data/documents/internal/DOC-I032_ke_hoach_khao_sat_viec_lam_cuu_sinh_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Trung tâm Quan hệ Doanh nghiệp mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 180,
@@ -1588,10 +1316,7 @@
     "title": "Báo cáo rà soát và thanh lý giáo trình lỗi thời",
     "file_path": "data/documents/internal/DOC-I033_bao_cao_ra_soat_giao_trinh_thu_vien.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Thư viện mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 180,
@@ -1607,10 +1332,7 @@
     "title": "Kế hoạch tổ chức hội nghị khoa học công nghệ trẻ",
     "file_path": "data/documents/internal/DOC-I034_ke_hoach_hoi_nghi_khoa_hoc_tre.txt",
     "classification": "Internal",
-    "allowed_roles": [
-      "GiangVien",
-      "QuanTri"
-    ],
+    "allowed_roles": ["GiangVien", "QuanTri"],
     "department": "Đoàn Thanh niên - Hội Sinh viên mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 180,
@@ -1626,9 +1348,7 @@
     "title": "Hồ sơ xét tốt nghiệp đặc cách cá nhân",
     "file_path": "data/documents/restricted/DOC-R013_ho_so_xet_tot_nghiep_dac_cach.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Hội đồng Xét tốt nghiệp mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -1644,9 +1364,7 @@
     "title": "Hồ sơ kỷ luật đình chỉ học tập sinh viên",
     "file_path": "data/documents/restricted/DOC-R014_ho_so_ky_luat_dinh_chi_hoc_tap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Hội đồng Kỷ luật mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 90,
@@ -1662,9 +1380,7 @@
     "title": "Hồ sơ y tế sinh viên diện bệnh án đặc biệt",
     "file_path": "data/documents/restricted/DOC-R015_ho_so_y_te_sinh_vien_benh_an.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Trạm Y tế mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 90,
@@ -1680,9 +1396,7 @@
     "title": "Hồ sơ miễn giảm học phí con thương binh liệt sĩ",
     "file_path": "data/documents/restricted/DOC-R016_ho_so_mien_giam_hoc_phi_chinh_sach.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Công tác Sinh viên mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 90,
@@ -1698,9 +1412,7 @@
     "title": "Hồ sơ tố cáo sai phạm tài chính học vụ",
     "file_path": "data/documents/restricted/DOC-R017_ho_so_to_cao_sai_pham_hoc_vu.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Ban Thanh tra Nhân dân mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -1716,9 +1428,7 @@
     "title": "Hồ sơ tranh chấp kết quả nghiên cứu khoa học",
     "file_path": "data/documents/restricted/DOC-R018_ho_so_tranh_chap_ban_quyen_de_tai.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Hội đồng Liêm chính Khoa học mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 90,
@@ -1734,9 +1444,7 @@
     "title": "Hồ sơ xác minh gian lận văn bằng tuyển sinh",
     "file_path": "data/documents/restricted/DOC-R019_ho_so_xac_minh_gian_lan_bang_cap.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Khảo thí và Kiểm định mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 90,
@@ -1752,9 +1460,7 @@
     "title": "Hồ sơ vi phạm bản quyền dữ liệu đồ án",
     "file_path": "data/documents/restricted/DOC-R020_ho_so_vi_pham_ban_quyen_do_an.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Bộ môn Chuyên ngành mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 90,
@@ -1770,9 +1476,7 @@
     "title": "Hồ sơ công nợ học phí khó thu hồi đặc biệt",
     "file_path": "data/documents/restricted/DOC-R021_ho_so_cong_no_kho_thu_hoi.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Phòng Kế hoạch Tài chính mô phỏng",
     "university": "Trường Đại học Giao thông vận tải TP.HCM",
     "retention_days": 90,
@@ -1788,9 +1492,7 @@
     "title": "Hồ sơ đề nghị trợ cấp đột xuất do tai nạn giao thông",
     "file_path": "data/documents/restricted/DOC-R022_ho_so_tro_cap_dot_xuat_tai_nan.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Quỹ Hỗ trợ Sinh viên mô phỏng",
     "university": "Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM",
     "retention_days": 90,
@@ -1806,9 +1508,7 @@
     "title": "Hồ sơ vi phạm an ninh thông tin mạng nội bộ",
     "file_path": "data/documents/restricted/DOC-R023_ho_so_vi_pham_an_ninh_mang.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Trung tâm An ninh Mạng mô phỏng",
     "university": "Trường Đại học Mở TP.HCM",
     "retention_days": 90,
@@ -1824,9 +1524,7 @@
     "title": "Hồ sơ cứu xét hủy kết quả kỷ luật buộc thôi học",
     "file_path": "data/documents/restricted/DOC-R024_ho_so_cuu_xet_huy_ky_luat.txt",
     "classification": "Restricted",
-    "allowed_roles": [
-      "QuanTri"
-    ],
+    "allowed_roles": ["QuanTri"],
     "department": "Ban Giám hiệu mô phỏng",
     "university": "Trường Đại học Thủ Dầu Một",
     "retention_days": 90,
