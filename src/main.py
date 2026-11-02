@@ -6,7 +6,7 @@ File: src/main.py
 Mục đích:
     Điểm khởi chạy chính (Entry Point) kết nối luồng xử lý toàn trình (End-to-End)
     theo đúng quy trình chuẩn 5 bước:
-      1. Người dùng gửi câu hỏi và vai trò (User Input & Authentication).
+      1. Thiết lập ngữ cảnh vai trò và tiếp nhận câu hỏi (Role Context & User Input).
       2. PermissionChecker xác định các mức tài liệu được phép truy cập (RBAC Policy).
       3. Retriever chỉ tìm kiếm trong những tài liệu thuộc phạm vi được phép (Authorized Retrieval).
       4. RAG Engine nhận kết quả hợp lệ để tạo câu trả lời (Grounded AI Generation).
@@ -28,6 +28,7 @@ import sys
 import re
 import json
 import time
+import hashlib
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple, Set
@@ -142,7 +143,7 @@ class SystemComponents:
 def initialize_system() -> SystemComponents:
     """
     Khởi tạo toàn bộ các module trong hệ sinh thái an toàn thông tin:
-    - RoleManager: Quản lý xác thực và vai trò.
+    - RoleManager: Quản lý/mô phỏng ngữ cảnh vai trò phục vụ kiểm thử.
     - PermissionChecker: Kiểm tra metadata và danh sách tài liệu được phép.
     - DocumentRetriever: Tìm kiếm và đọc nội dung tài liệu an toàn.
     - RAGEngine: Điều phối RAG và kết nối mô hình sinh ngôn ngữ.
@@ -172,7 +173,7 @@ def initialize_system() -> SystemComponents:
 # 4. CÁC BƯỚC XỬ LÝ TRONG PIPELINE (PIPELINE PHASES P1.0 - P6.0)
 # ==============================================================================
 
-# --- [P1.0] XÁC THỰC VÀ PHÂN QUYỀN (AUTHENTICATION & AUTHORIZATION) -----------
+# --- [P1.0] THIẾT LẬP NGỮ CẢNH VAI TRÒ (ROLE CONTEXT) -------------------------
 
 def p1_authenticate_user(role_manager: RoleManager) -> str:
     """
@@ -206,7 +207,18 @@ def p1_display_role_permissions(user_role: str, permission_checker: PermissionCh
     status_restricted = "[CHO PHÉP]" if user_role == "QuanTri" else "[TỪ CHỐI/CẤM]"
     print(f"│  • Hồ sơ Mật/Giới hạn (Restricted) : {restricted_count:>3} tài liệu {status_restricted:>26} │")
     print("├" + "─" * 74 + "┤")
-    print(f"│  ▶ TỔNG SỐ TÀI LIỆU ĐƯỢC PHÉP TRUY CẬP: {total_allowed:>3} / 96 tài liệu              │")
+    # Không hard-code 96: lấy tổng số tài liệu từ metadata mà PermissionChecker đang quản lý.
+    try:
+        total_docs = len(permission_checker.get_all_documents())
+    except (AttributeError, TypeError):
+        # Tương thích với phiên bản PermissionChecker chưa có get_all_documents().
+        # Khi đó chỉ hiển thị số tài liệu được phép thay vì đưa ra tổng số sai.
+        total_docs = None
+
+    if total_docs is not None:
+        print(f"│  ▶ TỔNG SỐ TÀI LIỆU ĐƯỢC PHÉP TRUY CẬP: {total_allowed:>3} / {total_docs:<3} tài liệu             │")
+    else:
+        print(f"│  ▶ TỔNG SỐ TÀI LIỆU ĐƯỢC PHÉP TRUY CẬP: {total_allowed:>3} tài liệu                   │")
     print("└" + "─" * 74 + "┘\n")
 
 
@@ -417,9 +429,11 @@ def p6_audit_log(
         return
         
     log_entry = {
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": datetime.now().astimezone().isoformat(),
         "user_role": user_role,
-        "query": query,
+        # Data minimization: không lưu nguyên văn prompt/query vào security log.
+        "query_sha256": hashlib.sha256(query.encode("utf-8")).hexdigest(),
+        "query_length": len(query),
         "retrieved_doc_count": len(retrieved_docs),
         "retrieved_doc_ids": [d.get("doc_id") for d in retrieved_docs],
         "status": status,
@@ -440,12 +454,13 @@ def p6_audit_log(
 
 # ==============================================================================
 # 5. ĐIỀU PHỐI LUỒNG TOÀN TRÌNH (END-TO-END PIPELINE ORCHESTRATOR)
-#    Quy trình chuẩn 5 bước:
-#    1. Người dùng gửi câu hỏi và vai trò.
+#    Quy trình xử lý 5 bước chính + bước 6 ghi Audit Log:
+#    1. Tiếp nhận câu hỏi trong ngữ cảnh vai trò đã thiết lập.
 #    2. PermissionChecker xác định các mức tài liệu được phép truy cập.
 #    3. Retriever chỉ tìm kiếm trong những tài liệu thuộc phạm vi được phép.
 #    4. RAG Engine nhận kết quả hợp lệ để tạo câu trả lời.
 #    5. Output Filter kiểm tra lại câu trả lời trước khi hiển thị.
+    6. Audit Logger ghi sự kiện tối thiểu phục vụ kiểm toán.
 # ==============================================================================
 
 def execute_end_to_end_pipeline(
@@ -488,6 +503,20 @@ def execute_end_to_end_pipeline(
         user_role=user_role, 
         rag_engine=components.rag_engine
     )
+
+    # Defense-in-depth: dù Retriever phải lọc quyền trước retrieval, main.py vẫn
+    # kiểm tra lại ID tài liệu trước khi đưa context sang LLM.
+    unauthorized_docs = [
+        d for d in retrieved_docs
+        if d.get("doc_id") not in allowed_doc_ids
+    ]
+    if unauthorized_docs:
+        blocked_ids = [d.get("doc_id") for d in unauthorized_docs]
+        print(f"[CẢNH BÁO RBAC] Retriever trả về tài liệu ngoài quyền: {blocked_ids}. Đã loại bỏ.")
+        retrieved_docs = [
+            d for d in retrieved_docs
+            if d.get("doc_id") in allowed_doc_ids
+        ]
     
     # -------------------------------------------------------------------------
     # Bước 4: RAG Engine nhận kết quả hợp lệ để tạo câu trả lời
@@ -682,7 +711,7 @@ def main() -> None:
     Hàm thực thi khởi đầu của toàn bộ chương trình:
     1. In biểu ngữ khởi động.
     2. Khởi tạo các module dịch vụ (RoleManager, PermissionChecker, Retriever, RAGEngine).
-    3. Xác thực và lựa chọn vai trò ban đầu (P1.0).
+    3. Thiết lập ngữ cảnh vai trò ban đầu (P1.0).
     4. Hiển thị bảng phân quyền truy cập.
     5. Bắt đầu phiên trò chuyện tương tác end-to-end.
     """
@@ -693,10 +722,10 @@ def main() -> None:
     # 1. Khởi tạo các thành phần hệ thống
     components = initialize_system()
     
-    # 2. [P1.0] Xác thực người dùng và chọn vai trò
+    # 2. [P1.0] Thiết lập ngữ cảnh vai trò ban đầu
     current_role = p1_authenticate_user(components.role_manager)
     if not current_role:
-        print("[LỖI] Không thể xác thực người dùng. Dừng chương trình.")
+        print("[LỖI] Không thể thiết lập vai trò người dùng. Dừng chương trình.")
         return
         
     # 3. Hiển thị quyền truy cập của vai trò đã chọn
