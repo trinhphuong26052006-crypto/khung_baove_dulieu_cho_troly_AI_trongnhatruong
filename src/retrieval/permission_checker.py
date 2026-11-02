@@ -1,92 +1,155 @@
-"""
-src/retrieval/permission_checker.py
-===================================
-Module kiểm tra quyền truy cập tài liệu dựa trên vai trò (Pre-retrieval Access Control).
+"""src/auth/permission_checker.py
 
-Chức năng chính:
-- Tải metadata của các tài liệu từ documents_metadata.json.
-- Xác định tài liệu nào người dùng có vai trò hiện tại được phép truy cập.
-- Cung cấp bộ lọc doc_id hợp lệ (allowed_doc_ids) cho Retriever / Vector Store.
+Kiểm tra quyền truy cập tài liệu cho prototype trợ lý AI/RAG nhà trường.
+
+Nguyên tắc:
+    AccessAllowed(user_role, document)
+        = user_role in document["allowed_roles"]
+
+Lưu ý:
+- Đây là AUTHORIZATION (phân quyền), không phải xác thực danh tính.
+- Quyền phải được kiểm tra trước khi tài liệu trái quyền trở thành
+  ứng viên/context cho mô hình.
 """
 
-import json
-import os
-from typing import List, Dict, Any, Optional, Set
+from dataclasses import dataclass
+from typing import Any, Dict, Iterable, List, Optional, Tuple
+
+
+VALID_ROLES = {"SinhVien", "GiangVien", "QuanTri"}
+
+
+@dataclass(frozen=True)
+class PermissionDecision:
+    doc_id: str
+    role: str
+    allowed: bool
+    reason: str
 
 
 class PermissionChecker:
-    """
-    Kiểm tra và lọc quyền truy cập tài liệu theo vai trò (RBAC).
-    """
+    def __init__(self, valid_roles: Optional[Iterable[str]] = None):
+        self.valid_roles = set(valid_roles or VALID_ROLES)
 
-    DEFAULT_METADATA_PATH = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "data", "metadata", "documents_metadata.json"
-    )
+    @staticmethod
+    def _normalize_allowed_roles(value: Any) -> List[str]:
+        """Hỗ trợ JSON array và CSV chuẩn dùng dấu |."""
+        if isinstance(value, list):
+            return [str(x).strip() for x in value if str(x).strip()]
 
-    def __init__(self, metadata_path: Optional[str] = None):
+        if isinstance(value, str):
+            return [x.strip() for x in value.split("|") if x.strip()]
+
+        return []
+
+    def check_document(
+        self,
+        user_role: str,
+        document_metadata: Dict[str, Any],
+    ) -> PermissionDecision:
+        role = str(user_role).strip()
+        doc_id = str(document_metadata.get("doc_id", "UNKNOWN"))
+
+        # Fail closed nếu role không hợp lệ.
+        if role not in self.valid_roles:
+            return PermissionDecision(
+                doc_id=doc_id,
+                role=role,
+                allowed=False,
+                reason="invalid_role",
+            )
+
+        allowed_roles = self._normalize_allowed_roles(
+            document_metadata.get("allowed_roles", [])
+        )
+
+        # Fail closed nếu metadata quyền bị thiếu/hỏng.
+        if not allowed_roles:
+            return PermissionDecision(
+                doc_id=doc_id,
+                role=role,
+                allowed=False,
+                reason="missing_or_invalid_allowed_roles",
+            )
+
+        if role in allowed_roles:
+            return PermissionDecision(
+                doc_id=doc_id,
+                role=role,
+                allowed=True,
+                reason="role_in_allowed_roles",
+            )
+
+        return PermissionDecision(
+            doc_id=doc_id,
+            role=role,
+            allowed=False,
+            reason="role_not_in_allowed_roles",
+        )
+
+    def filter_authorized_metadata(
+        self,
+        user_role: str,
+        documents: Iterable[Dict[str, Any]],
+    ) -> Tuple[List[Dict[str, Any]], List[PermissionDecision]]:
         """
-        Khởi tạo PermissionChecker với đường dẫn metadata.
+        Lọc metadata theo role TRƯỚC retrieval.
+
+        Trả về:
+        - authorized: tài liệu được phép trở thành tập ứng viên.
+        - denied: quyết định từ chối để ghi security log.
         """
-        self.metadata_path = metadata_path or self.DEFAULT_METADATA_PATH
-        self._metadata: List[Dict[str, Any]] = []
-        self._metadata_by_id: Dict[str, Dict[str, Any]] = {}
-        self.load_metadata()
+        authorized: List[Dict[str, Any]] = []
+        denied: List[PermissionDecision] = []
 
-    def load_metadata(self) -> None:
-        """Tải dữ liệu metadata từ tệp JSON."""
-        if not os.path.exists(self.metadata_path):
-            raise FileNotFoundError(f"Không tìm thấy file metadata tại: {self.metadata_path}")
+        for document in documents:
+            decision = self.check_document(user_role, document)
+            if decision.allowed:
+                authorized.append(document)
+            else:
+                denied.append(decision)
 
-        with open(self.metadata_path, "r", encoding="utf-8") as f:
-            self._metadata = json.load(f)
+        return authorized, denied
 
-        self._metadata_by_id = {doc["doc_id"]: doc for doc in self._metadata}
-
-    def get_allowed_documents(self, user_role: str) -> List[Dict[str, Any]]:
+    def filter_retrieved_results(
+        self,
+        user_role: str,
+        results: Iterable[Dict[str, Any]],
+    ) -> Tuple[List[Dict[str, Any]], List[PermissionDecision]]:
         """
-        Lấy danh sách các bản ghi tài liệu mà vai trò `user_role` được phép truy cập.
-        """
-        if not user_role:
-            return []
+        Defense-in-depth sau retrieval.
 
-        allowed = []
-        for doc in self._metadata:
-            roles = doc.get("allowed_roles", [])
-            if user_role in roles:
-                allowed.append(doc)
-        return allowed
-
-    def get_allowed_doc_ids(self, user_role: str) -> Set[str]:
+        Không thay thế pre-retrieval authorization; đây chỉ là cổng kiểm tra
+        thứ hai nếu vector store/integration trả về tài liệu ngoài dự kiến.
         """
-        Lấy tập hợp các doc_id mà `user_role` được phép truy cập.
-        Thường dùng để lọc (pre-filter) trong Vector Store.
-        """
-        allowed_docs = self.get_allowed_documents(user_role)
-        return {doc["doc_id"] for doc in allowed_docs}
+        return self.filter_authorized_metadata(user_role, results)
 
-    def is_access_allowed(self, doc_id: str, user_role: str) -> bool:
-        """
-        Kiểm tra một doc_id cụ thể có được phép truy cập bởi user_role hay không.
-        """
-        if not doc_id or not user_role:
-            return False
 
-        doc = self._metadata_by_id.get(doc_id)
-        if not doc:
-            return False
+if __name__ == "__main__":
+    checker = PermissionChecker()
 
-        return user_role in doc.get("allowed_roles", [])
+    demo_documents = [
+        {
+            "doc_id": "DOC-P001",
+            "classification": "Public",
+            "allowed_roles": ["SinhVien", "GiangVien", "QuanTri"],
+        },
+        {
+            "doc_id": "DOC-I001",
+            "classification": "Internal",
+            "allowed_roles": ["GiangVien", "QuanTri"],
+        },
+        {
+            "doc_id": "DOC-R001",
+            "classification": "Restricted",
+            "allowed_roles": ["QuanTri"],
+        },
+    ]
 
-    def filter_documents_by_role(self, documents: List[Dict[str, Any]], user_role: str) -> List[Dict[str, Any]]:
-        """
-        Hậu kiểm / Lọc một danh sách tài liệu retrieved để đảm bảo 100% không lọt tài liệu cấm.
-        """
-        allowed_ids = self.get_allowed_doc_ids(user_role)
-        filtered = []
-        for d in documents:
-            doc_id = d.get("doc_id") or d.get("metadata", {}).get("doc_id")
-            if doc_id in allowed_ids:
-                filtered.append(d)
-        return filtered
-
+    for role in ["SinhVien", "GiangVien", "QuanTri"]:
+        allowed, denied = checker.filter_authorized_metadata(role, demo_documents)
+        print(
+            f"{role}: "
+            f"ALLOW={[d['doc_id'] for d in allowed]} | "
+            f"DENY={[d.doc_id for d in denied]}"
+        )
