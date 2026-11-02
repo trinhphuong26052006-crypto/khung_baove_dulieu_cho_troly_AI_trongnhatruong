@@ -1,5 +1,8 @@
 # generate_all_docs.py
 # -*- coding: utf-8 -*-
+# Historical dataset-generation script.
+# Used once to expand the dataset from 50 to 96 documents.
+# Do not use in the current runtime pipeline.
 """
 Script to create supplementary documents and update metadata (JSON and CSV).
 Total supplementary docs:
