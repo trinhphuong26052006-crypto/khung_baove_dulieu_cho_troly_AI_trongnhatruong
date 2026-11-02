@@ -60,15 +60,18 @@ class RAGEngine:
 
     def _init_vector_store(self) -> None:
         """
-        Khởi tạo hoặc kết nối Vector Store khi các thư viện langchain/chromadb/faiss sẵn sàng.
-        Hỗ trợ fallback an toàn nếu chưa cài đặt xong.
+        Khởi tạo Vector Store & Embeddings.
+        Hỗ trợ cả môi trường offline (sử dụng BM25/keyword matcher hoặc Ollama Embeddings cục bộ)
+        mà không bắt buộc tải trọng số qua Internet.
         """
         try:
-            from langchain_community.embeddings import HuggingFaceEmbeddings
-            self.embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
-            print(f"[RAGEngine] Đã tải mô hình embeddings: {self.embedding_model_name}")
-        except Exception as e:
-            # Fallback nếu thư viện đang tải hoặc chưa sẵn sàng
+            # Ưu tiên sử dụng OllamaEmbeddings nếu Ollama cục bộ đang mở
+            from langchain_ollama import OllamaEmbeddings
+            self.embeddings = OllamaEmbeddings(
+                model=self.ollama_model,
+                base_url=self.ollama_base_url
+            )
+        except Exception:
             self.embeddings = None
 
     def retrieve_context(self, query: str, user_role: str, top_k: int = 3) -> List[Dict[str, Any]]:
