@@ -26,10 +26,7 @@ Bố cục mã nguồn:
 import os
 import sys
 import re
-import json
 import time
-import hashlib
-from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple, Set
 
@@ -56,6 +53,7 @@ from src.retrieval.permission_checker import PermissionChecker
 from src.retrieval.retriever import DocumentRetriever
 from src.retrieval.rag_engine import RAGEngine
 from src.filtering.output_filter import OutputFilter, FilterResult
+from src.logging.security_logger import SecurityLogger
 
 
 # ==============================================================================
@@ -88,6 +86,7 @@ CONFIG: Dict[str, Any] = {
 
     # Cấu hình nhật ký bảo mật (P6.0)
     "ENABLE_AUDIT_LOG": True,
+    "AUDIT_RETENTION_DAYS": 30,
     "AUDIT_LOG_FILE": os.path.join(PROJECT_ROOT, "data", "logs", "security_audit.log"),
     
     # Tùy chọn hiển thị chi tiết (Debug/Verbose mode)
@@ -132,12 +131,14 @@ class SystemComponents:
                  permission_checker: PermissionChecker,
                  retriever: DocumentRetriever,
                  rag_engine: RAGEngine,
-                 output_filter: OutputFilter):
+                 output_filter: OutputFilter,
+                 security_logger: SecurityLogger):
         self.role_manager = role_manager
         self.permission_checker = permission_checker
         self.retriever = retriever
         self.rag_engine = rag_engine
         self.output_filter = output_filter
+        self.security_logger = security_logger
 
 
 def initialize_system() -> SystemComponents:
@@ -166,7 +167,12 @@ def initialize_system() -> SystemComponents:
         os.makedirs(log_dir, exist_ok=True)
         
     print("[KHỞI TẠO] Hoàn tất nạp cấu hình hệ thống.\n")
-    return SystemComponents(role_manager, permission_checker, retriever, rag_engine, output_filter)
+    security_logger = SecurityLogger(
+        CONFIG["AUDIT_LOG_FILE"],
+        retention_days=CONFIG["AUDIT_RETENTION_DAYS"],
+        enabled=CONFIG["ENABLE_AUDIT_LOG"],
+    )
+    return SystemComponents(role_manager, permission_checker, retriever, rag_engine, output_filter, security_logger)
 
 
 # ==============================================================================
@@ -175,7 +181,7 @@ def initialize_system() -> SystemComponents:
 
 # --- [P1.0] THIẾT LẬP NGỮ CẢNH VAI TRÒ (ROLE CONTEXT) -------------------------
 
-def p1_authenticate_user(role_manager: RoleManager) -> str:
+def p1_select_role(role_manager: RoleManager) -> str:
     """
     [P1.0] Xác định vai trò người dùng trong phiên làm việc.
     Hỗ trợ vai trò: SinhVien, GiangVien, QuanTri.
@@ -364,7 +370,7 @@ def p4_generate_safe_answer(
     
     if CONFIG["VERBOSE_DEBUG"]:
         print("\n--- [DEBUG] NỘI DUNG PROMPT GỬI ĐẾN LLM ---")
-        print(prompt[:300] + "... (đã rút gọn)")
+        print("[ĐÃ ẨN] Không hiển thị prompt/context trong log debug.")
         print("-------------------------------------------\n")
         
     answer = rag_engine.query_ollama(prompt)
@@ -416,40 +422,20 @@ def p5_validate_and_format_output(
 # --- GHI NHẬT KÝ BẢO MẬT (SECURITY AUDIT LOGGING) ------------------------------
 
 def p6_audit_log(
-    user_role: str, 
-    query: str, 
-    retrieved_docs: List[Dict[str, Any]], 
-    status: str,
-    filter_result: Optional[FilterResult] = None
+    logger: SecurityLogger, user_role: str, query: str,
+    retrieved_docs: List[Dict[str, Any]], status: str,
+    filter_result: Optional[FilterResult] = None,
+    latency_ms: Optional[float] = None,
+    test_id: Optional[str] = None,
 ) -> None:
-    """
-    Ghi nhận lịch sử truy vấn vào tệp log phục vụ công tác thanh tra và kiểm toán an toàn.
-    """
-    if not CONFIG["ENABLE_AUDIT_LOG"]:
-        return
-        
-    log_entry = {
-        "timestamp": datetime.now().astimezone().isoformat(),
-        "user_role": user_role,
-        # Data minimization: không lưu nguyên văn prompt/query vào security log.
-        "query_sha256": hashlib.sha256(query.encode("utf-8")).hexdigest(),
-        "query_length": len(query),
-        "retrieved_doc_count": len(retrieved_docs),
-        "retrieved_doc_ids": [d.get("doc_id") for d in retrieved_docs],
-        "status": status,
-        "output_safety": {
-            "is_safe": filter_result.is_safe if filter_result else True,
-            "action_taken": filter_result.action_taken if filter_result else "PASSED",
-            "violations_count": len(filter_result.violations) if filter_result else 0
-        }
-    }
-    
-    try:
-        with open(CONFIG["AUDIT_LOG_FILE"], "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
-    except Exception as ex:
-        if CONFIG["VERBOSE_DEBUG"]:
-            print(f"[CẢNH BÁO] Không thể ghi log bảo mật: {ex}")
+    """Ủy quyền ghi log tối thiểu cho SecurityLogger; không ghi nguyên văn query."""
+    logger.log_event(
+        role=user_role, query=query, status=status,
+        retrieved_doc_ids=[d.get("doc_id", "") for d in retrieved_docs],
+        action_taken=filter_result.action_taken if filter_result else "NOT_RUN",
+        violation_count=len(filter_result.violations) if filter_result else 0,
+        latency_ms=latency_ms, test_id=test_id,
+    )
 
 
 # ==============================================================================
@@ -460,14 +446,15 @@ def p6_audit_log(
 #    3. Retriever chỉ tìm kiếm trong những tài liệu thuộc phạm vi được phép.
 #    4. RAG Engine nhận kết quả hợp lệ để tạo câu trả lời.
 #    5. Output Filter kiểm tra lại câu trả lời trước khi hiển thị.
-    6. Audit Logger ghi sự kiện tối thiểu phục vụ kiểm toán.
+#    6. Audit Logger ghi sự kiện tối thiểu phục vụ kiểm toán.
 # ==============================================================================
 
 def execute_end_to_end_pipeline(
-    raw_query: str, 
-    user_role: str, 
-    components: SystemComponents
-) -> None:
+    raw_query: str,
+    user_role: str,
+    components: SystemComponents,
+    test_id: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     Điều phối toàn bộ quy trình theo 5 bước chuẩn hóa từ khi tiếp nhận câu hỏi đến khi hiển thị.
     """
@@ -480,8 +467,11 @@ def execute_end_to_end_pipeline(
     is_valid, validated_or_error = p2_validate_input(raw_query)
     if not is_valid:
         print(f"[Bước 1 - LỖI ĐẦU VÀO]: {validated_or_error}")
-        p6_audit_log(user_role, raw_query, [], status=f"REJECTED_INPUT: {validated_or_error}")
-        return
+        p6_audit_log(components.security_logger, user_role, raw_query, [],
+                     status="REJECTED_INPUT", latency_ms=(time.time()-start_time)*1000,
+                     test_id=test_id)
+        return {"status": "REJECTED_INPUT", "answer": "", "retrieved_doc_ids": [],
+                "action_taken": "BLOCKED_INPUT", "latency_ms": round((time.time()-start_time)*1000, 2)}
         
     query = validated_or_error
     print(f"[Bước 1]: Tiếp nhận câu hỏi ({len(query)} ký tự) từ vai trò [{user_role}].")
@@ -546,23 +536,23 @@ def execute_end_to_end_pipeline(
                 raw_answer = (
                     f"[THÔNG BÁO HỆ THỐNG]\n"
                     f"Không tìm thấy tài liệu phù hợp trong danh mục Công khai (Public) dành cho vai trò [SinhVien].\n"
-                    f"Chủ đề bạn tra cứu ('{query}') có thể thuộc danh mục Tài liệu Nội bộ hoặc Hồ sơ Mật "
+                    "Chủ đề yêu cầu có thể thuộc danh mục Tài liệu Nội bộ hoặc Hồ sơ Mật "
                     f"mà vai trò Sinh viên không được phép truy cập theo quy chế bảo vệ dữ liệu."
                 )
             else:
                 raw_answer = (
                     f"[THÔNG BÁO HỆ THỐNG]\n"
-                    f"Không tìm thấy tài liệu học vụ nào phù hợp với câu hỏi '{query}' trong phạm vi quyền hạn của vai trò [SinhVien]."
+                    "Không tìm thấy tài liệu học vụ phù hợp trong phạm vi quyền hạn của vai trò [SinhVien]."
                 )
         elif user_role == "GiangVien":
             raw_answer = (
                 f"[THÔNG BÁO HỆ THỐNG]\n"
-                f"Không tìm thấy tài liệu phù hợp với câu hỏi '{query}' trong danh mục tài liệu Công khai và Nội bộ của vai trò [GiangVien]."
+                "Không tìm thấy tài liệu phù hợp trong danh mục tài liệu Công khai và Nội bộ của vai trò [GiangVien]."
             )
         else:
             raw_answer = (
                 f"[THÔNG BÁO HỆ THỐNG]\n"
-                f"Không tìm thấy tài liệu phù hợp với câu hỏi '{query}' trong cơ sở dữ liệu."
+                "Không tìm thấy tài liệu phù hợp trong cơ sở dữ liệu."
             )
     else:
         print(f"[Bước 3 - Retriever]: Đã trích xuất {len(retrieved_docs)} tài liệu hợp lệ trong phạm vi [{cls_str}]:")
@@ -607,12 +597,19 @@ def execute_end_to_end_pipeline(
     # Ghi log kiểm toán an toàn
     audit_status = "SUCCESS" if filter_result.is_safe else f"ALERT_{filter_result.action_taken}"
     p6_audit_log(
-        user_role=user_role, 
-        query=query, 
-        retrieved_docs=retrieved_docs, 
-        status=audit_status,
-        filter_result=filter_result
+        logger=components.security_logger,
+        user_role=user_role, query=query, retrieved_docs=retrieved_docs,
+        status=audit_status, filter_result=filter_result,
+        latency_ms=elapsed_time * 1000, test_id=test_id,
     )
+    return {
+        "status": audit_status,
+        "answer": final_answer,
+        "retrieved_doc_ids": [d.get("doc_id") for d in retrieved_docs],
+        "action_taken": filter_result.action_taken,
+        "is_safe": filter_result.is_safe,
+        "latency_ms": round(elapsed_time * 1000, 2),
+    }
 
 
 # ==============================================================================
@@ -723,7 +720,7 @@ def main() -> None:
     components = initialize_system()
     
     # 2. [P1.0] Thiết lập ngữ cảnh vai trò ban đầu
-    current_role = p1_authenticate_user(components.role_manager)
+    current_role = p1_select_role(components.role_manager)
     if not current_role:
         print("[LỖI] Không thể thiết lập vai trò người dùng. Dừng chương trình.")
         return
