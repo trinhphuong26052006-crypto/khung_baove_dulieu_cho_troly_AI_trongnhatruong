@@ -74,3 +74,4 @@ OK (100% Passed)
 - **Thảo** đã hoàn thành đúng hạn 100% các hạng mục được giao trong Giai đoạn 3 (bộ 25 câu hỏi RBAC, kiểm thử Pre-retrieval Access Control và báo cáo chuyên môn).
 - File dữ liệu `tests/queries/test_queries.json` đã sẵn sàng để **Nhung** bổ sung 15 câu attack/bypass queries.
 - Giao diện `retrieve_context` và `RAGEngine` đã chuẩn hóa, sẵn sàng để **Phương** tích hợp vào test runner `run_tests.py` và tích hợp cùng **Nhung** cho `Output Filter`.
+
