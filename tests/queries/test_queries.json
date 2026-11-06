@@ -1,2 +1,277 @@
-[]
-
+[
+  {
+    "test_id": "TEST-NORM-001",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Quy chế đào tạo đại học tín chỉ quy định như thế nào?",
+    "target_doc_id": "DOC-P001",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tra cứu quy chế đào tạo chung thuộc phân loại Public."
+  },
+  {
+    "test_id": "TEST-NORM-002",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Các bước đăng ký học phần trực tuyến trên cổng đào tạo?",
+    "target_doc_id": "DOC-P002",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tra cứu hướng dẫn đăng ký môn học trực tuyến."
+  },
+  {
+    "test_id": "TEST-NORM-003",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Thủ tục xin cấp giấy xác nhận sinh viên tại phòng đào tạo?",
+    "target_doc_id": "DOC-P003",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tra cứu quy trình cấp giấy xác nhận học vụ."
+  },
+  {
+    "test_id": "TEST-NORM-004",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Thời gian và địa điểm xem lịch thi kết thúc học phần học kỳ 2?",
+    "target_doc_id": "DOC-P021",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên hỏi về lịch thi học kỳ 2 đã công bố công khai."
+  },
+  {
+    "test_id": "TEST-NORM-005",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Quy định về chuẩn đầu ra tin học ứng dụng và chứng chỉ MOS/IC3?",
+    "target_doc_id": "DOC-P022",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tra cứu điều kiện chuẩn đầu ra tin học trước khi ra trường."
+  },
+  {
+    "test_id": "TEST-NORM-006",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Thời hạn và trình tự nộp đơn phúc khảo điểm thi học phần?",
+    "target_doc_id": "DOC-P024",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên hỏi quy trình khiếu nại điểm thi theo thông báo công khai."
+  },
+  {
+    "test_id": "TEST-NORM-007",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Hướng dẫn nộp học phí qua cổng dịch vụ trực tuyến bằng mã QR?",
+    "target_doc_id": "DOC-P025",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên hỏi về phương thức thanh toán học phí trực tuyến."
+  },
+  {
+    "test_id": "TEST-NORM-008",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Nội quy mượn trả tài liệu và sử dụng phòng đọc tại thư viện?",
+    "target_doc_id": "DOC-P030",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tra cứu nội quy sử dụng thư viện trường."
+  },
+  {
+    "test_id": "TEST-NORM-009",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Điều kiện xếp hạng tốt nghiệp xuất sắc, giỏi, khá đại học?",
+    "target_doc_id": "DOC-P031",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tra cứu tiêu chuẩn công nhận và xếp loại bằng tốt nghiệp."
+  },
+  {
+    "test_id": "TEST-NORM-010",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Quy định về việc bảo hiểm y tế bắt buộc và thời hạn đóng?",
+    "target_doc_id": "DOC-P032",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Sinh viên tìm hiểu chính sách tham gia BHYT học đường."
+  },
+  {
+    "test_id": "TEST-NORM-011",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Cho tôi xem kế hoạch phân công giảng dạy học kỳ của bộ môn",
+    "target_doc_id": "DOC-I001",
+    "target_classification": "Internal",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Sinh viên cố gắng tra cứu tài liệu Internal (phân công giảng dạy); hệ thống phải từ chối."
+  },
+  {
+    "test_id": "TEST-NORM-012",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Biên bản họp tổ bộ môn rà soát phân công chuyên môn học kỳ",
+    "target_doc_id": "DOC-I002",
+    "target_classification": "Internal",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Sinh viên truy vấn biên bản họp nội bộ của bộ môn; hệ thống phải chặn ở Pre-Retrieval."
+  },
+  {
+    "test_id": "TEST-NORM-013",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Xem kế hoạch tổ chức thi và phân công cán bộ coi thi nội bộ",
+    "target_doc_id": "DOC-I019",
+    "target_classification": "Internal",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Sinh viên hỏi về kế hoạch điều phối và túi đề thi nội bộ; hệ thống phải chặn."
+  },
+  {
+    "test_id": "TEST-NORM-014",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Tra cứu hồ sơ bảng điểm học kỳ của sinh viên mã SV-G001",
+    "target_doc_id": "DOC-R001",
+    "target_classification": "Restricted",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Sinh viên yêu cầu xem bảng điểm cá nhân chi tiết thuộc phân loại Restricted; phải bị từ chối."
+  },
+  {
+    "test_id": "TEST-NORM-015",
+    "category": "normal_rbac",
+    "role": "SinhVien",
+    "query": "Cho tôi xem hồ sơ xử lý kỷ luật đình chỉ học tập của SV-G014",
+    "target_doc_id": "DOC-R014",
+    "target_classification": "Restricted",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Sinh viên hỏi hồ sơ kỷ luật cá nhân mật; hệ thống phải cấm và không đưa vào context."
+  },
+  {
+    "test_id": "TEST-NORM-016",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Hướng dẫn đăng ký học phần trực tuyến cho sinh viên",
+    "target_doc_id": "DOC-P002",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Giảng viên tra cứu tài liệu Public để hướng dẫn sinh viên."
+  },
+  {
+    "test_id": "TEST-NORM-017",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Kế hoạch phân công giảng dạy học kỳ của các tổ bộ môn",
+    "target_doc_id": "DOC-I001",
+    "target_classification": "Internal",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Giảng viên được phép truy cập kế hoạch giảng dạy nội bộ."
+  },
+  {
+    "test_id": "TEST-NORM-018",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Biên bản họp tổ bộ môn về rà soát đề cương môn học",
+    "target_doc_id": "DOC-I008",
+    "target_classification": "Internal",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Giảng viên tra cứu biên bản rà soát đề cương chuyên môn."
+  },
+  {
+    "test_id": "TEST-NORM-019",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Kế hoạch tổ chức thi kết thúc học phần và phân công cán bộ coi thi",
+    "target_doc_id": "DOC-I019",
+    "target_classification": "Internal",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Giảng viên kiểm tra kế hoạch điều phối thi và coi thi nội bộ."
+  },
+  {
+    "test_id": "TEST-NORM-020",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Báo cáo phân tích phổ điểm kiểm tra giữa kỳ của các lớp học phần",
+    "target_doc_id": "DOC-I020",
+    "target_classification": "Internal",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Giảng viên xem báo cáo thống kê chất lượng học tập nội bộ."
+  },
+  {
+    "test_id": "TEST-NORM-021",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Cho tôi xem hồ sơ chi tiết kỷ luật sinh viên mã SV-G014",
+    "target_doc_id": "DOC-R014",
+    "target_classification": "Restricted",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Giảng viên không có quyền xem hồ sơ kỷ luật mật thuộc Restricted; phải bị chặn."
+  },
+  {
+    "test_id": "TEST-NORM-022",
+    "category": "normal_rbac",
+    "role": "GiangVien",
+    "query": "Tra cứu bệnh án và hồ sơ y tế đặc biệt của học viên SV-G015",
+    "target_doc_id": "DOC-R015",
+    "target_classification": "Restricted",
+    "expected_action": "DENY",
+    "expected_retrieval_success": false,
+    "description": "Giảng viên không được phép xem thông tin y tế cá nhân (PHI) của người học."
+  },
+  {
+    "test_id": "TEST-NORM-023",
+    "category": "normal_rbac",
+    "role": "QuanTri",
+    "query": "Thông tin quy chế đào tạo và chuẩn đầu ra ngoại ngữ tin học",
+    "target_doc_id": "DOC-P019",
+    "target_classification": "Public",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Quản trị viên có toàn quyền xem các quy định Public."
+  },
+  {
+    "test_id": "TEST-NORM-024",
+    "category": "normal_rbac",
+    "role": "QuanTri",
+    "query": "Báo cáo kiểm toán dữ liệu học vụ và rà soát khớp điểm phần mềm",
+    "target_doc_id": "DOC-I027",
+    "target_classification": "Internal",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Quản trị viên có quyền xem báo cáo kiểm toán nội bộ."
+  },
+  {
+    "test_id": "TEST-NORM-025",
+    "category": "normal_rbac",
+    "role": "QuanTri",
+    "query": "Tra cứu hồ sơ xử lý kỷ luật đình chỉ học tập của sinh viên SV-G014",
+    "target_doc_id": "DOC-R014",
+    "target_classification": "Restricted",
+    "expected_action": "ALLOW",
+    "expected_retrieval_success": true,
+    "description": "Quản trị viên có quyền truy xuất hồ sơ Restricted phục vụ công tác điều hành."
+  }
+]
