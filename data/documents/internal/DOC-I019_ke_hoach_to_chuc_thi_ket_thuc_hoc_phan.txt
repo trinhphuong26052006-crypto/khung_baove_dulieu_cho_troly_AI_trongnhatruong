@@ -1,0 +1,24 @@
+KẾ HOẠCH TỔ CHỨC THI KẾT THÚC HỌC PHẦN NỘI BỘ
+Mã tài liệu: DOC-I019
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Giao thông vận tải TP.HCM
+Nguồn tham khảo: https://daotao.ut.edu.vn/lich-thi/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. BỐI CẢNH GIẢ LẬP
+Đơn vị học vụ của Trường Mô phỏng Liên trường lập kế hoạch nội bộ chuẩn bị tổ chức kỳ thi kết thúc học phần đợt 2 năm học 2026–2027. Kế hoạch xác định rõ tiến độ chuẩn bị đề thi, bố trí phòng thi và quy trình bàn giao bài thi an toàn. Mọi mã ca thi và mã cán bộ đều là số liệu mô phỏng.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Tham khảo quy trình khảo thí và kế hoạch thời gian năm học công khai của Trường Đại học Giao thông vận tải TP.HCM về nguyên tắc bảo mật đề thi và quản lý phòng thi.
+
+3. PHÂN CÔNG ĐIỀU PHỐI NỘI BỘ
+Tổ khảo thí NV-KT01 phụ trách tiếp nhận túi đề thi niêm phong từ bộ môn chuyên môn; cán bộ NV-KT02 lập sơ đồ phân bố phòng máy tính và phòng thi viết; giảng viên GV-KT03 giám sát việc ký nhận túi bài thi sau mỗi buổi thi.
+
+4. TIẾN ĐỘ THỰC HIỆN
+Đợt 1 kiểm tra tình trạng phòng học và máy tính trước ngày 05/11/2026; đợt 2 phân phối danh sách thí sinh và số báo danh nội bộ; đợt 3 tổ chức bàn giao bài thi đã niêm phong về kho bảo mật của ban khảo thí.
+
+5. KIỂM SOÁT TRUY CẬP
+Tài liệu này lưu hành nội bộ cho giảng viên (GiangVien) và quản trị viên (QuanTri). Người dùng SinhVien không được phép tiếp cận bảng phân công coi thi và tiến độ giao nhận đề thi nội bộ.
+
+6. KẾT LUẬN
+Tài liệu chỉ phục vụ mục đích kiểm thử phân quyền RBAC và kiểm soát truy xuất trước RAG trong môi trường thực nghiệm an toàn.

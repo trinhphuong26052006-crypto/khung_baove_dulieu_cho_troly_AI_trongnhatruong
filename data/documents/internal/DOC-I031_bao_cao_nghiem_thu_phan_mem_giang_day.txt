@@ -1,0 +1,24 @@
+BÁO CÁO TIẾN ĐỘ NGHIỆM THU PHẦN MỀM QUẢN LÝ GIẢNG DẠY
+Mã tài liệu: DOC-I031
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Giao thông vận tải TP.HCM
+Nguồn tham khảo: https://it.ut.edu.vn/phan-mem/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. BỐI CẢNH GIẢ LẬP
+Tổ dự án công nghệ thông tin báo cáo kết quả chạy thử nghiệm hệ thống quản trị học tập (LMS) phiên bản 3.0 tích hợp tính năng điểm danh tự động và bảng quản lý tiến độ giảng dạy của giảng viên trong học kỳ giả định 2026.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Dựa trên đề án ứng dụng công nghệ thông tin trong quản lý đào tạo và dạy học trực tuyến tại Trường Đại học Giao thông vận tải TP.HCM.
+
+3. KẾT QUẢ KIỂM THỬ TÍNH NĂNG
+Đã thử nghiệm thành công tải đồng thời 5.000 người dùng truy cập; tính năng tải tài liệu giảng dạy định dạng video bài giảng đạt độ trễ dưới 2 giây; phát hiện lỗi hiển thị điểm trung bình tích lũy môn học trên giao diện di động và đã khắc phục qua bản vá 3.0.2.
+
+4. ĐỀ XUẤT CỦA TỔ NGHIỆM THU
+Cho phép triển khai thí điểm phần mềm trên 15 lớp học phần chuyên ngành thuộc Khoa Công nghệ Thông tin từ tuần học thứ 10; tổ chức 01 buổi hướng dẫn sử dụng tính năng mới cho toàn thể giảng viên bộ môn.
+
+5. KIỂM SOÁT TRUY CẬP
+Mức phân loại Internal. Phân quyền cho GiangVien và QuanTri. Quyền SinhVien không được xem báo cáo kỹ thuật phần mềm nội bộ.
+
+6. KẾT LUẬN
+Bản ghi được thiết lập nhằm kiểm thử quy tắc phân quyền người dùng của module truy xuất RAG bảo mật.

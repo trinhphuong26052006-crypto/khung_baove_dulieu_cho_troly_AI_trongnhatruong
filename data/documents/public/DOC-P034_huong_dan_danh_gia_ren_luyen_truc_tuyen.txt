@@ -1,0 +1,21 @@
+HƯỚNG DẪN TỰ ĐÁNH GIÁ ĐIỂM RÈN LUYỆN TRỰC TUYẾN
+Mã tài liệu: DOC-P034
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM
+Nguồn tham khảo: https://ctsv.hcmus.edu.vn/diem-ren-luyen/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. MỤC ĐÍCH VÀ NGUYÊN TẮC
+Điểm rèn luyện là tiêu chí quan trọng phản ánh ý thức chấp hành nội quy, học tập, rèn luyện phẩm chất và tham gia hoạt động phong trào của sinh viên. Đánh giá được thực hiện công khai, minh bạch thông qua hệ thống phần mềm quản lý công tác sinh viên.
+
+2. TRÌNH TỰ ĐÁNH GIÁ
+Bước 1: Sinh viên đăng nhập hệ thống, tự chấm điểm theo từng tiêu chí kèm tải lên ảnh minh chứng hoạt động; Bước 2: Ban cán sự lớp tổ chức họp duyệt điểm; Bước 3: Cố vấn học tập xác nhận kết quả; Bước 4: Hội đồng cấp khoa và trường phê duyệt chính thức.
+
+3. KHUNG TIÊU CHÍ ĐÁNH GIÁ
+Gồm 5 tiêu chí chính: Ý thức tham gia học tập; Ý thức chấp hành pháp luật và quy chế; Tham gia các hoạt động chính trị - xã hội, văn thể mỹ; Phẩm chất công dân và quan hệ cộng đồng; Tham gia công tác cán bộ lớp, đoàn hội hoặc có thành tích đặc biệt.
+
+4. THỜI GIAN VÀ KHIẾU NẠI
+Việc đánh giá được tiến hành vào cuối mỗi học kỳ chính. Sinh viên có 05 ngày làm việc kể từ ngày công bố điểm tạm thời để gửi phản hồi trực tuyến nếu phát hiện điểm bị cộng thiếu hoặc chưa ghi nhận minh chứng.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Trợ lý AI hướng dẫn cách thức đăng tải minh chứng hoạt động, lịch họp xét duyệt của lớp và cách tính điểm trung bình rèn luyện.

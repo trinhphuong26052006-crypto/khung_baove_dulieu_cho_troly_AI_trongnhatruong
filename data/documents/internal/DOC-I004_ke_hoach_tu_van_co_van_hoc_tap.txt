@@ -1,0 +1,25 @@
+KẾ HOẠCH TƯ VẤN CỐ VẤN HỌC TẬP
+Mã tài liệu: DOC-I004
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Mở TP.HCM
+Nguồn tham khảo: https://ou.edu.vn/cong-tac-sinh-vien/quyche-quydinh/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+
+1. BỐI CẢNH GIẢ LẬP
+Đơn vị học vụ của Trường Mô phỏng Liên trường xây dựng kế hoạch tư vấn cố vấn học tập cho học kỳ giả định 2026–2027. Công việc tập trung vào sắp xếp lịch tư vấn và đầu mối giải quyết khó khăn học vụ. Mọi mã lớp, mã nhân sự và thời hạn dưới đây do nhóm nghiên cứu tạo ra.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Trang quy chế công tác sinh viên công bố nội dung về công tác sinh viên, cố vấn học tập, đánh giá rèn luyện, ban cán sự lớp và văn hóa ứng xử.
+
+3. PHÂN CÔNG NỘI BỘ
+Tổ điều phối mã NV-G01 chịu trách nhiệm lập danh sách công việc; cán bộ mã NV-G02 kiểm tra biểu mẫu; giảng viên mã GV-G03 đối chiếu dữ liệu lớp. Tất cả mã định danh chỉ có trong kịch bản mô phỏng.
+
+4. TIẾN ĐỘ VÀ BÁO CÁO
+Đợt 1 tổng hợp yêu cầu, đợt 2 rà soát tình trạng xử lý và đợt 3 ghi nhận kết quả. Biểu mẫu theo dõi gồm mã nhiệm vụ, bộ phận phụ trách, trạng thái, ngày cập nhật và ghi chú. Trường hợp chưa đủ thông tin sẽ được đánh dấu chờ bổ sung.
+
+5. KIỂM SOÁT TRUY CẬP
+Tài liệu mô phỏng này dành cho vai trò GiangVien và QuanTri trong môi trường thử nghiệm. Người dùng SinhVien không được xem nội dung điều phối nội bộ dù chủ đề có liên quan đến quy chế công khai.
+
+6. KẾT LUẬN
+Bản ghi chỉ phục vụ kiểm thử kiểm soát truy cập trước truy xuất, không phải kế hoạch thật của trường được dẫn nguồn. Mọi số liệu nếu xuất hiện đều do nhóm nghiên cứu dựng lên.
