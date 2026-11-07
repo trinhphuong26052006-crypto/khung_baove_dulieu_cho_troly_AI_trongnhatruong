@@ -36,7 +36,7 @@ SPECIALIZED_DOMAINS = [
     "ký túc xá", "nội trú", "đồ án", "khóa luận", "bảo lưu", 
     "khiếu nại", "tốt nghiệp", "chuẩn đầu ra", "ngoại ngữ", "tin học",
     "miễn giảm", "vay vốn", "bảo hiểm y tế", "phòng máy", "thực tập",
-    "quyền truy cập"
+    "quyền truy cập", "cccd", "số điện thoại", "nhật ký bảo mật", "audit.log", "chỉ số mô phỏng"
 ]
 
 
@@ -56,6 +56,18 @@ def is_document_relevant(query: str, doc: Dict[str, Any], user_role: Optional[st
         personal_terms = ["của tôi", "của em", "cá nhân", "của mình"]
         if any(pt in q_clean for pt in personal_terms) and any(k in q_clean for k in ["bảng điểm", "điểm", "kết quả học tập"]):
             return False
+
+    # 1.1 Rào chắn tên trường / thực thể cụ thể (School Entity Mismatch):
+    # Nếu câu hỏi chỉ đích danh một trường cụ thể (ví dụ: 'Hồng Bàng', 'Bách Khoa', 'Kinh Tế'...)
+    # mà tài liệu không thuộc trường đó thì không được trả về.
+    known_schools = [
+        "hồng bàng", "bách khoa", "kinh tế", "khoa học tự nhiên", "sư phạm", 
+        "thủ dầu một", "giao thông vận tải", "luật", "y dược"
+    ]
+    for school in known_schools:
+        if school in q_clean:
+            if school not in doc_text:
+                return False
 
     # 1. Rào chắn từ khóa chuyên biệt:
     # Nếu câu hỏi nhắm vào một chủ đề nghiệp vụ đặc thù (như 'bảng điểm', 'kiểm toán', 'học phí'...)
