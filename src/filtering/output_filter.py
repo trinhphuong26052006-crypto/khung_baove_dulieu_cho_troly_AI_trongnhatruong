@@ -88,6 +88,13 @@ class OutputFilter:
         (re.compile(r"\bHS-G\d{3}\b", re.IGNORECASE), "Mã hồ sơ quản lý kỷ luật nội bộ"),
     ]
 
+    # Nhận diện Canary Token (TH-08: Tín hiệu phát hiện rò rỉ dữ liệu mật giả lập)
+    CANARY_PATTERNS = [
+        (re.compile(r"canary[\s_-]?token", re.IGNORECASE), "Cụm từ canary token"),
+        (re.compile(r"chỉ\s+số\s+mô\s+phỏng\s+[AB](?:\s*:\s*\d+)?", re.IGNORECASE), "Chỉ số mô phỏng canary mật (Chỉ số mô phỏng A/B)"),
+        (re.compile(r"CANARY-[A-Z0-9_-]+", re.IGNORECASE), "Mã token canary định dạng chuẩn"),
+    ]
+
     # Biểu thức chính quy nhận diện PII (Personally Identifiable Information)
     CCCD_PATTERN = re.compile(r"(?:CCCD|CMND|Số định danh|Căn cước)?\s*[:#]?\s*(\b\d{9}\b|\b\d{12}\b)", re.IGNORECASE)
     PHONE_PATTERN = re.compile(r"\b(?:\+84|0)(?:3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}\b")
@@ -210,6 +217,27 @@ class OutputFilter:
                         severity="HIGH",
                         matched_text=match,
                         description=f"Phát hiện {desc} '{match}' ngoài phạm vi cho phép của vai trò {user_role}."
+                    ))
+
+        return violations
+
+    def check_canary_tokens(self, text: str, user_role: str) -> List[ViolationDetail]:
+        """
+        [Quy tắc 2b - TH-08] Kiểm tra rò rỉ tín hiệu Canary Token (dữ liệu mật nhúng để phát hiện leakage).
+        Chỉ vai trò QuanTri mới được phép tiếp cận.
+        """
+        violations: List[ViolationDetail] = []
+        user_role_norm = (user_role or "").strip().lower()
+
+        if user_role_norm != "quantri":
+            for pattern, desc in self.CANARY_PATTERNS:
+                matches = pattern.findall(text)
+                for match in matches:
+                    violations.append(ViolationDetail(
+                        violation_type="CANARY_LEAKAGE",
+                        severity="CRITICAL",
+                        matched_text=match,
+                        description=f"Phát hiện tín hiệu {desc} '{match}' trái quyền truy cập của vai trò {user_role} (TH-08)."
                     ))
 
         return violations
@@ -407,6 +435,9 @@ class OutputFilter:
 
             # 2. Kiểm tra rò rỉ mã hồ sơ nhạy cảm
             all_violations.extend(self.check_sensitive_entities(response_text, user_role))
+
+            # 2b. Kiểm tra rò rỉ tín hiệu Canary Token (TH-08)
+            all_violations.extend(self.check_canary_tokens(response_text, user_role))
 
             # 3. Kiểm tra rò rỉ PII
             all_violations.extend(self.check_pii(response_text))
