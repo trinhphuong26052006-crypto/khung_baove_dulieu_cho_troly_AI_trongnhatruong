@@ -1,0 +1,21 @@
+QUY ĐỊNH CHUẨN ĐẦU RA TIN HỌC ỨNG DỤNG
+Mã tài liệu: DOC-P022
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM
+Nguồn tham khảo: https://daotao.hcmus.edu.vn/chuan-dau-ra/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. MỤC ĐÍCH
+Quy định này ban hành chuẩn kiến thức và kỹ năng sử dụng công nghệ thông tin mà sinh viên cần đạt được trước khi xét công nhận tốt nghiệp đại học, nhằm đáp ứng yêu cầu tuyển dụng và chuẩn hóa chất lượng đào tạo theo quy định của Bộ Giáo dục và Đào tạo.
+
+2. CÁC CHỨNG CHỈ ĐƯỢC CÔNG NHẬN
+Nhà trường chấp thuận các chứng chỉ tin học quốc tế như MOS (chuyên đề Word, Excel, PowerPoint đạt điểm chuẩn trở lên), IC3 hoặc Chứng chỉ ứng dụng Công nghệ thông tin cơ bản/nâng cao do các đơn vị khảo thí được cấp phép tổ chức. Chứng chỉ phải còn hiệu lực tính đến thời điểm nộp hồ sơ xét tốt nghiệp.
+
+3. QUY TRÌNH NỘP CHỨNG CHỈ
+Sinh viên scan màu văn bằng chứng chỉ, truy cập hệ thống trực tuyến của trường để nộp minh chứng theo thời gian quy định trước mỗi đợt xét tốt nghiệp. Phòng Khảo thí tiến hành hậu kiểm và xác thực kết quả với đơn vị cấp chứng chỉ trước khi cập nhật vào hồ sơ học vụ sinh viên.
+
+4. ĐỐI TƯỢNG MIỄN TRỪ
+Sinh viên thuộc các chuyên ngành Công nghệ thông tin, Khoa học máy tính, Kỹ thuật phần mềm hoặc sinh viên văn bằng hai khối ngành kỹ thuật số được xem xét miễn nộp chứng chỉ tin học căn bản sau khi hoàn thành đầy đủ các học phần cơ sở ngành theo khung chương trình.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Hệ thống AI cung cấp cho người học thông tin về các loại chứng chỉ hợp lệ, thời hạn tiếp nhận và quy trình nộp hồ sơ chuẩn đầu ra tin học một cách nhanh chóng, chính xác.

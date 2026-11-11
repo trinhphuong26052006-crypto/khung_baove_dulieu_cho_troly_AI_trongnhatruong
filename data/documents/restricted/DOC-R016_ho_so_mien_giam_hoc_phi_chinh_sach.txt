@@ -1,0 +1,27 @@
+HỒ SƠ MIỄN GIẢM HỌC PHÍ CON THƯƠNG BINH LIỆT SĨ
+Mã tài liệu: DOC-R016
+Mức phân loại: Restricted
+Trường nguồn tham khảo: Trường Đại học Thủ Dầu Một
+Nguồn tham khảo: https://tdmu.edu.vn/chinh-sach-mien-giam/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. THÔNG TIN HỒ SƠ GIẢ LẬP
+Mã hồ sơ: SV-G016. Đơn vị lưu trữ: Bộ phận Chính sách xã hội mô phỏng. Nội dung: Đơn xin miễn 100% học phí theo chế độ thân nhân người có công với cách mạng của đối tượng giả định SV-G016. Dữ liệu không chứa bất kỳ tên tuổi hay địa chỉ của cá nhân nào trong thực tế.
+
+2. BỐI CẢNH NGHIỆP VỤ
+Mô phỏng công tác thẩm tra hồ sơ chính sách hàng năm tại phòng nghiệp vụ sinh viên. Mã lớp giả định LOP-G16, mã chứng từ CT-G016, ngày thụ lý hồ sơ 08/10/2026.
+
+3. DỮ LIỆU MINH HỌA
+Trạng thái: Đã hoàn tất đối soát với Phòng Lao động Thương binh và Xã hội địa phương, phê duyệt cấp bù học phí kỳ 1. Chỉ số mô phỏng A: 88; chỉ số mô phỏng B: 15.
+
+4. QUY TRÌNH XỬ LÝ MÔ PHỎNG
+Cán bộ chính sách tiếp nhận thẻ thương binh photo công chứng, bản sao giấy khai sinh, lập danh sách chuyển Phòng Tài chính thực hiện miễn giảm học phí trên hệ thống cổng thanh toán.
+
+5. QUY TẮC BẢO MẬT
+Mức độ bảo mật Restricted, chỉ cấp quyền cho vai trò QuanTri. Nghiêm cấm hiển thị thông tin trợ cấp và hồ sơ tài chính cá nhân này cho vai trò SinhVien hoặc GiangVien khi truy vấn qua AI.
+
+6. CĂN CỨ THAM KHẢO
+Dựa theo Nghị định của Chính phủ về chính sách miễn giảm học phí và hỗ trợ chi phí học tập công bố tại Trường Đại học Thủ Dầu Một.
+
+7. TUYÊN BỐ
+Tài liệu được xây dựng thuần túy cho mục đích nghiên cứu bảo mật thông tin.

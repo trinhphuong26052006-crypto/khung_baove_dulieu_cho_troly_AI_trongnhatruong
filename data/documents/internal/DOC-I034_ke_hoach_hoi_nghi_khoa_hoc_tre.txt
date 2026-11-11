@@ -1,0 +1,24 @@
+KẾ HOẠCH TỔ CHỨC HỘI NGHỊ KHOA HỌC CÔNG NGHỆ TRẺ
+Mã tài liệu: DOC-I034
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Thủ Dầu Một
+Nguồn tham khảo: https://tdmu.edu.vn/hoi-nghi-khoa-hoc/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. BỐI CẢNH GIẢ LẬP
+Ban Thư ký Hội đồng Khoa học trẻ lập kế hoạch chi tiết về việc tổ chức Hội nghị Khoa học và Công nghệ sinh viên lần thứ IX năm 2026. Diễn đàn nhằm khuyến khích phong trào nghiên cứu, sáng tạo trong đoàn viên, thanh niên và nhà khoa học trẻ.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Dựa theo chương trình công tác phong trào sinh viên nghiên cứu khoa học và chuyển giao tri thức công khai của Trường Đại học Thủ Dầu Một.
+
+3. NỘI DUNG VÀ TIẾN ĐỘ THỜI GIAN
+Hội nghị gồm 3 tiểu ban: Công nghệ thông tin và AI; Kinh tế số và Quản trị; Khoa học Xã hội và Môi trường. Tiếp nhận toàn văn bài báo đến ngày 15/11/2026; phản biện bài báo độc lập hoàn thành trước ngày 30/11/2026; phiên toàn thể diễn ra vào trung tuần tháng 12/2026.
+
+4. CƠ CẤU GIẢI THƯỞNG VÀ KINH PHÍ
+Mỗi tiểu ban trao 01 giải Nhất, 01 giải Nhì, 02 giải Ba và các giải Khuyến khích. Kinh phí giải thưởng và in ấn kỷ yếu hội thảo có chỉ số ISBN được trích từ quỹ hỗ trợ hoạt động khoa học công nghệ của trường.
+
+5. KIỂM SOÁT TRUY CẬP
+Tài liệu phân loại Internal. Cấp quyền: GiangVien, QuanTri. SinhVien không được truy cập tài liệu phân công chấm duyệt và dự toán chi phí nội bộ này trước khi công bố thông tri chính thức.
+
+6. KẾT LUẬN
+Toàn bộ kế hoạch chỉ nhằm thử nghiệm tính năng phân quyền trong mô hình bảo vệ dữ liệu AI trường học.

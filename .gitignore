@@ -1,0 +1,34 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.cpython-*
+
+# Environment & Dependencies
+.env
+venv/
+env/
+.venv/
+
+# Vector Stores & DBs
+chroma_db/
+faiss_index/
+*.sqlite3
+
+# Logs & Test outputs
+logs/*.log
+tests/results/*.csv
+!logs/.gitkeep
+!tests/results/.gitkeep
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+

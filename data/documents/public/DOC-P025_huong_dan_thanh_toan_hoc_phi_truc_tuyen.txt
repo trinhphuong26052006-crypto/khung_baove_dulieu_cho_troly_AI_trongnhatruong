@@ -1,0 +1,21 @@
+HƯỚNG DẪN THANH TOÁN HỌC PHÍ QUA CỔNG DỊCH VỤ TRỰC TUYẾN
+Mã tài liệu: DOC-P025
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Thủ Dầu Một
+Nguồn tham khảo: https://tdmu.edu.vn/hoc-phi/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. MỤC ĐÍCH
+Hướng dẫn sinh viên thực hiện nghĩa vụ nộp học phí, các khoản lệ phí đào tạo qua cổng thanh toán điện tử kết nối với hệ thống ngân hàng, đảm bảo tiện lợi, chính xác, hạn chế dùng tiền mặt và tự động gạch nợ học phí tức thời.
+
+2. CÁC PHƯƠNG THỨC THANH TOÁN
+Sinh viên có thể chọn thanh toán qua ứng dụng Mobile Banking quét mã QR động, chuyển khoản định danh ảo (Virtual Account), thanh toán qua thẻ ghi nợ nội địa Napas hoặc ví điện tử có liên kết chính thức với cổng thanh toán của trường.
+
+3. TRÌNH TỰ THANH TOÁN
+Đăng nhập tài khoản sinh viên trên cổng quản lý tài chính trường, kiểm tra công nợ học kỳ tương ứng. Bấm chọn Thanh toán trực tuyến, lựa chọn phương thức ngân hàng phù hợp và thực hiện quét mã xác nhận giao dịch. Biên lai điện tử sẽ được gửi về email sinh viên trong vòng 15 phút.
+
+4. LƯU Ý QUAN TRỌNG
+Sinh viên tuyệt đối không chuyển khoản vào các số tài khoản cá nhân mạo danh cán bộ nhà trường. Khi thực hiện giao dịch chuyển khoản thủ công, bắt buộc ghi rõ cú pháp Mã sinh viên kèm Họ tên để hệ thống khớp dữ liệu chính xác.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Hệ thống AI giúp sinh viên kiểm tra cú pháp nộp tiền, cách lấy biên lai điện tử và hướng dẫn xử lý khi hệ thống chưa cập nhật gạch nợ sau thanh toán.
