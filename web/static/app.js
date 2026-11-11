@@ -1,11 +1,21 @@
 /**
  * ============================================================================
  * TRỢ LÝ AI NHÀ TRƯỜNG - FRONTEND JAVASCRIPT
+ * Tương thích cả Python Web Server (web_app.py) và Apache/XAMPP (api.php)
  * ============================================================================
  */
 
 let rolesData = {};
 let sampleQueries = [];
+
+function getApiUrl(endpoint, params = {}) {
+    if (window.API_BASE === 'api.php') {
+        const query = new URLSearchParams({ action: endpoint, ...params }).toString();
+        return `api.php?${query}`;
+    }
+    const query = new URLSearchParams(params).toString();
+    return query ? `/api/${endpoint}?${query}` : `/api/${endpoint}`;
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadRoles();
@@ -24,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadRoles() {
     try {
-        const res = await fetch("/api/roles");
+        const res = await fetch(getApiUrl("roles"));
         rolesData = await res.json();
         updateRoleUI("SinhVien");
     } catch (err) {
@@ -57,11 +67,11 @@ function updateRoleUI(role) {
 
 async function loadConfig() {
     try {
-        const res = await fetch("/api/config");
+        const res = await fetch(getApiUrl("config"));
         const cfg = await res.json();
-        document.getElementById("toggleRbac").checked = cfg.ENABLE_RBAC_PRERETRIEVAL;
-        document.getElementById("toggleFilter").checked = cfg.ENABLE_OUTPUT_FILTER;
-        updateModeBadge(cfg.ENABLE_RBAC_PRERETRIEVAL);
+        document.getElementById("toggleRbac").checked = cfg.ENABLE_RBAC_PRERETRIEVAL !== false;
+        document.getElementById("toggleFilter").checked = cfg.ENABLE_OUTPUT_FILTER !== false;
+        updateModeBadge(cfg.ENABLE_RBAC_PRERETRIEVAL !== false);
     } catch (err) {
         console.error("Lỗi tải cấu hình:", err);
     }
@@ -72,7 +82,7 @@ async function updateSystemConfig() {
     const enableFilter = document.getElementById("toggleFilter").checked;
 
     try {
-        const res = await fetch("/api/config", {
+        const res = await fetch(getApiUrl("config"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -104,7 +114,7 @@ function updateModeBadge(isControlled) {
 async function loadSampleQueries() {
     const listEl = document.getElementById("sampleQueryList");
     try {
-        const res = await fetch("/api/sample-queries");
+        const res = await fetch(getApiUrl("sample-queries"));
         sampleQueries = await res.json();
 
         if (!sampleQueries || sampleQueries.length === 0) {
@@ -143,23 +153,20 @@ async function handleSendMessage(e) {
     const role = document.getElementById("roleSelect").value;
     const sendBtn = document.getElementById("sendBtn");
 
-    // Hiển thị tin nhắn người dùng
     appendUserMessage(query);
     input.value = "";
     sendBtn.disabled = true;
 
-    // Hiển thị tin nhắn tạm Loading
     const loadingId = appendLoadingMessage();
 
     try {
-        const res = await fetch("/api/chat", {
+        const res = await fetch(getApiUrl("chat"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: query, role: role })
         });
         const data = await res.json();
 
-        // Xóa bubble loading và hiển thị kết quả AI
         removeMessage(loadingId);
         appendAiResponse(data);
     } catch (err) {
@@ -210,10 +217,9 @@ function appendAiResponse(data) {
     const actionPill = data.action_taken || "PASSED";
     const sources = data.sources || [];
 
-    // Xử lý tạo HTML danh sách tài liệu nguồn (Courdx Style)
     let sourcesHtml = "";
     if (sources.length > 0) {
-        let cardsHtml = sources.map((s, idx) => `
+        let cardsHtml = sources.map((s) => `
             <div class="source-card">
                 <div class="source-card-header">
                     <span class="source-title">
@@ -258,7 +264,7 @@ function appendAiResponse(data) {
         <div class="ai-bubble">
             <div class="ai-meta-header">
                 <div>
-                    <strong>AI Assistant</strong> • <span>${data.latency_ms}ms</span> • <span>${escapeHtml(data.mode)}</span>
+                    <strong>AI Assistant</strong> • <span>${data.latency_ms || 0}ms</span> • <span>${escapeHtml(data.mode || 'Controlled')}</span>
                 </div>
                 <span class="status-pill ${actionPill}">${actionPill}</span>
             </div>
@@ -308,7 +314,7 @@ async function openDocModal(docId) {
     modal.style.display = "flex";
 
     try {
-        const res = await fetch(`/api/document?doc_id=${encodeURIComponent(docId)}`);
+        const res = await fetch(getApiUrl("document", { doc_id: docId }));
         const doc = await res.json();
         titleEl.innerText = doc.title || docId;
         idEl.innerText = `Mã: ${docId} | Đơn vị: ${doc.department || 'Nhà trường'}`;
@@ -338,4 +344,3 @@ function escapeHtml(text) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
