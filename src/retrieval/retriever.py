@@ -12,6 +12,14 @@ Chức năng chính:
 """
 
 import os
+import sys
+from pathlib import Path
+
+# Đảm bảo đường dẫn gốc của dự án luôn có trong sys.path khi chạy trực tiếp file
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import re
 from typing import List, Dict, Any, Optional
 from src.retrieval.permission_checker import PermissionChecker
@@ -172,3 +180,28 @@ class DocumentRetriever:
 
         scored_docs.sort(key=lambda x: x[0], reverse=True)
         return [doc for score, doc in scored_docs[:top_k]]
+
+
+if __name__ == "__main__":
+    retriever = DocumentRetriever()
+    print("=" * 70)
+    print("KIỂM TRA MODULE RETRIEVER (TÌM KIẾM THEO PHÂN QUYỀN RBAC)")
+    print("=" * 70)
+
+    test_cases = [
+        ("SinhVien", "Lịch thi học kỳ 2"),
+        ("SinhVien", "Kế hoạch tổ chức thi nội bộ"),
+        ("GiangVien", "Kế hoạch tổ chức thi nội bộ"),
+        ("SinhVien", "Hồ sơ kỷ luật SV-G014"),
+        ("QuanTri", "Hồ sơ kỷ luật SV-G014"),
+    ]
+
+    for role, q in test_cases:
+        results = retriever.search_documents(q, user_role=role, top_k=2)
+        print(f"\n[Vai trò: {role}] Tìm kiếm: '{q}'")
+        print(f" -> Số tài liệu tìm thấy: {len(results)}")
+        for d in results:
+            print(f"    + [{d['classification']}] {d['doc_id']}: {d['title']}")
+        if not results:
+            print("    [!] Không tìm thấy tài liệu phù hợp trong danh mục được phép.")
+
