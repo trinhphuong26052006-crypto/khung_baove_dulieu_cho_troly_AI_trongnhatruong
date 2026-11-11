@@ -151,3 +151,4 @@
     <script src="web/static/app.js"></script>
 </body>
 </html>
+

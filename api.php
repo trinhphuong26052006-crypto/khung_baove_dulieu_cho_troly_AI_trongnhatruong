@@ -153,3 +153,4 @@ if ($action === 'chat') {
 }
 
 echo json_encode(["status" => "XAMPP Gateway Ready"]);
+
