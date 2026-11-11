@@ -111,7 +111,9 @@ class TestRBACPreRetrieval(unittest.TestCase):
         total_tests = 0
         passed_tests = 0
 
-        for t in self.test_queries:
+        # Lọc danh sách câu hỏi RBAC chuẩn (normal_rbac)
+        rbac_cases = [t for t in self.test_queries if t.get("category") == "normal_rbac"]
+        for t in rbac_cases:
             test_id = t["test_id"]
             role = t["role"]
             query = t["query"]

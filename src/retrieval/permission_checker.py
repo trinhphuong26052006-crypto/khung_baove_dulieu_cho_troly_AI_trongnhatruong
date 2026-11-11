@@ -1,4 +1,4 @@
-"""src/auth/permission_checker.py
+"""src/retrieval/permission_checker.py
 
 Kiểm tra quyền truy cập tài liệu cho prototype trợ lý AI/RAG nhà trường.
 
@@ -12,8 +12,10 @@ Lưu ý:
   ứng viên/context cho mô hình.
 """
 
+import json
+import os
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 
 VALID_ROLES = {"SinhVien", "GiangVien", "QuanTri"}
@@ -28,8 +30,40 @@ class PermissionDecision:
 
 
 class PermissionChecker:
-    def __init__(self, valid_roles: Optional[Iterable[str]] = None):
+    """
+    Kiểm tra và lọc quyền truy cập tài liệu theo vai trò (RBAC).
+    Tương thích cả giao diện Document-level authorization và Metadata-based retrieval.
+    """
+
+    DEFAULT_METADATA_PATH = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "data", "metadata", "documents_metadata.json"
+    )
+
+    def __init__(
+        self,
+        metadata_path: Optional[str] = None,
+        valid_roles: Optional[Iterable[str]] = None
+    ):
+        self.metadata_path = metadata_path or self.DEFAULT_METADATA_PATH
         self.valid_roles = set(valid_roles or VALID_ROLES)
+        self._metadata: List[Dict[str, Any]] = []
+        self._metadata_by_id: Dict[str, Dict[str, Any]] = {}
+        self.load_metadata()
+
+    def load_metadata(self) -> None:
+        """Tải dữ liệu metadata từ tệp JSON nếu tồn tại."""
+        if os.path.exists(self.metadata_path):
+            try:
+                with open(self.metadata_path, "r", encoding="utf-8") as f:
+                    self._metadata = json.load(f)
+                self._metadata_by_id = {doc["doc_id"]: doc for doc in self._metadata if "doc_id" in doc}
+            except Exception:
+                self._metadata = []
+                self._metadata_by_id = {}
+        else:
+            self._metadata = []
+            self._metadata_by_id = {}
 
     @staticmethod
     def _normalize_allowed_roles(value: Any) -> List[str]:
@@ -118,11 +152,67 @@ class PermissionChecker:
     ) -> Tuple[List[Dict[str, Any]], List[PermissionDecision]]:
         """
         Defense-in-depth sau retrieval.
-
-        Không thay thế pre-retrieval authorization; đây chỉ là cổng kiểm tra
-        thứ hai nếu vector store/integration trả về tài liệu ngoài dự kiến.
         """
         return self.filter_authorized_metadata(user_role, results)
+
+    # --------------------------------------------------------------------------
+    # CÁC PHƯƠNG THỨC TIỆN ÍCH CHO RETRIEVER & MAIN PIPELINE
+    # --------------------------------------------------------------------------
+
+    def get_all_documents(self) -> List[Dict[str, Any]]:
+        """Lấy toàn bộ danh sách metadata tài liệu được nạp."""
+        return self._metadata.copy()
+
+    def get_allowed_documents(self, user_role: str) -> List[Dict[str, Any]]:
+        """
+        Lấy danh sách các bản ghi tài liệu mà vai trò `user_role` được phép truy cập.
+        """
+        if not user_role or not self._metadata:
+            return []
+        authorized, _ = self.filter_authorized_metadata(user_role, self._metadata)
+        return authorized
+
+    def get_allowed_doc_ids(self, user_role: str) -> Set[str]:
+        """
+        Lấy tập hợp các doc_id mà `user_role` được phép truy cập.
+        """
+        allowed_docs = self.get_allowed_documents(user_role)
+        return {doc["doc_id"] for doc in allowed_docs if "doc_id" in doc}
+
+    def get_allowed_classifications(self, user_role: str) -> List[str]:
+        """
+        Xác định danh sách các mức phân loại (Public, Internal, Restricted) mà vai trò được phép truy cập.
+        SinhVien: ['Public']
+        GiangVien: ['Public', 'Internal']
+        QuanTri: ['Public', 'Internal', 'Restricted']
+        """
+        role = str(user_role).strip()
+        if role == "SinhVien":
+            return ["Public"]
+        elif role == "GiangVien":
+            return ["Public", "Internal"]
+        elif role == "QuanTri":
+            return ["Public", "Internal", "Restricted"]
+        return []
+
+    def is_access_allowed(self, doc_id: str, user_role: str) -> bool:
+        """
+        Kiểm tra một doc_id cụ thể có được phép truy cập bởi user_role hay không.
+        """
+        if not doc_id or not user_role:
+            return False
+        doc = self._metadata_by_id.get(doc_id)
+        if not doc:
+            return False
+        decision = self.check_document(user_role, doc)
+        return decision.allowed
+
+    def filter_documents_by_role(self, documents: List[Dict[str, Any]], user_role: str) -> List[Dict[str, Any]]:
+        """
+        Hậu kiểm / Lọc một danh sách tài liệu retrieved để đảm bảo 100% không lọt tài liệu cấm.
+        """
+        authorized, _ = self.filter_retrieved_results(user_role, documents)
+        return authorized
 
 
 if __name__ == "__main__":

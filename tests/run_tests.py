@@ -11,7 +11,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 QUERY_FILE = ROOT / 'tests/queries/test_queries.json'
 RESULT_DIR = ROOT / 'tests/results'
 VALID_ROLES = {'SinhVien', 'GiangVien', 'QuanTri'}

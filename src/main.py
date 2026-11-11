@@ -53,7 +53,6 @@ from src.retrieval.permission_checker import PermissionChecker
 from src.retrieval.retriever import DocumentRetriever
 from src.retrieval.rag_engine import RAGEngine
 from src.filtering.output_filter import OutputFilter, FilterResult
-from src.filtering.input_guard import validate_input
 from src.logging.security_logger import SecurityLogger
 
 
@@ -88,7 +87,7 @@ CONFIG: Dict[str, Any] = {
     # Cấu hình nhật ký bảo mật (P6.0)
     "ENABLE_AUDIT_LOG": True,
     "AUDIT_RETENTION_DAYS": 30,
-    "AUDIT_LOG_FILE": os.path.join(PROJECT_ROOT, "logs", "security_audit.jsonl"),
+    "AUDIT_LOG_FILE": os.path.join(PROJECT_ROOT, "data", "logs", "security_audit.log"),
     
     # Tùy chọn hiển thị chi tiết (Debug/Verbose mode)
     "VERBOSE_DEBUG": False
@@ -232,15 +231,26 @@ def p1_display_role_permissions(user_role: str, permission_checker: PermissionCh
 # --- [P2.0] TIẾP NHẬN & KIỂM TRA ĐẦU VÀO (INPUT GUARDRAILS) -------------------
 
 def p2_validate_input(user_input: str) -> Tuple[bool, str]:
-    """Giữ API cũ để các lời gọi trong main.py không phải thay đổi.
-
-    Logic kiểm tra được quản lý độc lập tại src/filtering/input_guard.py.
     """
-    return validate_input(
-        user_input,
-        max_length=CONFIG["MAX_INPUT_LENGTH"],
-        blocked_keywords=CONFIG["BLOCKED_KEYWORDS"],
-    )
+    [P2.0] Kiểm tra tính hợp lệ và an toàn của câu hỏi từ người dùng:
+    - Loại trừ chuỗi rỗng.
+    - Giới hạn độ dài tránh tấn công tràn bối cảnh (Context Overflow).
+    - Phát hiện các từ khóa nghi vấn tấn công Prompt Injection cơ bản.
+    """
+    cleaned = user_input.strip()
+    
+    if not cleaned:
+        return False, "Câu hỏi không được để trống."
+        
+    if len(cleaned) > CONFIG["MAX_INPUT_LENGTH"]:
+        return False, f"Câu hỏi quá dài ({len(cleaned)} ký tự). Vui lòng giới hạn dưới {CONFIG['MAX_INPUT_LENGTH']} ký tự."
+        
+    cleaned_lower = cleaned.lower()
+    for kw in CONFIG["BLOCKED_KEYWORDS"]:
+        if kw in cleaned_lower:
+            return False, f"Phát hiện ký tự/mẫu câu có nguy cơ mất an toàn thông tin: '{kw}'."
+            
+    return True, cleaned
 
 
 # ==============================================================================
