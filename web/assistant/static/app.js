@@ -9,6 +9,13 @@ let rolesData = {};
 let sampleQueries = [];
 let currentChatHistory = []; // Lưu các lượt hỏi đáp của phiên chat hiện tại
 
+// Key localStorage riêng cho từng tài khoản đăng nhập
+function getChatStorageKey() {
+    const emailEl = document.getElementById("currentUserEmail");
+    const userEmail = emailEl ? emailEl.value : "default";
+    return "ai_chat_sessions_" + userEmail;
+}
+
 function getApiUrl(endpoint, params = {}) {
     if (window.API_BASE === 'api.php') {
         const query = new URLSearchParams({ action: endpoint, ...params }).toString();
@@ -314,7 +321,7 @@ function createNewChat() {
 function saveCurrentSessionToStorage() {
     if (currentChatHistory.length === 0) return;
 
-    let sessions = JSON.parse(localStorage.getItem("ai_chat_sessions") || "[]");
+    let sessions = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
     const firstUserMsg = currentChatHistory.find(m => m.type === 'user');
     const title = firstUserMsg ? firstUserMsg.text : "Đoạn chat mới";
 
@@ -334,7 +341,7 @@ function saveCurrentSessionToStorage() {
 
     // Giữ tối đa 15 phiên chat gần nhất
     if (sessions.length > 15) sessions = sessions.slice(0, 15);
-    localStorage.setItem("ai_chat_sessions", JSON.stringify(sessions));
+    localStorage.setItem(getChatStorageKey(), JSON.stringify(sessions));
     renderSavedChatSessions();
 }
 
@@ -343,7 +350,7 @@ function renderSavedChatSessions() {
     const list = document.getElementById("savedChatList");
     if (!container || !list) return;
 
-    const sessions = JSON.parse(localStorage.getItem("ai_chat_sessions") || "[]");
+    const sessions = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
     if (sessions.length === 0) {
         container.style.display = "none";
         return;
@@ -372,7 +379,7 @@ function renderSavedChatSessions() {
 }
 
 function loadSavedSession(sessionId) {
-    const sessions = JSON.parse(localStorage.getItem("ai_chat_sessions") || "[]");
+    const sessions = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
     const sess = sessions.find(s => s.id === sessionId);
     if (!sess) return;
 
@@ -395,7 +402,7 @@ function loadSavedSession(sessionId) {
 
 function clearAllChats() {
     if (confirm("Bạn có chắc muốn xóa tất cả lịch sử các đoạn chat cũ đã lưu không?")) {
-        localStorage.removeItem("ai_chat_sessions");
+        localStorage.removeItem(getChatStorageKey());
         currentChatHistory = [];
         createNewChat();
     }

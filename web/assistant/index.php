@@ -63,6 +63,7 @@ $isControlled = ($config['mode'] === 'controlled');
 
             <!-- Recent Chats (40 Ca Kiểm thử RBAC) -->
             <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role']) ?>">
+            <input type="hidden" id="currentUserEmail" value="<?= htmlspecialchars($user['email'] ?? '') ?>">
             <div class="recent-header-row">
                 <span class="recent-title">Recent Tests</span>
                 <span class="recent-badge-count">40 Cases</span>
