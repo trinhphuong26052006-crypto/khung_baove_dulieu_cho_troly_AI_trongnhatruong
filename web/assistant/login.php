@@ -39,10 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Fallback tài khoản mẫu nếu MySQL chưa nạp
         if (!$authenticated_user) {
             $mockUsers = [
-                'admin@studyhub.vn' => ['id' => 1, 'full_name' => 'Quản Trị Viên', 'role' => 'QuanTri', 'email' => 'admin@studyhub.vn'],
-                'user1@studyhub.vn' => ['id' => 2, 'full_name' => 'Nguyễn Văn An (Sinh viên)', 'role' => 'SinhVien', 'email' => 'user1@studyhub.vn'],
-                'user2@studyhub.vn' => ['id' => 3, 'full_name' => 'Trần Thị Bình (Sinh viên)', 'role' => 'SinhVien', 'email' => 'user2@studyhub.vn'],
-                'user3@studyhub.vn' => ['id' => 4, 'full_name' => 'Lê Hoàng Cường (Giảng viên)', 'role' => 'GiangVien', 'email' => 'user3@studyhub.vn']
+                'admin@aiassistant.vn' => ['id' => 1, 'full_name' => 'Quản Trị Viên', 'role' => 'QuanTri', 'email' => 'admin@aiassistant.vn'],
+                'user1@aiassistant.vn' => ['id' => 2, 'full_name' => 'Nguyễn Văn An (Sinh viên)', 'role' => 'SinhVien', 'email' => 'user1@aiassistant.vn'],
+                'user2@aiassistant.vn' => ['id' => 3, 'full_name' => 'Trần Thị Bình (Sinh viên)', 'role' => 'SinhVien', 'email' => 'user2@aiassistant.vn'],
+                'user3@aiassistant.vn' => ['id' => 4, 'full_name' => 'Lê Hoàng Cường (Giảng viên)', 'role' => 'GiangVien', 'email' => 'user3@aiassistant.vn']
             ];
             if (isset($mockUsers[$email])) {
                 $authenticated_user = $mockUsers[$email];
@@ -483,7 +483,7 @@ foreach ($imageSearchOrder as $candidate) {
                     <div class="minimal-form-group">
                         <label class="minimal-label" for="email">Email</label>
                         <div class="minimal-input-container">
-                            <input type="email" id="email" name="email" class="minimal-input" placeholder="nhap.email@studyhub.vn" required autofocus>
+                            <input type="email" id="email" name="email" class="minimal-input" placeholder="nhap.email@aiassistant.vn" required autofocus>
                         </div>
                     </div>
 
@@ -505,7 +505,7 @@ foreach ($imageSearchOrder as $candidate) {
                             <input type="checkbox" name="remember" checked>
                             <span>Remember me</span>
                         </label>
-                        <a href="javascript:void(0)" class="forgot-link" onclick="quickSelectUser('admin@studyhub.vn')">Quên mật khẩu?</a>
+                        <a href="javascript:void(0)" class="forgot-link" onclick="quickSelectUser('admin@aiassistant.vn')">Quên mật khẩu?</a>
                     </div>
 
                     <button type="submit" class="btn-pill-submit">
