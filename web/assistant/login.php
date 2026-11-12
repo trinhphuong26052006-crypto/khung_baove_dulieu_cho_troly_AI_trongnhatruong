@@ -75,120 +75,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             height: 100vh;
             width: 100vw;
-            background: radial-gradient(circle at 50% 20%, #1e2029 0%, #111216 70%);
+            background: radial-gradient(circle at 50% 15%, #e0edff 0%, #f4f7fc 70%);
         }
         .login-card {
-            background: var(--card-bg);
+            background: #ffffff;
             border: 1px solid var(--card-border);
-            border-radius: 16px;
+            border-radius: 20px;
             width: 440px;
             max-width: 90vw;
-            padding: 36px 32px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 40px 36px;
+            box-shadow: 0 20px 45px rgba(25, 81, 252, 0.08);
         }
         .login-header {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 30px;
         }
         .login-logo {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             margin-bottom: 8px;
             display: inline-block;
         }
         .login-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #a78bfa, #38bdf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--blue-darkest);
+            letter-spacing: -0.02em;
         }
         .login-sub {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 6px;
         }
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
         .form-label {
             display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
+            font-size: 0.82rem;
+            font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .form-input {
             width: 100%;
-            padding: 10px 14px;
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1.5px solid var(--input-border);
+            border-radius: 10px;
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
         .form-input:focus {
-            border-color: var(--accent-blue);
+            border-color: var(--blue-primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(25, 81, 252, 0.1);
         }
         .btn-submit {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            padding: 14px;
+            background: var(--accent-gradient);
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            margin-top: 8px;
-        }
-        .btn-submit:hover {
-            opacity: 0.9;
-        }
-        .quick-accounts {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid var(--card-border);
-        }
-        .quick-title {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .account-chips {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .account-chip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #15161b;
-            border: 1px solid var(--card-border);
-            border-radius: 6px;
+            font-size: 0.98rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.78rem;
+            box-shadow: var(--accent-pill-glow);
+            margin-top: 10px;
         }
-        .account-chip:hover {
-            border-color: #4b5563;
-            background: var(--input-bg);
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(25, 81, 252, 0.35);
         }
         .error-msg {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid #ef4444;
-            color: #fca5a5;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            margin-bottom: 16px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            margin-bottom: 20px;
             text-align: center;
         }
     </style>

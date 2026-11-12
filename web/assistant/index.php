@@ -133,9 +133,11 @@ $isControlled = ($config['mode'] === 'controlled');
                         <div>
                             Xin chào <strong><?= htmlspecialchars($user['full_name']) ?></strong>! Bạn đang đăng nhập với vai trò <strong class="role-tag <?= htmlspecialchars($user['role']) ?>"><?= htmlspecialchars($user['role']) ?></strong>.
                             <br><br>
-                            Hệ thống đang hoạt động ở chế độ <strong><?= $isControlled ? 'Controlled (Kích hoạt đầy đủ RBAC & Guardrails)' : 'Baseline (Tắt kiểm soát phân quyền)' ?></strong>.
+                            Hệ thống đang hoạt động ở chế độ <strong style="color: var(--blue-primary);"><?= $isControlled ? 'Controlled (Kích hoạt đầy đủ RBAC & Guardrails)' : 'Baseline (Tắt kiểm soát phân quyền)' ?></strong>.
                             <br><br>
-                            Bạn có thể nhập câu hỏi tự do hoặc click vào các câu hỏi mẫu (Normal & Attack) ở menu bên trái để kiểm nghiệm cơ chế phân quyền bảo vệ dữ liệu.
+                            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 16px; border-radius: 10px; margin-top: 8px; font-size: 0.85rem; color: var(--blue-darkest);">
+                                💡 <strong>Gợi ý:</strong> Bạn có thể nhập câu hỏi trực tiếp vào khung chat bên dưới hoặc click chọn nhanh các ca kiểm thử (Normal & Attack) ở menu bên trái để kiểm tra khả năng phòng vệ dữ liệu.
+                            </div>
                         </div>
                     </div>
                 </div>
