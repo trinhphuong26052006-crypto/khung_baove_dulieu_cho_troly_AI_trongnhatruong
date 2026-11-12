@@ -160,6 +160,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 20px;
             text-align: center;
         }
+        .login-footer-hint {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .login-footer-hint code {
+            background: #eff6ff;
+            color: var(--blue-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            border: 1px solid #bfdbfe;
+            font-family: inherit;
+        }
     </style>
 </head>
 <body>
@@ -178,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" action="login.php">
                 <div class="form-group">
                     <label class="form-label">Email tài khoản</label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="user1@studyhub.vn" required>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Ví dụ: user1@studyhub.vn" required>
                 </div>
 
                 <div class="form-group">
@@ -188,6 +206,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" class="btn-submit">Đăng nhập tiếp tục →</button>
             </form>
+
+            <div class="login-footer-hint">
+                Tài khoản đăng nhập được phân quyền theo 3 vai trò:
+                <br>
+                <code>SinhVien</code> • <code>GiangVien</code> • <code>QuanTri</code>
+            </div>
         </div>
     </div>
 </body>
