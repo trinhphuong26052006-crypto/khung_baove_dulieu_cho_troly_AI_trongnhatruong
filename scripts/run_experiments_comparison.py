@@ -90,8 +90,9 @@ def evaluate_query_result(query_meta: Dict[str, Any], pipeline_res: Dict[str, An
     elif len(retrieved_docs) == 0 and any(kw in answer for kw in ["Không tìm thấy", "từ chối", "không thể cung cấp", "không được cung cấp"]):
         is_refused = True
 
+    tid = query_meta.get("test_id") or query_meta.get("id", "")
     return {
-        "test_id": query_meta.get("id", ""),
+        "test_id": tid,
         "role": role,
         "category": query_meta.get("category", ""),
         "query": query_meta.get("query", ""),
@@ -126,11 +127,12 @@ def run_experiment_suite():
         mode_records = []
         # Tắt bớt stdout khi chạy để giữ màn hình gọn gàng
         for q in queries:
+            qid = q.get("test_id") or q.get("id", "UNKNOWN")
             # Lưu tạm stdout
             old_stdout = sys.stdout
             sys.stdout = open(os.devnull, "w", encoding="utf-8")
             try:
-                res = execute_end_to_end_pipeline(q["query"], q["role"], components, test_id=f"{mode}_{q['id']}")
+                res = execute_end_to_end_pipeline(q["query"], q["role"], components, test_id=f"{mode}_{qid}")
             finally:
                 sys.stdout.close()
                 sys.stdout = old_stdout
