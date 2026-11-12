@@ -77,57 +77,12 @@ $isControlled = ($config['mode'] === 'controlled');
             </div>
 
             <div class="sidebar-content">
-                <!-- Chọn vai trò mô phỏng (Nhiệm vụ Thảo) -->
-                <div class="role-select-box">
-                    <div class="sidebar-section-title">VAI TRÒ MÔ PHỎNG (RBAC)</div>
-                    <select id="roleSelect" class="role-select">
-                        <option value="SinhVien" <?= $user['role'] === 'SinhVien' ? 'selected' : '' ?>>🎓 SinhVien (Sinh viên)</option>
-                        <option value="GiangVien" <?= $user['role'] === 'GiangVien' ? 'selected' : '' ?>>👨‍🏫 GiangVien (Giảng viên)</option>
-                        <option value="QuanTri" <?= $user['role'] === 'QuanTri' ? 'selected' : '' ?>>🔑 QuanTri (Quản trị viên)</option>
-                    </select>
-
-                    <div id="rolePermissionCard" class="role-permission-card">
-                        <div style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 600;">Quyền truy cập:</span>
-                            <span id="roleBadge" class="role-tag <?= htmlspecialchars($user['role']) ?>"><?= htmlspecialchars($user['role']) ?></span>
-                        </div>
-                        <div id="roleDescription" style="color: var(--text-muted);">
-                            Chỉ xem văn bản học vụ, học phí, biểu mẫu công khai.
-                        </div>
-                        <div style="margin-top: 6px; font-size: 0.7rem; color: #9ca3af;">
-                            Tầng dữ liệu: <strong id="roleLevels" style="color: #34d399;">Public</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cấu hình chế độ Baseline vs Controlled (Nhiệm vụ Thảo & Nhung) -->
-                <div class="mode-switch-card">
-                    <div class="sidebar-section-title" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
-                        <span>CHẾ ĐỘ THỬ NGHIỆM</span>
-                        <a href="setup.php" style="font-size: 0.68rem; color: #3b82f6; text-decoration: none;">Đổi cấu hình</a>
-                    </div>
-                    <div class="mode-toggle-row">
-                        <span style="font-size: 0.8rem; font-weight: 500;">RBAC Pre-retrieval</span>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleRbac" <?= $config['ENABLE_RBAC_PRERETRIEVAL'] ? 'checked' : '' ?>>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="mode-toggle-row">
-                        <span style="font-size: 0.8rem; font-weight: 500;">Output Guardrails</span>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleFilter" <?= $config['ENABLE_OUTPUT_FILTER'] ? 'checked' : '' ?>>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;" id="modeExplainText">
-                        Chế độ: <strong style="color: <?= $isControlled ? '#60a5fa' : '#fbbf24' ?>;"><?= $isControlled ? 'Controlled (Có bảo vệ)' : 'Baseline (Không bảo vệ)' ?></strong>
-                    </div>
-                </div>
+                <!-- Vai trò người dùng (Lấy trực tiếp từ tài khoản đăng nhập) -->
+                <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role']) ?>">
 
                 <!-- Câu hỏi mẫu chuẩn hóa (40 Ca Kiểm thử - Nhiệm vụ Phương) -->
                 <div>
-                    <div class="sidebar-section-title">CÂU HỎI MẪU (TEST CASES)</div>
+                    <div class="sidebar-section-title" style="margin-top: 4px;">CÂU HỎI MẪU (TEST CASES)</div>
                     <div id="sampleQueryList">
                         <div style="font-size: 0.75rem; color: var(--text-muted); padding: 8px;">Đang tải 40 ca test...</div>
                     </div>

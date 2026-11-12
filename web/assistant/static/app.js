@@ -22,14 +22,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadConfig();
     await loadSampleQueries();
 
-    // Lắng nghe thay đổi Role
-    document.getElementById("roleSelect").addEventListener("change", (e) => {
-        updateRoleUI(e.target.value);
-    });
+    // Lắng nghe thay đổi Role (nếu có select element)
+    const roleSelect = document.getElementById("roleSelect");
+    if (roleSelect && roleSelect.tagName === "SELECT") {
+        roleSelect.addEventListener("change", (e) => {
+            updateRoleUI(e.target.value);
+        });
+    }
 
-    // Lắng nghe toggle Chế độ
-    document.getElementById("toggleRbac").addEventListener("change", updateSystemConfig);
-    document.getElementById("toggleFilter").addEventListener("change", updateSystemConfig);
+    // Lắng nghe toggle Chế độ (nếu có switch elements)
+    const toggleRbac = document.getElementById("toggleRbac");
+    const toggleFilter = document.getElementById("toggleFilter");
+    if (toggleRbac) toggleRbac.addEventListener("change", updateSystemConfig);
+    if (toggleFilter) toggleFilter.addEventListener("change", updateSystemConfig);
 });
 
 async function loadRoles() {
@@ -54,15 +59,21 @@ function updateRoleUI(role) {
     const roleDescription = document.getElementById("roleDescription");
     const activeRoleBadge = document.getElementById("activeRoleBadge");
 
-    roleBadge.className = `role-tag ${role}`;
-    roleBadge.innerText = role;
+    if (roleBadge) {
+        roleBadge.className = `role-tag ${role}`;
+        roleBadge.innerText = role;
+    }
 
-    activeRoleBadge.className = `role-tag ${role}`;
-    activeRoleBadge.innerText = role;
+    if (activeRoleBadge) {
+        activeRoleBadge.className = `role-tag ${role}`;
+        activeRoleBadge.innerText = role;
+    }
 
-    roleDescription.innerText = roleInfo.description;
-    roleLevels.innerText = roleInfo.accessible.join(", ");
-    roleLevels.style.color = role === "SinhVien" ? "#34d399" : (role === "GiangVien" ? "#fbbf24" : "#f87171");
+    if (roleDescription) roleDescription.innerText = roleInfo.description;
+    if (roleLevels) {
+        roleLevels.innerText = roleInfo.accessible.join(", ");
+        roleLevels.style.color = role === "SinhVien" ? "#34d399" : (role === "GiangVien" ? "#fbbf24" : "#f87171");
+    }
 }
 
 async function loadConfig() {
@@ -100,14 +111,21 @@ async function updateSystemConfig() {
 function updateModeBadge(isControlled) {
     const badge = document.getElementById("currentModeBadge");
     const explainText = document.getElementById("modeExplainText");
-    if (isControlled) {
-        badge.className = "badge-mode controlled";
-        badge.innerText = "🛡️ Controlled Mode";
-        explainText.innerHTML = 'Chế độ: <strong style="color: #60a5fa;">Controlled (Có phòng thủ RBAC)</strong>';
-    } else {
-        badge.className = "badge-mode baseline";
-        badge.innerText = "⚠️ Baseline Mode";
-        explainText.innerHTML = 'Chế độ: <strong style="color: #fbbf24;">Baseline (Không phòng thủ)</strong>';
+    if (badge) {
+        if (isControlled) {
+            badge.className = "badge-mode controlled";
+            badge.innerText = "🛡️ Controlled Mode";
+        } else {
+            badge.className = "badge-mode baseline";
+            badge.innerText = "⚠️ Baseline Mode";
+        }
+    }
+    if (explainText) {
+        if (isControlled) {
+            explainText.innerHTML = 'Chế độ: <strong style="color: #60a5fa;">Controlled (Có phòng thủ RBAC)</strong>';
+        } else {
+            explainText.innerHTML = 'Chế độ: <strong style="color: #fbbf24;">Baseline (Không phòng thủ)</strong>';
+        }
     }
 }
 
@@ -138,8 +156,11 @@ async function loadSampleQueries() {
 }
 
 function selectSampleQuery(item) {
-    document.getElementById("roleSelect").value = item.role;
-    updateRoleUI(item.role);
+    const roleSelect = document.getElementById("roleSelect");
+    if (roleSelect && roleSelect.tagName === "SELECT") {
+        roleSelect.value = item.role;
+        updateRoleUI(item.role);
+    }
     document.getElementById("queryInput").value = item.query;
     document.getElementById("queryInput").focus();
 }
