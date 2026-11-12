@@ -19,36 +19,47 @@ $isControlled = ($config['mode'] === 'controlled');
     <title>Hệ Thống Trợ Lý AI Nhà Trường - ATTT RAG</title>
     <link rel="stylesheet" href="static/style.css">
     <style>
-        .user-profile-header {
+        .navbar-user-box {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: #15161b;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--card-border);
-            margin-bottom: 14px;
+            gap: 12px;
+            padding-left: 12px;
+            border-left: 1px solid var(--card-border);
+            margin-left: 8px;
         }
-        .user-name {
-            font-size: 0.8rem;
+        .navbar-user-info {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+        .navbar-user-name {
+            font-size: 0.82rem;
             font-weight: 600;
             color: #f3f4f6;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 130px;
+            line-height: 1.2;
         }
-        .btn-logout {
-            color: var(--text-muted);
-            text-decoration: none;
+        .navbar-user-email {
             font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            transition: 0.2s;
+            color: var(--text-muted);
         }
-        .btn-logout:hover {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
+        .btn-navbar-logout {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-navbar-logout:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
         }
     </style>
 </head>
@@ -66,15 +77,6 @@ $isControlled = ($config['mode'] === 'controlled');
             </div>
 
             <div class="sidebar-content">
-                <!-- Thông tin người dùng đang đăng nhập -->
-                <div class="user-profile-header">
-                    <div>
-                        <div class="user-name" title="<?= htmlspecialchars($user['full_name']) ?>"><?= htmlspecialchars($user['full_name']) ?></div>
-                        <div style="font-size: 0.68rem; color: var(--text-muted);"><?= htmlspecialchars($user['email']) ?></div>
-                    </div>
-                    <a href="logout.php" class="btn-logout" title="Đăng xuất">Thoát</a>
-                </div>
-
                 <!-- Chọn vai trò mô phỏng (Nhiệm vụ Thảo) -->
                 <div class="role-select-box">
                     <div class="sidebar-section-title">VAI TRÒ MÔ PHỎNG (RBAC)</div>
@@ -145,6 +147,22 @@ $isControlled = ($config['mode'] === 'controlled');
                         <?= $isControlled ? '🛡️ Controlled Mode' : '⚠️ Baseline Mode' ?>
                     </span>
                     <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role']) ?>"><?= htmlspecialchars($user['role']) ?></span>
+
+                    <!-- Thông tin người dùng đăng nhập & Nút Đăng xuất trên Navbar -->
+                    <div class="navbar-user-box">
+                        <div class="navbar-user-info">
+                            <span class="navbar-user-name"><?= htmlspecialchars($user['full_name']) ?></span>
+                            <span class="navbar-user-email"><?= htmlspecialchars($user['email']) ?></span>
+                        </div>
+                        <a href="logout.php" class="btn-navbar-logout" title="Đăng xuất khỏi hệ thống">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Đăng xuất
+                        </a>
+                    </div>
                 </div>
             </header>
 

@@ -213,39 +213,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Mật khẩu (Mặc định: 123456789)</label>
-                    <input type="password" id="password" name="password" class="form-input" placeholder="•••••••••" value="123456789">
+                    <label class="form-label">Mật khẩu</label>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="•••••••••" required>
                 </div>
 
                 <button type="submit" class="btn-submit">Đăng nhập tiếp tục →</button>
             </form>
-
-            <div class="quick-accounts">
-                <div class="quick-title">Chọn nhanh tài khoản mẫu từ Database Seed:</div>
-                <div class="account-chips">
-                    <div class="account-chip" onclick="fillAccount('user1@studyhub.vn')">
-                        <span>🎓 Nguyễn Văn An</span>
-                        <span class="role-tag SinhVien">SinhVien</span>
-                    </div>
-                    <div class="account-chip" onclick="fillAccount('user3@studyhub.vn')">
-                        <span>👨‍🏫 Lê Hoàng Cường</span>
-                        <span class="role-tag GiangVien">GiangVien</span>
-                    </div>
-                    <div class="account-chip" onclick="fillAccount('admin@studyhub.vn')">
-                        <span>🔑 Quản Trị Viên</span>
-                        <span class="role-tag QuanTri">QuanTri</span>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-
-    <script>
-        function fillAccount(email) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = '123456789';
-        }
-    </script>
 </body>
 </html>
 
