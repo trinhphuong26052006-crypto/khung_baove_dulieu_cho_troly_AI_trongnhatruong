@@ -2,8 +2,8 @@ import sys
 import json
 from pathlib import Path
 
-# Đảm bảo import được module trong src
-PROJECT_ROOT = Path(__file__).resolve().parent
+# Đảm bảo import được module trong src (Project Root là thư mục gốc D:\Xampp\htdocs\AI_attt)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 

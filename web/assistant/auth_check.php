@@ -5,9 +5,9 @@
 session_start();
 
 function get_db_connection() {
-    $configFile = __DIR__ . '/web/config/database.local.php';
+    $configFile = dirname(__DIR__) . '/config/database.local.php';
     if (!file_exists($configFile)) {
-        $configFile = __DIR__ . '/web/config/database.example.php';
+        $configFile = dirname(__DIR__) . '/config/database.example.php';
     }
     require_once $configFile;
 
@@ -33,3 +33,4 @@ function check_auth() {
         exit;
     }
 }
+

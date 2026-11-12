@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng Nhập - Hệ Thống Trợ Lý AI Nhà Trường</title>
-    <link rel="stylesheet" href="web/static/style.css">
+    <link rel="stylesheet" href="static/style.css">
     <style>
         .login-wrapper {
             display: flex;
@@ -246,3 +246,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>
 </html>
+

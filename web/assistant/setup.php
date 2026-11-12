@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['app_config'] = $config;
 
     // Lưu vào file JSON cấu hình XAMPP
-    $configFile = __DIR__ . '/data/xampp_config.json';
+    $configFile = dirname(dirname(__DIR__)) . '/data/xampp_config.json';
     file_put_contents($configFile, json_encode($config, JSON_PRETTY_PRINT));
 
     header('Location: index.php');
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cấu Hình Phân Quyền RBAC & RAG - Bước 2</title>
-    <link rel="stylesheet" href="web/static/style.css">
+    <link rel="stylesheet" href="static/style.css">
     <style>
         .setup-wrapper {
             display: flex;
@@ -247,3 +247,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>
 </html>
+

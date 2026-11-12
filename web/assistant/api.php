@@ -14,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-// Đường dẫn Python và Project
+// Đường dẫn Python và Project gốc
 $pythonPath = 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
-$projectDir = __DIR__;
+$projectDir = dirname(dirname(__DIR__));
 
 // 1. Lấy danh sách Roles
 if ($action === 'roles') {
@@ -128,7 +128,7 @@ if ($action === 'chat') {
 
     // Thực thi Python runner
     $cmd = escapeshellarg($pythonPath) . ' ' .
-           escapeshellarg($projectDir . '/runner.py') . ' ' .
+           escapeshellarg(__DIR__ . '/runner.py') . ' ' .
            escapeshellarg($query) . ' ' .
            escapeshellarg($role) . ' ' .
            $enableRbac . ' ' .
