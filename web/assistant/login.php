@@ -59,13 +59,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Kiểm tra xem có file ảnh nào trong thư mục assets/images
-$customImage = 'assets/images/login-art.jpg';
-if (!file_exists(__DIR__ . '/' . $customImage)) {
-    if (file_exists(__DIR__ . '/assets/images/login-art.png')) {
-        $customImage = 'assets/images/login-art.png';
-    } else if (file_exists(__DIR__ . '/assets/images/login-bg.png')) {
-        $customImage = 'assets/images/login-bg.png';
+// Tìm file ảnh minh họa trong thư mục assets/images
+$customImage = null;
+$imageSearchOrder = [
+    'assets/images/login-bg.jpg',
+    'assets/images/login-bg.png',
+    'assets/images/login-art.jpg',
+    'assets/images/login-art.png',
+];
+foreach ($imageSearchOrder as $candidate) {
+    if (file_exists(__DIR__ . '/' . $candidate)) {
+        $customImage = $candidate;
+        break;
     }
 }
 ?>
@@ -445,24 +450,19 @@ if (!file_exists(__DIR__ . '/' . $customImage)) {
 </head>
 <body>
     <div class="login-page-wrapper">
-        <!-- Status indicator top pill -->
-        <div class="top-status-indicator">
-            <div class="avatar-circle">🤖</div>
-            <span>Hệ Thống Trợ Lý AI &bull; Đề Tài Nghiên Cứu ATTT</span>
-        </div>
-
+        
         <!-- Main Rounded Card -->
         <div class="kreative-login-card">
             <!-- Left Visual Panel -->
             <div class="login-visual-panel">
-                <?php if (file_exists(__DIR__ . '/' . $customImage)): ?>
+                <?php if ($customImage): ?>
                     <img src="<?= htmlspecialchars($customImage) ?>?v=<?= time() ?>" alt="Login Visual Illustration">
                 <?php else: ?>
                     <div class="visual-art-fallback">
                         <div class="art-icon-shape">👾</div>
                         <h3 style="font-weight:800; font-size:1.3rem; margin-bottom:8px; color:#334155;">Security AI Assistant</h3>
                         <p style="color:#64748b; font-size:0.85rem; max-width:280px; margin:0;">
-                            Thư mục hình ảnh: <code>web/assistant/assets/images/login-art.jpg</code>
+                            Thư mục hình ảnh: <code>web/assistant/assets/images/login-bg.jpg</code>
                         </p>
                     </div>
                 <?php endif; ?>
@@ -470,13 +470,8 @@ if (!file_exists(__DIR__ . '/' . $customImage)) {
 
             <!-- Right Form Panel -->
             <div class="login-form-panel">
-                <div class="brand-badge-header">
-                    <span class="brand-badge-icon">🎛️</span>
-                    <span class="brand-badge-text">StudyHub AI</span>
-                </div>
 
-                <h1 class="welcome-heading">Welcome Back!</h1>
-                <p class="welcome-subtext">Nhập thông tin tài khoản của bạn để tiếp tục</p>
+                <h1 class="welcome-heading">Welcome To AI Assistant!</h1> <br>
 
                 <?php if (!empty($error)): ?>
                     <div class="alert-message-box">
@@ -516,25 +511,6 @@ if (!file_exists(__DIR__ . '/' . $customImage)) {
                     <button type="submit" class="btn-pill-submit">
                         Log in
                     </button>
-
-                    <button type="button" class="btn-pill-secondary" onclick="quickSelectUser('user1@studyhub.vn')">
-                        <svg width="18" height="18" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
-                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
-                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                        </svg>
-                        <span>Đăng nhập nhanh với Sinh viên</span>
-                    </button>
-
-                    <div class="form-bottom-hint">
-                        Chọn vai trò thử nghiệm:
-                        <div class="quick-role-picker">
-                            <span class="quick-role-chip" onclick="quickSelectUser('user1@studyhub.vn')">Sinh viên</span>
-                            <span class="quick-role-chip" onclick="quickSelectUser('user3@studyhub.vn')">Giảng viên</span>
-                            <span class="quick-role-chip" onclick="quickSelectUser('admin@studyhub.vn')">Quản trị</span>
-                        </div>
-                    </div>
                 </form>
             </div>
         </div>
