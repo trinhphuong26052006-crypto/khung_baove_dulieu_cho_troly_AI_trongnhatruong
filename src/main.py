@@ -655,6 +655,13 @@ def execute_end_to_end_pipeline(
         "action_taken": filter_result.action_taken,
         "is_safe": filter_result.is_safe,
         "latency_ms": round(elapsed_time * 1000, 2),
+        "violations": [
+            {
+                "violation_type": v.violation_type,
+                "severity": v.severity,
+                "description": v.description
+            } for v in filter_result.violations
+        ] if filter_result else []
     }
 
 

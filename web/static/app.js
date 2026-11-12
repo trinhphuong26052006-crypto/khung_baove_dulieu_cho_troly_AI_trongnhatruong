@@ -42,6 +42,25 @@ async function loadRoles() {
     }
 }
 
+// Mapping tài khoản thực tế theo vai trò được chọn
+const ACCOUNT_MAPPING = {
+    "SinhVien": {
+        id: "SV001",
+        name: "SV001 - Sinh viên",
+        fullName: "SV001 - Nguyễn Văn A (Sinh viên)"
+    },
+    "GiangVien": {
+        id: "GV002",
+        name: "GV002 - Giảng viên",
+        fullName: "GV002 - TS. Trần Văn B (Giảng viên)"
+    },
+    "QuanTri": {
+        id: "QT003",
+        name: "QT003 - Quản trị viên",
+        fullName: "QT003 - Lê Văn C (Quản trị viên)"
+    }
+};
+
 function updateRoleUI(role) {
     const roleInfo = rolesData[role] || {
         name: role,
@@ -63,6 +82,14 @@ function updateRoleUI(role) {
     roleDescription.innerText = roleInfo.description;
     roleLevels.innerText = roleInfo.accessible.join(", ");
     roleLevels.style.color = role === "SinhVien" ? "#34d399" : (role === "GiangVien" ? "#fbbf24" : "#f87171");
+
+    // Lưu trạng thái tài khoản thực tế vào localStorage để đồng bộ ngay lập tức sang trang Trạng thái bảo mật
+    const acc = ACCOUNT_MAPPING[role] || ACCOUNT_MAPPING["SinhVien"];
+    try {
+        localStorage.setItem("CURRENT_USER_ROLE", role);
+        localStorage.setItem("CURRENT_USER_ACCOUNT", acc.name);
+        localStorage.setItem("CURRENT_USER_ACCOUNT_ID", acc.id);
+    } catch(e) {}
 }
 
 async function loadConfig() {
@@ -166,6 +193,27 @@ async function handleSendMessage(e) {
             body: JSON.stringify({ query: query, role: role })
         });
         const data = await res.json();
+
+        // Lưu sự kiện truy vấn gần nhất vào localStorage để trang Trạng thái bảo mật cập nhật theo thời gian thực
+        try {
+            const acc = ACCOUNT_MAPPING[role] || { id: "SV001", name: "SV001 - Sinh viên" };
+            const reqId = "REQ-" + Math.random().toString(36).substring(2, 6).toUpperCase();
+            const eventPayload = {
+                req_id: reqId,
+                query: query,
+                role: role,
+                account: acc.name,
+                account_id: acc.id,
+                action_taken: data.action_taken || "PASSED",
+                is_safe: data.is_safe !== false,
+                latency_ms: data.latency_ms || 0,
+                answer: data.answer || "",
+                violations: data.violations || [],
+                timestamp: new Date().toISOString(),
+                _t: Date.now()
+            };
+            localStorage.setItem("LATEST_SECURITY_EVENT", JSON.stringify(eventPayload));
+        } catch(e) {}
 
         removeMessage(loadingId);
         appendAiResponse(data);

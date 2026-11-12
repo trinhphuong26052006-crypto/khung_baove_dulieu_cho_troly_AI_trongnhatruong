@@ -19,6 +19,19 @@
                 </div>
             </div>
 
+            <!-- Điều hướng 3 trang chuẩn hệ thống -->
+            <div style="padding: 10px 14px 2px 14px; font-size: 0.7rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">
+                ĐIỀU HƯỚNG
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 4px 10px 10px 10px; border-bottom: 1px solid var(--card-border);">
+                <a href="index.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; background: #1e3a5f; color: #60a5fa; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                    <span>💬</span> Trợ lý AI
+                </a>
+                <a href="security_status.html" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+                    <span>🛡️</span> Trạng thái bảo mật
+                </a>
+            </div>
+
             <div class="sidebar-content">
                 <!-- Chọn vai trò mô phỏng (Nhiệm vụ Thảo) -->
                 <div class="role-select-box">
