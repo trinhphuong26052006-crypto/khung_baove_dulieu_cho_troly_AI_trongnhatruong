@@ -69,6 +69,7 @@ $isControlled = ($config['mode'] === 'controlled');
             </div>
 
             <!-- Recent Chats (40 Ca Kiểm thử RBAC) -->
+            <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role']) ?>">
             <div class="recent-header-row">
                 <span class="recent-title">Recent Tests</span>
                 <span class="recent-badge-count">40 Cases</span>
@@ -124,7 +125,7 @@ $isControlled = ($config['mode'] === 'controlled');
                         <?= htmlspecialchars($user['role']) ?>
                     </span>
 
-                    <!-- Huy hiệu trạng thái bảo vệ (Tĩnh, không có liên kết, không nhấp nháy khi di chuột) -->
+                    <!-- Huy hiệu trạng thái bảo vệ -->
                     <span class="zyn-status-badge">
                         <span>✨</span> <?= $isControlled ? 'Đang bảo vệ (Controlled)' : 'Đối chứng (Baseline)' ?>
                     </span>

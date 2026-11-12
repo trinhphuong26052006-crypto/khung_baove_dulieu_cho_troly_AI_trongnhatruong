@@ -174,6 +174,12 @@ async function handleSendMessage(e) {
     const role = document.getElementById("roleSelect").value;
     const sendBtn = document.getElementById("sendBtn");
 
+    // Ẩn hero canvas khi bắt đầu cuộc trò chuyện
+    const heroCanvas = document.querySelector(".zynovate-hero-canvas");
+    if (heroCanvas) {
+        heroCanvas.style.display = "none";
+    }
+
     appendUserMessage(query);
     input.value = "";
     sendBtn.disabled = true;
