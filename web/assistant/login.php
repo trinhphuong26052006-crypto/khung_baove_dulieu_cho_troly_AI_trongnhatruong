@@ -58,6 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Kiểm tra xem có file ảnh nào trong thư mục assets/images
+$customImage = 'assets/images/login-art.jpg';
+if (!file_exists(__DIR__ . '/' . $customImage)) {
+    if (file_exists(__DIR__ . '/assets/images/login-art.png')) {
+        $customImage = 'assets/images/login-art.png';
+    } else if (file_exists(__DIR__ . '/assets/images/login-bg.png')) {
+        $customImage = 'assets/images/login-bg.png';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -70,378 +80,480 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/style.css">
     <style>
-        .login-page-container {
-            display: flex;
+        /* Modern Floating Card Layout theo mẫu hình ảnh */
+        body {
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
-            width: 100vw;
-            background: #ffffff;
+            background: #eef1f6;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e293b;
         }
 
-        /* Khối Banner Trái (Hero Section) */
-        .login-hero-side {
-            flex: 1.1;
-            background: linear-gradient(145deg, #03195b 0%, #0b2cb1 45%, #1951fc 100%);
-            padding: 60px;
+        .login-page-wrapper {
+            width: 100%;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            color: #ffffff;
-            position: relative;
-            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
         }
 
-        .login-hero-side::before {
-            content: "";
-            position: absolute;
-            top: -100px;
-            right: -100px;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(55, 129, 252, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .login-hero-side::after {
-            content: "";
-            position: absolute;
-            bottom: -80px;
-            left: -80px;
-            width: 380px;
-            height: 380px;
-            background: radial-gradient(circle, rgba(3, 25, 91, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .hero-top-badge {
+        /* Top user indicator pill (như thanh đỉnh trong mẫu) */
+        .top-status-indicator {
+            background: #ffffff;
+            padding: 6px 18px 6px 8px;
+            border-radius: 999px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.8rem;
+            gap: 10px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            margin-bottom: 24px;
+            font-size: 0.85rem;
             font-weight: 600;
-            letter-spacing: 0.02em;
-            width: fit-content;
+            color: #475569;
         }
 
-        .hero-main-content {
-            margin: auto 0;
-            max-width: 520px;
-            z-index: 2;
+        .top-status-indicator .avatar-circle {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
         }
 
-        .hero-main-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            line-height: 1.25;
-            letter-spacing: -0.03em;
-            margin-bottom: 20px;
+        /* Khung chính Bo tròn lớn màu trắng */
+        .kreative-login-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 980px;
+            min-height: 560px;
+            border-radius: 36px;
+            box-shadow: 0 20px 45px -10px rgba(100, 116, 139, 0.15), 0 0 1px 1px rgba(0, 0, 0, 0.03);
+            display: flex;
+            padding: 22px;
+            gap: 28px;
+            box-sizing: border-box;
+            position: relative;
         }
 
-        .hero-main-title span {
-            background: linear-gradient(135deg, #cbe9fd 0%, #ffffff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Cột bên trái: Hình ảnh nghệ thuật 3D bo tròn */
+        .login-visual-panel {
+            flex: 1;
+            min-height: 516px;
+            border-radius: 28px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .hero-main-desc {
-            font-size: 1rem;
-            line-height: 1.7;
-            color: #dbeafe;
-            margin-bottom: 36px;
+        .login-visual-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
-        .hero-features {
+        /* Fallback nghệ thuật nếu không có file ảnh */
+        .visual-art-fallback {
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-        }
-
-        .hero-feature-item {
-            display: flex;
             align-items: center;
-            gap: 14px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 14px 18px;
-            border-radius: 14px;
-            backdrop-filter: blur(10px);
+            justify-content: center;
+            background: radial-gradient(circle at 30% 30%, #ede9fe 0%, #dbeafe 50%, #eff6ff 100%);
+            padding: 30px;
+            text-align: center;
+            box-sizing: border-box;
         }
 
-        .hero-feature-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2);
+        .art-icon-shape {
+            font-size: 5rem;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 15px 25px rgba(139, 92, 246, 0.35));
+            animation: floatShape 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-12px) rotate(4deg); }
+        }
+
+        /* Cột bên phải: Form đăng nhập thanh lịch */
+        .login-form-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 48px;
+            box-sizing: border-box;
+        }
+
+        .brand-badge-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
-            flex-shrink: 0;
+            gap: 8px;
+            margin-bottom: 24px;
         }
 
-        .hero-feature-text h4 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 2px;
+        .brand-badge-icon {
+            font-size: 1.15rem;
         }
 
-        .hero-feature-text p {
-            font-size: 0.78rem;
-            color: #bfdbfe;
-            margin: 0;
-        }
-
-        .hero-footer {
-            font-size: 0.75rem;
-            color: #bfdbfe;
-            z-index: 2;
-        }
-
-        /* Khối Form Phải (Form Section) */
-        .login-form-side {
-            flex: 0.9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            background: #ffffff;
-        }
-
-        .form-container-box {
-            width: 100%;
-            max-width: 440px;
-        }
-
-        .form-brand-header {
-            margin-bottom: 32px;
-        }
-
-        .form-brand-title {
-            font-size: 1.7rem;
+        .brand-badge-text {
+            font-size: 1.05rem;
             font-weight: 800;
-            color: #03195b;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
+            color: #0f172a;
+            letter-spacing: -0.01em;
         }
 
-        .form-brand-subtitle {
+        .welcome-heading {
+            text-align: center;
+            font-size: 1.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-subtext {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 0 0 32px 0;
+        }
+
+        .alert-message-box {
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+            color: #b91c1c;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.82rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Field Inputs dạng Clean Underline / Minimal Border */
+        .minimal-form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .minimal-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 6px;
+            text-transform: capitalize;
+        }
+
+        .minimal-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .minimal-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1.5px solid #cbd5e1;
+            padding: 8px 30px 8px 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0f172a;
+            background: transparent;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .minimal-input:focus {
+            border-bottom-color: #0f172a;
+        }
+
+        .minimal-input::placeholder {
+            color: #94a3b8;
             font-size: 0.88rem;
+        }
+
+        .input-trailing-icon {
+            position: absolute;
+            right: 4px;
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Remember me & Forgot Password */
+        .form-options-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 26px;
+            font-size: 0.8rem;
+        }
+
+        .remember-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #64748b;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .remember-checkbox-label input[type="checkbox"] {
+            accent-color: #0f172a;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            color: #0f172a;
+        }
+
+        /* Nút Log in dạng Pill Black bo tròn */
+        .btn-pill-submit {
+            width: 100%;
+            height: 48px;
+            background: #111827;
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(17, 24, 39, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .btn-pill-submit:hover {
+            background: #1f2937;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(17, 24, 39, 0.22);
+        }
+
+        .btn-pill-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Nút phụ Google / Vai trò đăng nhập nhanh */
+        .btn-pill-secondary {
+            width: 100%;
+            height: 48px;
+            background: #f8fafc;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            text-decoration: none;
+        }
+
+        .btn-pill-secondary:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .form-bottom-hint {
+            text-align: center;
+            font-size: 0.8rem;
             color: #64748b;
         }
 
-        .styled-form-group {
-            margin-bottom: 22px;
-        }
-
-        .styled-form-label {
-            display: block;
-            font-size: 0.82rem;
+        .form-bottom-hint a {
+            color: #0f172a;
             font-weight: 700;
-            color: #334155;
-            margin-bottom: 8px;
+            text-decoration: none;
         }
 
-        .input-icon-wrapper {
-            position: relative;
+        .quick-role-picker {
             display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 16px;
-            color: #94a3b8;
-            pointer-events: none;
-        }
-
-        .styled-form-input {
-            width: 100%;
-            padding: 14px 16px 14px 46px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            color: #1e293b;
-            font-size: 0.92rem;
-            font-weight: 500;
-            outline: none;
-            transition: all 0.25s ease;
-        }
-
-        .styled-form-input:focus {
-            border-color: #1951fc;
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(25, 81, 252, 0.12);
-        }
-
-        .styled-submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #1951fc 0%, #3781fc 100%);
-            border: none;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 0.98rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 16px rgba(25, 81, 252, 0.3);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
             justify-content: center;
             gap: 8px;
+            margin-top: 14px;
         }
 
-        .styled-submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(25, 81, 252, 0.4);
+        .quick-role-chip {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            color: #475569;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s ease;
         }
 
-        .login-role-guide {
-            margin-top: 28px;
-            padding: 16px;
-            background: #f0f7ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 12px;
-            font-size: 0.78rem;
-            color: #03195b;
-            line-height: 1.6;
+        .quick-role-chip:hover {
+            background: #e2e8f0;
+            color: #0f172a;
         }
 
-        .role-badges-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .role-pill-sm {
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .error-alert-box {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        @media (max-width: 900px) {
-            .login-hero-side { display: none; }
-            .login-form-side { flex: 1; }
+        @media (max-width: 860px) {
+            .kreative-login-card {
+                flex-direction: column;
+                max-width: 480px;
+            }
+            .login-visual-panel {
+                min-height: 240px;
+            }
+            .login-form-panel {
+                padding: 16px 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-page-container">
-        <!-- Khối Banner Trái -->
-        <div class="login-hero-side">
-            <div class="hero-top-badge">
-                <span>🛡️</span> AN TOÀN THÔNG TIN & TRỢ LÝ AI
-            </div>
-
-            <div class="hero-main-content">
-                <h1 class="hero-main-title">
-                    Khung Bảo Vệ Dữ Liệu <span>Toàn Trình Cho Trợ Lý AI</span>
-                </h1>
-                <p class="hero-main-desc">
-                    Hệ thống tích hợp mô hình phân quyền RBAC và kiểm duyệt dữ liệu an toàn (RAG Guardrails) giúp bảo vệ tuyệt đối thông tin nội bộ và hồ sơ mật trong trường học.
-                </p>
-
-                <div class="hero-features">
-                    <div class="hero-feature-item">
-                        <div class="hero-feature-icon">🔒</div>
-                        <div class="hero-feature-text">
-                            <h4>Kiểm soát tiền truy xuất (Pre-retrieval RBAC)</h4>
-                            <p>Ngăn chặn triệt để nguy cơ rò rỉ dữ liệu ngoài quyền hạn người dùng.</p>
-                        </div>
-                    </div>
-                    <div class="hero-feature-item">
-                        <div class="hero-feature-icon">⚡</div>
-                        <div class="hero-feature-text">
-                            <h4>Hậu kiểm an toàn (Output Guardrails)</h4>
-                            <p>Tự động che giấu thông tin định danh PII (CCCD, SĐT, Điểm số).</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-footer">
-                Đề tài nghiên cứu ATTT &bull; Nhóm tác giả: Phương & Nhung & Thảo &bull; 2026
-            </div>
+    <div class="login-page-wrapper">
+        <!-- Status indicator top pill -->
+        <div class="top-status-indicator">
+            <div class="avatar-circle">🤖</div>
+            <span>Hệ Thống Trợ Lý AI &bull; Đề Tài Nghiên Cứu ATTT</span>
         </div>
 
-        <!-- Khối Form Phải -->
-        <div class="login-form-side">
-            <div class="form-container-box">
-                <div class="form-brand-header">
-                    <h2 class="form-brand-title">Đăng Nhập</h2>
-                    <p class="form-brand-subtitle">Chào mừng bạn! Vui lòng nhập tài khoản để bắt đầu trải nghiệm.</p>
+        <!-- Main Rounded Card -->
+        <div class="kreative-login-card">
+            <!-- Left Visual Panel -->
+            <div class="login-visual-panel">
+                <?php if (file_exists(__DIR__ . '/' . $customImage)): ?>
+                    <img src="<?= htmlspecialchars($customImage) ?>?v=<?= time() ?>" alt="Login Visual Illustration">
+                <?php else: ?>
+                    <div class="visual-art-fallback">
+                        <div class="art-icon-shape">👾</div>
+                        <h3 style="font-weight:800; font-size:1.3rem; margin-bottom:8px; color:#334155;">Security AI Assistant</h3>
+                        <p style="color:#64748b; font-size:0.85rem; max-width:280px; margin:0;">
+                            Thư mục hình ảnh: <code>web/assistant/assets/images/login-art.jpg</code>
+                        </p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Right Form Panel -->
+            <div class="login-form-panel">
+                <div class="brand-badge-header">
+                    <span class="brand-badge-icon">🎛️</span>
+                    <span class="brand-badge-text">StudyHub AI</span>
                 </div>
 
+                <h1 class="welcome-heading">Welcome Back!</h1>
+                <p class="welcome-subtext">Nhập thông tin tài khoản của bạn để tiếp tục</p>
+
                 <?php if (!empty($error)): ?>
-                    <div class="error-alert-box">
+                    <div class="alert-message-box">
                         <span>⚠️</span> <?= htmlspecialchars($error) ?>
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="login.php">
-                    <div class="styled-form-group">
-                        <label class="styled-form-label">Email tài khoản</label>
-                        <div class="input-icon-wrapper">
-                            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                <polyline points="22,6 12,13 2,6"></polyline>
-                            </svg>
-                            <input type="email" id="email" name="email" class="styled-form-input" placeholder="Nhập email của bạn..." required autofocus>
+                <form method="POST" action="login.php" id="loginForm">
+                    <div class="minimal-form-group">
+                        <label class="minimal-label" for="email">Email</label>
+                        <div class="minimal-input-container">
+                            <input type="email" id="email" name="email" class="minimal-input" placeholder="nhap.email@studyhub.vn" required autofocus>
                         </div>
                     </div>
 
-                    <div class="styled-form-group">
-                        <label class="styled-form-label">Mật khẩu</label>
-                        <div class="input-icon-wrapper">
-                            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            <input type="password" id="password" name="password" class="styled-form-input" placeholder="•••••••••" required>
+                    <div class="minimal-form-group">
+                        <label class="minimal-label" for="password">Password</label>
+                        <div class="minimal-input-container">
+                            <input type="password" id="password" name="password" class="minimal-input" placeholder="••••••••" required>
+                            <span class="input-trailing-icon" onclick="togglePasswordVisibility()" title="Ẩn/hiện mật khẩu">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </span>
                         </div>
                     </div>
 
-                    <button type="submit" class="styled-submit-btn">
-                        Đăng nhập tiếp tục
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
+                    <div class="form-options-row">
+                        <label class="remember-checkbox-label">
+                            <input type="checkbox" name="remember" checked>
+                            <span>Remember me</span>
+                        </label>
+                        <a href="javascript:void(0)" class="forgot-link" onclick="quickSelectUser('admin@studyhub.vn')">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="btn-pill-submit">
+                        Log in
                     </button>
-                </form>
 
-                <div class="login-role-guide">
-                    <strong>Phân quyền truy cập theo vai trò:</strong>
-                    <div class="role-badges-row">
-                        <span class="role-pill-sm role-tag SinhVien">SinhVien (Public)</span>
-                        <span class="role-pill-sm role-tag GiangVien">GiangVien (+Internal)</span>
-                        <span class="role-pill-sm role-tag QuanTri">QuanTri (Full)</span>
+                    <button type="button" class="btn-pill-secondary" onclick="quickSelectUser('user1@studyhub.vn')">
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                        </svg>
+                        <span>Đăng nhập nhanh với Sinh viên</span>
+                    </button>
+
+                    <div class="form-bottom-hint">
+                        Chọn vai trò thử nghiệm:
+                        <div class="quick-role-picker">
+                            <span class="quick-role-chip" onclick="quickSelectUser('user1@studyhub.vn')">Sinh viên</span>
+                            <span class="quick-role-chip" onclick="quickSelectUser('user3@studyhub.vn')">Giảng viên</span>
+                            <span class="quick-role-chip" onclick="quickSelectUser('admin@studyhub.vn')">Quản trị</span>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const pwd = document.getElementById('password');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+            } else {
+                pwd.type = 'password';
+            }
+        }
+
+        function quickSelectUser(email) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = '123456789';
+        }
+    </script>
 </body>
 </html>
