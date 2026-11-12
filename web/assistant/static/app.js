@@ -297,7 +297,6 @@ function createNewChat() {
     const chatContainer = document.getElementById("chatMessages");
     chatContainer.innerHTML = `
         <div class="zynovate-hero-canvas">
-            <div class="glowing-orb"></div>
             <h2 class="zyn-hero-title">
                 Cuộc trò chuyện mới
             </h2>

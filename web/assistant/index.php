@@ -48,14 +48,14 @@ $isControlled = ($config['mode'] === 'controlled');
             <!-- Search conversations -->
             <div class="sidebar-search-box">
                 <span class="search-icon-left">🔍</span>
-                <input type="text" id="searchTestInput" class="sidebar-search-input" placeholder="Tìm kiếm tài liệu & ca test..." oninput="filterSampleQueries(this.value)">
+                <input type="text" id="searchTestInput" class="sidebar-search-input" placeholder="Search" oninput="filterSampleQueries(this.value)">
                 <span class="search-icon-right">⌘K</span>
             </div>
 
             <!-- Khu vực lưu các đoạn chat cũ (Saved Chat Sessions) -->
             <div id="chatHistorySection" style="display: none; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--zyn-border);">
                 <div class="recent-header-row" style="padding: 2px 6px 6px;">
-                    <span class="recent-title" style="color: var(--zyn-primary);">💬 Đoạn chat đã lưu</span>
+                    <span class="recent-title" style="color: var(--zyn-primary);">CHATS</span>
                     <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Xóa tất cả chat cũ">Xóa hết</span>
                 </div>
                 <div id="savedChatList" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;"></div>
@@ -110,9 +110,6 @@ $isControlled = ($config['mode'] === 'controlled');
                         <span>⚙️</span> Cấu hình
                     </a>
 
-                    <!-- Huy hiệu trạng thái -->
-                    <span id="currentModeBadge" class="badge-mode <?= $isControlled ? 'controlled' : 'baseline' ?>">
-                        <?= $isControlled ? '🛡️ Controlled Mode' : '⚠️ Baseline Mode' ?>
                     </span>
                     <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role']) ?>">
                         <?= htmlspecialchars($user['role']) ?>
@@ -127,14 +124,13 @@ $isControlled = ($config['mode'] === 'controlled');
 
             <!-- Vùng hiển thị tin nhắn & Hero Orb -->
             <div id="chatMessages" class="chat-messages">
-                <!-- Zynovate Glowing Orb Hero (Khi mở đầu) -->
+                <!-- Zynovate Hero (Khi mở đầu) -->
                 <div class="zynovate-hero-canvas">
-                    <div class="glowing-orb"></div>
                     <h2 class="zyn-hero-title">
                         Xin chào, <span><?= htmlspecialchars($user['full_name']) ?></span>
                     </h2>
                     <p class="zyn-hero-subtitle">
-                        Hôm nay bạn cần hỗ trợ gì? Trợ lý AI sẵn sàng giải đáp học vụ, quy chế và tra cứu hồ sơ nhà trường với khung bảo mật RBAC toàn trình.
+                        Hôm nay bạn cần hỗ trợ gì? Trợ lý AI sẵn sàng giải đáp mọi vấn đề của bạn.
                     </p>
 
                     <!-- 4 Feature Action Cards (như trong ảnh mẫu) -->
@@ -194,7 +190,7 @@ $isControlled = ($config['mode'] === 'controlled');
                             type="text" 
                             id="queryInput" 
                             class="chat-input" 
-                            placeholder="Ask me anything... (Hỏi trợ lý AI hoặc chọn thẻ kiểm thử phía trên)"
+                            placeholder="Ask me anything... "
                             autocomplete="off"
                         />
                     </div>
