@@ -82,13 +82,14 @@ CONFIG: Dict[str, Any] = {
         "ignore previous instructions", "bypass security"
     ],
     
-    # Cấu hình kiểm soát phân quyền truy xuất (Pre-retrieval Access Control)
-    "ENABLE_PERMISSION_CHECK": True, # Bật/tắt lọc quyền theo role trước truy xuất
-    "ENABLE_RELEVANCE_GATE": True,   # Bật/tắt Relevance Gate lọc tài liệu lạc đề / cá nhân
-    
-    # Cấu hình bộ lọc an toàn đầu ra (P5.0)
-    "ENABLE_OUTPUT_FILTER": True,    # Bật/tắt toàn bộ Output Filter
-    "STRICT_OUTPUT_FILTER": True,    # Chặn toàn bộ phản hồi (BLOCK) nếu vi phạm nghiêm trọng
+    # Cấu hình kiểm soát phân quyền RBAC & Pre-retrieval (Nhiệm vụ Thảo: Baseline vs Controlled)
+    "ENABLE_RBAC_PRERETRIEVAL": True, # True: Chế độ Controlled (có RBAC & Pre-retrieval) | False: Chế độ Baseline (truy xuất toàn bộ 96 docs)
+    "ENABLE_PERMISSION_CHECK": True,  # Alias tương thích ngược cho ENABLE_RBAC_PRERETRIEVAL
+    "ENABLE_RELEVANCE_GATE": True,    # True: Kiểm tra mức độ liên quan chủ đề | False: Truy xuất thuần theo từ khóa
+
+    # Cấu hình bộ lọc an toàn đầu ra (P5.0 - Nhiệm vụ Nhung)
+    "ENABLE_OUTPUT_FILTER": True,     # True: Chế độ Controlled (bật bộ lọc an toàn đầu ra) | False: Chế độ Baseline (tắt lọc)
+    "STRICT_OUTPUT_FILTER": True,     # Chặn toàn bộ phản hồi nếu vi phạm nghiêm trọng (lộ tài liệu Mật)
 
     # Cấu hình nhật ký bảo mật (P6.0)
     "ENABLE_AUDIT_LOG": True,
@@ -340,26 +341,25 @@ def p3_retrieve_authorized_documents(
     rag_engine: RAGEngine
 ) -> List[Dict[str, Any]]:
     """
-    [P3.0] Truy xuất tài liệu liên quan:
-    - Nếu ENABLE_PERMISSION_CHECK=True (Controlled): Lọc theo quyền hạn của user_role.
-    - Nếu ENABLE_PERMISSION_CHECK=False (Baseline): Tìm kiếm trên toàn bộ tài liệu (Public + Internal + Restricted).
-    - Nếu ENABLE_RELEVANCE_GATE=True: Lọc bỏ tài liệu lạc đề / hỏi dữ liệu cá nhân.
+    [P3.0] Truy xuất tài liệu liên quan áp dụng Pre-retrieval Access Control:
+    - Nếu ENABLE_RBAC_PRERETRIEVAL = True (Controlled): Lọc tài liệu theo vai trò user_role.
+    - Nếu ENABLE_RBAC_PRERETRIEVAL = False (Baseline): Bỏ qua kiểm tra quyền, truy xuất toàn bộ (như vai trò QuanTri).
+    - Áp dụng Relevance Gate nếu ENABLE_RELEVANCE_GATE = True.
     """
-    if CONFIG.get("ENABLE_PERMISSION_CHECK", True):
-        candidate_docs = rag_engine.retrieve_context(
-            query=query, 
-            user_role=user_role, 
-            top_k=CONFIG["TOP_K_DOCUMENTS"]
-        )
+    enable_rbac = CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", CONFIG.get("ENABLE_PERMISSION_CHECK", True))
+    if enable_rbac:
+        effective_role = user_role
     else:
-        # Chế độ Baseline: Không lọc phân quyền trước, tìm kiếm trong toàn bộ tài liệu (tương đương QuanTri)
-        candidate_docs = rag_engine.retrieve_context(
-            query=query, 
-            user_role="QuanTri", 
-            top_k=CONFIG["TOP_K_DOCUMENTS"]
-        )
+        # Chế độ Baseline: bỏ qua phân quyền, cho phép tìm kiếm trên toàn bộ 96 tài liệu
+        effective_role = "QuanTri"
+
+    candidate_docs = rag_engine.retrieve_context(
+        query=query, 
+        user_role=effective_role, 
+        top_k=CONFIG["TOP_K_DOCUMENTS"]
+    )
     
-    # Áp dụng Relevance Gate nếu được bật
+    # Lọc chỉ giữ lại các tài liệu thực sự phù hợp với câu hỏi nếu bật Relevance Gate
     if CONFIG.get("ENABLE_RELEVANCE_GATE", True):
         relevant_docs = [doc for doc in candidate_docs if is_document_relevant(query, doc, user_role)]
     else:
@@ -517,8 +517,15 @@ def execute_end_to_end_pipeline(
     # -------------------------------------------------------------------------
     # Bước 2: PermissionChecker xác định các mức tài liệu được phép truy cập
     # -------------------------------------------------------------------------
-    allowed_classifications = components.permission_checker.get_allowed_classifications(user_role)
-    allowed_doc_ids = components.permission_checker.get_allowed_doc_ids(user_role)
+    enable_rbac = CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", True)
+    if enable_rbac:
+        allowed_classifications = components.permission_checker.get_allowed_classifications(user_role)
+        allowed_doc_ids = components.permission_checker.get_allowed_doc_ids(user_role)
+    else:
+        # Chế độ Baseline: Không áp dụng RBAC Pre-retrieval, coi như được truy cập toàn bộ tài liệu
+        allowed_classifications = ["Public", "Internal", "Restricted"]
+        allowed_doc_ids = set(components.permission_checker._metadata_by_id.keys())
+
     cls_str = ", ".join(allowed_classifications) if allowed_classifications else "Không có"
     print(f"[Bước 2 - PermissionChecker]: Mức tài liệu được phép truy cập: [{cls_str}] ({len(allowed_doc_ids)} tài liệu hợp lệ)")
     
@@ -533,8 +540,8 @@ def execute_end_to_end_pipeline(
     )
 
     # Defense-in-depth: dù Retriever phải lọc quyền trước retrieval, main.py vẫn
-    # kiểm tra lại ID tài liệu trước khi đưa context sang LLM (nếu ENABLE_PERMISSION_CHECK=True).
-    if CONFIG.get("ENABLE_PERMISSION_CHECK", True):
+    # kiểm tra lại ID tài liệu trước khi đưa context sang LLM (chỉ áp dụng ở Controlled mode).
+    if enable_rbac:
         unauthorized_docs = [
             d for d in retrieved_docs
             if d.get("doc_id") not in allowed_doc_ids

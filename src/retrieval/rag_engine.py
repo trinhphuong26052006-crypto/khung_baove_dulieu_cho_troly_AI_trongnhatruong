@@ -15,6 +15,14 @@ Kiến trúc luồng xử lý:
 """
 
 import os
+import sys
+from pathlib import Path
+
+# Đảm bảo đường dẫn gốc của dự án luôn có trong sys.path khi chạy trực tiếp file
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import json
 from typing import List, Dict, Any, Optional
 

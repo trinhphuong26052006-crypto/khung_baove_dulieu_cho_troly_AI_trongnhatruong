@@ -42,12 +42,14 @@ def set_security_mode(mode: str) -> None:
     if mode.upper() == "BASELINE":
         CONFIG["ENABLE_INPUT_VALIDATION"] = False
         CONFIG["ENABLE_PERMISSION_CHECK"] = False
+        CONFIG["ENABLE_RBAC_PRERETRIEVAL"] = False
         CONFIG["ENABLE_RELEVANCE_GATE"] = False
         CONFIG["ENABLE_OUTPUT_FILTER"] = False
         CONFIG["STRICT_OUTPUT_FILTER"] = False
     elif mode.upper() == "CONTROLLED":
         CONFIG["ENABLE_INPUT_VALIDATION"] = True
         CONFIG["ENABLE_PERMISSION_CHECK"] = True
+        CONFIG["ENABLE_RBAC_PRERETRIEVAL"] = True
         CONFIG["ENABLE_RELEVANCE_GATE"] = True
         CONFIG["ENABLE_OUTPUT_FILTER"] = True
         CONFIG["STRICT_OUTPUT_FILTER"] = True
