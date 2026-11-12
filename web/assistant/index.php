@@ -41,15 +41,24 @@ $isControlled = ($config['mode'] === 'controlled');
             </div>
 
             <!-- Nút + New Chat -->
-            <button class="btn-zyn-newchat" onclick="location.reload()">
+            <button class="btn-zyn-newchat" onclick="createNewChat()">
                 <span>+</span> New chat
             </button>
 
             <!-- Search conversations -->
             <div class="sidebar-search-box">
                 <span class="search-icon-left">🔍</span>
-                <input type="text" id="searchTestInput" class="sidebar-search-input" placeholder="Search test cases..." oninput="filterSampleQueries(this.value)">
+                <input type="text" id="searchTestInput" class="sidebar-search-input" placeholder="Tìm kiếm tài liệu & ca test..." oninput="filterSampleQueries(this.value)">
                 <span class="search-icon-right">⌘K</span>
+            </div>
+
+            <!-- Khu vực lưu các đoạn chat cũ (Saved Chat Sessions) -->
+            <div id="chatHistorySection" style="display: none; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--zyn-border);">
+                <div class="recent-header-row" style="padding: 2px 6px 6px;">
+                    <span class="recent-title" style="color: var(--zyn-primary);">💬 Đoạn chat đã lưu</span>
+                    <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Xóa tất cả chat cũ">Xóa hết</span>
+                </div>
+                <div id="savedChatList" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;"></div>
             </div>
 
             <!-- Quick Navigation Menu -->
@@ -252,15 +261,6 @@ $isControlled = ($config['mode'] === 'controlled');
             const input = document.getElementById('queryInput');
             input.value = text;
             input.focus();
-        }
-
-        function filterSampleQueries(keyword) {
-            const items = document.querySelectorAll('.sidebar-recent-list .query-item');
-            const kw = keyword.toLowerCase().trim();
-            items.forEach(el => {
-                const text = el.innerText.toLowerCase();
-                el.style.display = text.includes(kw) ? 'flex' : 'none';
-            });
         }
     </script>
     <script src="static/app.js"></script>
