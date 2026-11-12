@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 require_once __DIR__ . '/auth_check.php';
 
 // Kiểm tra phiên đăng nhập và cấu hình
@@ -16,94 +14,228 @@ $isControlled = ($config['mode'] === 'controlled');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Trợ Lý AI Nhà Trường - ATTT RAG</title>
+    <title>Trợ Lý AI Nhà Trường - ATTT RAG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/style.css">
     <style>
-        .navbar-user-box {
+        /* Font Family toàn cục */
+        body, input, button, select, textarea {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        }
+
+        /* Tinh chỉnh Navbar Header */
+        .chat-header {
+            height: 70px;
+            padding: 0 32px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-left {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding-left: 12px;
-            border-left: 1px solid var(--card-border);
-            margin-left: 8px;
         }
-        .navbar-user-info {
-            display: flex;
-            flex-direction: column;
-            text-align: right;
+
+        .chat-header-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #03195b;
+            letter-spacing: -0.02em;
         }
-        .navbar-user-name {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #f3f4f6;
-            line-height: 1.2;
-        }
-        .navbar-user-email {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        .btn-navbar-logout {
-            color: #fca5a5;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 5px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
+
+        .header-badges {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 12px;
         }
-        .btn-navbar-logout:hover {
-            background: #ef4444;
-            color: white;
-            border-color: #ef4444;
+
+        .btn-change-mode {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #1951fc;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 4px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-change-mode:hover {
+            background: #1951fc;
+            color: #ffffff;
+        }
+
+        /* Sidebar hiện đại hơn */
+        .sidebar {
+            width: 320px;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .sidebar-header {
+            height: 70px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-brand-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #03195b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+        }
+
+        .sidebar-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+
+        .test-cases-count {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* Zyricon Floating Input Box */
+        .chat-input-area {
+            padding: 16px 36px 24px;
+            background: transparent;
+        }
+
+        .input-box-wrapper {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 8px 12px 8px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .input-box-wrapper:focus-within {
+            border-color: #1951fc;
+            box-shadow: 0 12px 35px rgba(25, 81, 252, 0.15);
+        }
+
+        .input-sparkle-icon {
+            font-size: 1.2rem;
+            color: #1951fc;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e293b;
+            background: transparent;
+            padding: 8px 0;
+        }
+
+        .chat-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #1951fc 0%, #3781fc 100%);
+            border: none;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(25, 81, 252, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 18px rgba(25, 81, 252, 0.45);
+        }
+
+        .send-btn:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Bên Trái: Cấu hình Role & Danh mục -->
+        <!-- Sidebar Bên Trái: Danh Sách 40 Ca Test -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div>
-                    <div class="brand-title">
-                        <span>🛡️</span> ATTT AI ASSISTANT
-                    </div>
-                    <div class="brand-subtitle">Khung bảo vệ dữ liệu toàn trình (XAMPP)</div>
+                <div class="sidebar-brand-name">
+                    <span>🛡️</span> ATTT ASSISTANT
                 </div>
             </div>
 
             <div class="sidebar-content">
-                <!-- Vai trò người dùng (Lấy trực tiếp từ tài khoản đăng nhập) -->
                 <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role']) ?>">
 
-                <!-- Câu hỏi mẫu chuẩn hóa (40 Ca Kiểm thử - Nhiệm vụ Phương) -->
-                <div>
-                    <div class="sidebar-section-title" style="margin-top: 4px;">CÂU HỎI MẪU (TEST CASES)</div>
-                    <div id="sampleQueryList">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); padding: 8px;">Đang tải 40 ca test...</div>
-                    </div>
+                <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">BỘ KIỂM THỬ THỰC NGHIỆM</span>
+                    <span class="test-cases-count">40 CA TEST</span>
+                </div>
+
+                <div id="sampleQueryList">
+                    <div style="font-size: 0.78rem; color: #94a3b8; padding: 12px; text-align: center;">Đang nạp dữ liệu kiểm thử...</div>
                 </div>
             </div>
         </aside>
 
-        <!-- Vùng Chat Chính -->
+        <!-- Vùng Chat Chính (Khung Hội Thoại) -->
         <main class="chat-main">
             <!-- Header phía trên -->
             <header class="chat-header">
-                <div class="chat-header-title">
-                    <span>💬 HỘI THOẠI HỎI ĐÁP HỌC VỤ & BẢO MẬT</span>
+                <div class="chat-header-left">
+                    <span class="chat-header-title">Hội Thoại Trợ Lý AI Học Vụ & Bảo Mật</span>
+                    <a href="setup.php" class="btn-change-mode" title="Nhấn để đổi chế độ">⚙️ Đổi Chế Độ</a>
                 </div>
+
                 <div class="header-badges">
                     <span id="currentModeBadge" class="badge-mode <?= $isControlled ? 'controlled' : 'baseline' ?>">
-                        <?= $isControlled ? '🛡️ Controlled Mode' : '⚠️ Baseline Mode' ?>
+                        <?= $isControlled ? '🛡️ Controlled (Có bảo vệ)' : '⚠️ Baseline (Không bảo vệ)' ?>
                     </span>
                     <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role']) ?>"><?= htmlspecialchars($user['role']) ?></span>
 
-                    <!-- Thông tin người dùng đăng nhập & Nút Đăng xuất trên Navbar -->
+                    <!-- Profile & Nút Đăng Xuất -->
                     <div class="navbar-user-box">
                         <div class="navbar-user-info">
                             <span class="navbar-user-name"><?= htmlspecialchars($user['full_name']) ?></span>
@@ -127,34 +259,35 @@ $isControlled = ($config['mode'] === 'controlled');
                     <div class="ai-avatar">AI</div>
                     <div class="ai-bubble">
                         <div class="ai-meta-header">
-                            <strong>Trợ lý Trí tuệ Nhân tạo Nhà trường</strong>
+                            <strong style="color: #03195b; font-weight: 800;">Trợ Lý AI Nhà Trường</strong>
                             <span class="status-pill PASSED">READY</span>
                         </div>
                         <div>
                             Xin chào <strong><?= htmlspecialchars($user['full_name']) ?></strong>! Bạn đang đăng nhập với vai trò <strong class="role-tag <?= htmlspecialchars($user['role']) ?>"><?= htmlspecialchars($user['role']) ?></strong>.
                             <br><br>
-                            Hệ thống đang hoạt động ở chế độ <strong style="color: var(--blue-primary);"><?= $isControlled ? 'Controlled (Kích hoạt đầy đủ RBAC & Guardrails)' : 'Baseline (Tắt kiểm soát phân quyền)' ?></strong>.
+                            Hệ thống đang hoạt động ở chế độ <strong style="color: #1951fc;"><?= $isControlled ? 'Controlled (Kích hoạt đầy đủ RBAC Pre-retrieval & Output Guardrails)' : 'Baseline (Tắt tiền lọc phân quyền để đo lường rò rỉ)' ?></strong>.
                             <br><br>
-                            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 16px; border-radius: 10px; margin-top: 8px; font-size: 0.85rem; color: var(--blue-darkest);">
-                                💡 <strong>Gợi ý:</strong> Bạn có thể nhập câu hỏi trực tiếp vào khung chat bên dưới hoặc click chọn nhanh các ca kiểm thử (Normal & Attack) ở menu bên trái để kiểm tra khả năng phòng vệ dữ liệu.
+                            <div style="background: #f0f7ff; border: 1px solid #bfdbfe; padding: 14px 18px; border-radius: 12px; margin-top: 10px; font-size: 0.88rem; color: #03195b; line-height: 1.6;">
+                                💡 <strong>Gợi ý thao tác:</strong> Nhập câu hỏi tự nhiên về quy chế, học phí, biểu mẫu vào khung chat bên dưới hoặc click chọn nhanh các ca kiểm thử (Normal & Attack) ở danh sách bên trái để kiểm tra phản ứng của hệ thống an toàn thông tin.
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Khung nhập câu hỏi bên dưới -->
+            <!-- Khung nhập câu hỏi bên dưới (Zyricon Floating Style) -->
             <div class="chat-input-area">
                 <form id="chatForm" class="input-box-wrapper" onsubmit="handleSendMessage(event)">
+                    <span class="input-sparkle-icon">✨</span>
                     <input 
                         type="text" 
                         id="queryInput" 
                         class="chat-input" 
-                        placeholder="Nhập câu hỏi của bạn (hoặc chọn câu hỏi mẫu bên trái)..."
+                        placeholder="Hỏi trợ lý AI về quy chế, học vụ, học phí (hoặc chọn ca test bên trái)..."
                         autocomplete="off"
                     />
                     <button type="submit" id="sendBtn" class="send-btn" title="Gửi câu hỏi">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                         </svg>
@@ -169,9 +302,9 @@ $isControlled = ($config['mode'] === 'controlled');
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <h4 id="modalDocTitle" style="font-size: 0.95rem; margin-bottom: 4px;">Chi tiết văn bản</h4>
+                    <h4 id="modalDocTitle" style="font-size: 1rem; font-weight: 800; color: #03195b; margin-bottom: 4px;">Chi tiết văn bản</h4>
                     <span id="modalDocClassification" class="source-tag Public">Public</span>
-                    <span id="modalDocId" style="font-size: 0.75rem; color: var(--text-muted); margin-left: 8px;"></span>
+                    <span id="modalDocId" style="font-size: 0.78rem; color: var(--text-muted); margin-left: 8px;"></span>
                 </div>
                 <button class="close-btn" onclick="closeDocModal()">&times;</button>
             </div>
@@ -182,7 +315,6 @@ $isControlled = ($config['mode'] === 'controlled');
     </div>
 
     <script>
-        // Cấu hình URL endpoint cho môi trường XAMPP PHP
         window.API_BASE = 'api.php';
     </script>
     <script src="static/app.js"></script>
