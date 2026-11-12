@@ -6,3 +6,4 @@ Bạn có thể copy hoặc đổi tên hình ảnh vào thư mục này để h
 
 *Đường dẫn đầy đủ trên máy tính của bạn:*
 `D:\Xampp\htdocs\AI_attt\web\assistant\assets\images\`
+
