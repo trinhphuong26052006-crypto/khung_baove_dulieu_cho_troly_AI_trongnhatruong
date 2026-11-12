@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/auth_check.php';
 
 // Chưa đăng nhập thì quay về trang Login

@@ -2,7 +2,9 @@
 /**
  * Helper kết nối CSDL MySQL và xác thực tài khoản
  */
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 function get_db_connection() {
     $configFile = dirname(__DIR__) . '/config/database.local.php';

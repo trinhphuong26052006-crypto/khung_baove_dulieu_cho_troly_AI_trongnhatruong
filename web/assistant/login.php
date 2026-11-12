@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/auth_check.php';
 
 // Nếu đã đăng nhập và đã cấu hình, chuyển thẳng vào index.php
