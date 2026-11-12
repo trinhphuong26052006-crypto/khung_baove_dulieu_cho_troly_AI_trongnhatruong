@@ -451,16 +451,19 @@ body {
     background: #f8faff;
 }
 
-.btn-upgrade-pill {
+.zyn-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
     background: var(--zyn-primary-gradient);
-    color: #ffffff !important;
-    border: none !important;
-    box-shadow: var(--zyn-btn-glow);
-}
-
-.btn-upgrade-pill:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+    user-select: none;
+    cursor: default;
 }
 
 /* Badges */

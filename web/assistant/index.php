@@ -14,7 +14,7 @@ $isControlled = ($config['mode'] === 'controlled');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zynovate AI - Trợ Lý Học Vụ & An Toàn Thông Tin</title>
+    <title> AI Assistant - Trợ Lý Học Vụ & An Toàn Thông Tin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,10 +33,10 @@ $isControlled = ($config['mode'] === 'controlled');
 
             <!-- Logo Zynovate -->
             <div class="sidebar-brand-box">
-                <div class="brand-icon-logo">Z</div>
+                <div class="brand-icon-logo">AI</div>
                 <div class="brand-name-group">
-                    <span class="brand-main-text">Zynovate</span>
-                    <span class="brand-slogan-text">AI ASSISTANT &bull; ATTT</span>
+                    <span class="brand-main-text">ASSISTANT</span>
+                    <span class="brand-slogan-text">AI Assistant Data Protection Framework for Schools</span>
                 </div>
             </div>
 
@@ -106,8 +106,7 @@ $isControlled = ($config['mode'] === 'controlled');
                 <div class="header-left-tools">
                     <div class="model-pill-selector">
                         <span class="model-spark-dot"></span>
-                        <span>Zynovate RAG</span>
-                        <span style="color: #94a3b8; font-size: 0.75rem;">v2.0 &bull; Llama 3.2</span>
+                        <span>Q&A</span>
                     </div>
                 </div>
 
@@ -125,10 +124,10 @@ $isControlled = ($config['mode'] === 'controlled');
                         <?= htmlspecialchars($user['role']) ?>
                     </span>
 
-                    <!-- Nút Đổi Chế Độ nổi bật dạng Upgrade -->
-                    <a href="setup.php" class="header-action-btn btn-upgrade-pill">
-                        <span>✨</span> <?= $isControlled ? 'Đang bảo vệ' : 'Chuyển sang Controlled' ?>
-                    </a>
+                    <!-- Huy hiệu trạng thái bảo vệ (Tĩnh, không có liên kết, không nhấp nháy khi di chuột) -->
+                    <span class="zyn-status-badge">
+                        <span>✨</span> <?= $isControlled ? 'Đang bảo vệ (Controlled)' : 'Đối chứng (Baseline)' ?>
+                    </span>
                 </div>
             </header>
 
