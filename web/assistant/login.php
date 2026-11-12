@@ -85,7 +85,7 @@ if (!file_exists(__DIR__ . '/' . $customImage)) {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: #eef1f6;
+            background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 40%, #fdf2f8 80%, #f0f4ff 100%);
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             display: flex;
             align-items: center;

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .setup-page-bg {
             min-height: 100vh;
             width: 100vw;
-            background: #f4f7fc;
+            background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 40%, #fdf2f8 80%, #f0f4ff 100%);
             display: flex;
             align-items: center;
             justify-content: center;
