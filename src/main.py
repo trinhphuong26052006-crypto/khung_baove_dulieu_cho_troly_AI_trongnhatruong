@@ -92,7 +92,8 @@ CONFIG: Dict[str, Any] = {
     # Cấu hình nhật ký bảo mật (P6.0)
     "ENABLE_AUDIT_LOG": True,
     "AUDIT_RETENTION_DAYS": 30,
-    "AUDIT_LOG_FILE": os.path.join(PROJECT_ROOT, "data", "logs", "security_audit.log"),
+"AUDIT_LOG_FILE": str(PROJECT_ROOT / "logs" / "security_audit.jsonl"),
+
     
     # Tùy chọn hiển thị chi tiết (Debug/Verbose mode)
     "VERBOSE_DEBUG": False
