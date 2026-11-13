@@ -1,470 +1,687 @@
 /**
- * ============================================================================
  * TRỢ LÝ AI NHÀ TRƯỜNG - FRONTEND JAVASCRIPT
- * Hỗ trợ: Lưu phiên chat cũ (New Chat), Tìm kiếm từ khóa thông minh
- * ============================================================================
+ * Chat AI, RBAC, lịch sử hội thoại và nguồn tham khảo.
  */
 
 let rolesData = {};
 let sampleQueries = [];
-let currentChatHistory = []; // Lưu các lượt hỏi đáp của phiên chat hiện tại
+let currentChatHistory = [];
+let currentSessionId = "session_" + Date.now();
 
-// Key localStorage riêng cho từng tài khoản đăng nhập
 function getChatStorageKey() {
-    const emailEl = document.getElementById("currentUserEmail");
-    const userEmail = emailEl ? emailEl.value : "default";
-    return "ai_chat_sessions_" + userEmail;
+  const emailEl = document.getElementById("currentUserEmail");
+  const userEmail = emailEl ? emailEl.value : "default";
+  return "ai_chat_sessions_" + userEmail;
 }
 
 function getApiUrl(endpoint, params = {}) {
-    if (window.API_BASE === 'api.php') {
-        const query = new URLSearchParams({ action: endpoint, ...params }).toString();
-        return `api.php?${query}`;
-    }
-    const query = new URLSearchParams(params).toString();
-    return query ? `/api/${endpoint}?${query}` : `/api/${endpoint}`;
+  if (window.API_BASE === "api.php") {
+    const query = new URLSearchParams({
+      action: endpoint,
+      ...params,
+    }).toString();
+    return `api.php?${query}`;
+  }
+
+  const query = new URLSearchParams(params).toString();
+  return query ? `/api/${endpoint}?${query}` : `/api/${endpoint}`;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await loadRoles();
-    await loadConfig();
-    await loadSampleQueries();
-    renderSavedChatSessions();
+  await Promise.all([loadRoles(), loadConfig(), loadSampleQueries()]);
 
-    // Hỗ trợ phím tắt ⌘K / Ctrl+K để focus vào ô tìm kiếm
-    document.addEventListener("keydown", (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-            e.preventDefault();
-            const searchInput = document.getElementById("searchTestInput");
-            if (searchInput) searchInput.focus();
-        }
-    });
+  renderSavedChatSessions();
+
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      document.getElementById("searchTestInput")?.focus();
+    }
+  });
 });
 
+// ============================================================
+// 1. TẢI VAI TRÒ VÀ CẤU HÌNH
+// ============================================================
+
 async function loadRoles() {
-    try {
-        const res = await fetch(getApiUrl("roles"));
-        rolesData = await res.json();
-    } catch (err) {
-        console.error("Lỗi khi tải vai trò:", err);
-    }
+  try {
+    const res = await fetch(getApiUrl("roles"), {
+      credentials: "same-origin",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    rolesData = await res.json();
+  } catch (err) {
+    console.error("Lỗi khi tải vai trò:", err);
+  }
 }
 
 async function loadConfig() {
-    try {
-        const res = await fetch(getApiUrl("config"));
-        const cfg = await res.json();
-        const badge = document.getElementById("currentModeBadge");
-        if (badge) {
-            const isControlled = cfg.ENABLE_RBAC_PRERETRIEVAL !== false;
-            badge.className = `badge-mode ${isControlled ? 'controlled' : 'baseline'}`;
-            badge.innerText = isControlled ? '🛡️ Controlled Mode' : '⚠️ Baseline Mode';
-        }
-    } catch (err) {
-        console.error("Lỗi tải cấu hình:", err);
-    }
+  try {
+    const res = await fetch(getApiUrl("config"), {
+      credentials: "same-origin",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const cfg = await res.json();
+    const badge = document.getElementById("currentModeBadge");
+    if (!badge) return;
+
+    const rbac = cfg.ENABLE_RBAC_PRERETRIEVAL === true;
+    const filter = cfg.ENABLE_OUTPUT_FILTER === true;
+
+    const mode =
+      rbac && filter ? "Controlled" : !rbac && !filter ? "Baseline" : "Custom";
+
+    badge.textContent =
+      mode === "Controlled"
+        ? "✨ Đang bảo vệ (Controlled)"
+        : mode === "Baseline"
+          ? "⚠️ Đối chứng (Baseline)"
+          : "⚙️ Cấu hình tùy chỉnh";
+
+    badge.dataset.mode = mode;
+  } catch (err) {
+    console.error("Không tải được cấu hình:", err);
+  }
 }
 
+// ============================================================
+// 2. DANH SÁCH CÂU HỎI KIỂM THỬ
+// ============================================================
+
 async function loadSampleQueries() {
-    const listEl = document.getElementById("sampleQueryList");
-    try {
-        const res = await fetch(getApiUrl("sample-queries"));
-        sampleQueries = await res.json();
-        renderSampleQueryList(sampleQueries);
-    } catch (err) {
-        listEl.innerHTML = '<div style="font-size: 0.75rem; color: #f87171; padding: 8px;">Lỗi tải câu hỏi mẫu</div>';
+  const listEl = document.getElementById("sampleQueryList");
+
+  try {
+    const res = await fetch(getApiUrl("sample-queries"), {
+      credentials: "same-origin",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    sampleQueries = Array.isArray(data) ? data : [];
+
+    const count = document.getElementById("sampleQueryCount");
+    if (count) {
+      count.textContent = `${sampleQueries.length} Cases`;
     }
+
+    renderSampleQueryList(sampleQueries);
+  } catch (err) {
+    console.error("Lỗi tải câu hỏi mẫu:", err);
+    if (listEl) listEl.textContent = "Lỗi tải câu hỏi mẫu";
+  }
 }
 
 function renderSampleQueryList(queries) {
-    const listEl = document.getElementById("sampleQueryList");
-    if (!queries || queries.length === 0) {
-        listEl.innerHTML = '<div style="font-size: 0.78rem; color: #94a3b8; padding: 12px; text-align: center;">Không tìm thấy câu hỏi phù hợp</div>';
-        return;
-    }
+  const listEl = document.getElementById("sampleQueryList");
+  if (!listEl) return;
 
-    listEl.innerHTML = "";
-    queries.forEach((item) => {
-        const div = document.createElement("div");
-        div.className = "query-item";
-        const icon = item.category === "attack" ? "🛡️" : "💬";
-        div.innerHTML = `
+  listEl.innerHTML = "";
+
+  if (!Array.isArray(queries) || queries.length === 0) {
+    listEl.textContent = "Không tìm thấy câu hỏi phù hợp";
+    return;
+  }
+
+  queries.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "query-item";
+
+    const icon = item.category === "attack" ? "🛡️" : "💬";
+    const label = `[${item.role || "?"}] ${item.query || ""}`;
+
+    div.innerHTML = `
             <span class="query-item-icon">${icon}</span>
-            <span class="query-item-title" title="[${item.role}] ${escapeHtml(item.query)}">[${item.role}] ${escapeHtml(item.query)}</span>
+            <span class="query-item-title"
+                  title="${escapeHtml(label)}">
+                ${escapeHtml(label)}
+            </span>
         `;
-        div.onclick = () => selectSampleQuery(item);
-        listEl.appendChild(div);
-    });
+
+    div.addEventListener("click", () => selectSampleQuery(item));
+    listEl.appendChild(div);
+  });
 }
 
-/**
- * TÌM KIẾM THEO TỪ KHÓA THÔNG MINH (Không dấu, không phân biệt hoa thường)
- */
 function filterSampleQueries(keyword) {
-    const kw = removeVietnameseTones(keyword.trim().toLowerCase());
-    if (!kw) {
-        renderSampleQueryList(sampleQueries);
-        return;
-    }
+  const kw = removeVietnameseTones(
+    String(keyword || "")
+      .trim()
+      .toLowerCase(),
+  );
 
-    const filtered = sampleQueries.filter(item => {
-        const qText = removeVietnameseTones((item.query || "").toLowerCase());
-        const rText = removeVietnameseTones((item.role || "").toLowerCase());
-        const cText = removeVietnameseTones((item.category || "").toLowerCase());
-        const docId = removeVietnameseTones((item.target_doc_id || "").toLowerCase());
-        return qText.includes(kw) || rText.includes(kw) || cText.includes(kw) || docId.includes(kw);
+  if (!kw) {
+    renderSampleQueryList(sampleQueries);
+    renderSavedChatSessions();
+    return;
+  }
+
+  const filtered = sampleQueries.filter((item) => {
+    const fields = [item.query, item.role, item.category, item.target_doc_id];
+
+    return fields.some((field) => {
+      const value = removeVietnameseTones(String(field || "").toLowerCase());
+      return value.includes(kw);
     });
+  });
 
-    renderSampleQueryList(filtered);
+  renderSampleQueryList(filtered);
+  renderSavedChatSessions();
 }
 
 function selectSampleQuery(item) {
-    document.getElementById("queryInput").value = item.query;
-    document.getElementById("queryInput").focus();
+  const input = document.getElementById("queryInput");
+  if (!input) return;
+
+  input.value = item.query || "";
+  input.focus();
 }
 
-/**
- * GỬI CÂU HỎI & HỘI THOẠI
- */
+// ============================================================
+// 3. GỬI CÂU HỎI VÀ NHẬN PHẢN HỒI
+// ============================================================
+
 async function handleSendMessage(e) {
-    e.preventDefault();
-    const input = document.getElementById("queryInput");
-    const query = input.value.trim();
-    if (!query) return;
+  e.preventDefault();
 
-    const role = document.getElementById("roleSelect") ? document.getElementById("roleSelect").value : "SinhVien";
-    const sendBtn = document.getElementById("sendBtn");
+  const input = document.getElementById("queryInput");
+  const sendBtn = document.getElementById("sendBtn");
 
-    // Ẩn hero canvas khi bắt đầu cuộc trò chuyện
-    const heroCanvas = document.querySelector(".zynovate-hero-canvas");
-    if (heroCanvas) {
-        heroCanvas.style.display = "none";
+  if (!input || !sendBtn) return;
+
+  const query = input.value.trim();
+  if (!query || sendBtn.disabled) return;
+
+  const role = document.getElementById("roleSelect")?.value || "SinhVien";
+
+  document.querySelector(".zynovate-hero-canvas")?.remove();
+
+  appendUserMessage(query);
+
+  currentChatHistory.push({
+    type: "user",
+    text: query,
+    time: new Date().toLocaleTimeString("vi-VN"),
+  });
+
+  input.value = "";
+  sendBtn.disabled = true;
+
+  const loadingId = appendLoadingMessage();
+
+  try {
+    const res = await fetch(getApiUrl("chat"), {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, role }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.status === "ERROR" || data.error) {
+      throw new Error("Không thể xử lý yêu cầu. Vui lòng thử lại.");
     }
 
-    appendUserMessage(query);
-    currentChatHistory.push({ type: 'user', text: query, time: new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'}) });
-    input.value = "";
-    sendBtn.disabled = true;
+    removeMessage(loadingId);
+    appendAiResponse(data);
 
-    const loadingId = appendLoadingMessage();
+    currentChatHistory.push({
+      type: "ai",
+      data,
+    });
 
-    try {
-        const res = await fetch(getApiUrl("chat"), {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: query, role: role })
-        });
-        const data = await res.json();
+    saveCurrentSessionToStorage();
+  } catch (err) {
+    removeMessage(loadingId);
 
-        removeMessage(loadingId);
-        appendAiResponse(data);
-        currentChatHistory.push({ type: 'ai', data: data });
+    const message = err.message || "Đã xảy ra lỗi khi kết nối tới máy chủ.";
 
-        // Tự động lưu/cập nhật phiên chat hiện tại vào LocalStorage
-        saveCurrentSessionToStorage();
-    } catch (err) {
-        removeMessage(loadingId);
-        appendErrorMessage("Đã xảy ra lỗi khi kết nối tới máy chủ.");
-    } finally {
-        sendBtn.disabled = false;
-        input.focus();
-    }
+    appendErrorMessage(message);
+    saveCurrentSessionToStorage();
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
+  }
 }
 
 function appendUserMessage(text) {
-    const chatContainer = document.getElementById("chatMessages");
-    const container = document.createElement("div");
-    container.className = "user-message-container";
-    container.innerHTML = `<div class="user-bubble">${escapeHtml(text)}</div>`;
-    chatContainer.appendChild(container);
-    scrollToBottom();
+  const chatContainer = document.getElementById("chatMessages");
+  if (!chatContainer) return;
+
+  const container = document.createElement("div");
+  container.className = "user-message-container";
+
+  container.innerHTML = `
+        <div class="user-bubble">${escapeHtml(text)}</div>
+    `;
+
+  chatContainer.appendChild(container);
+  scrollToBottom();
 }
 
 function appendLoadingMessage() {
-    const id = "loading-" + Date.now();
-    const chatContainer = document.getElementById("chatMessages");
-    const container = document.createElement("div");
-    container.id = id;
-    container.className = "ai-message-container";
-    container.innerHTML = `
+  const id = "loading-" + Date.now();
+  const chatContainer = document.getElementById("chatMessages");
+
+  if (!chatContainer) return id;
+
+  const container = document.createElement("div");
+  container.id = id;
+  container.className = "ai-message-container";
+
+  container.innerHTML = `
         <div class="ai-avatar">AI</div>
-        <div class="ai-bubble" style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem;">
+        <div class="ai-bubble"
+             style="display:flex;align-items:center;gap:8px;
+                    color:var(--text-muted);font-size:0.85rem;">
             <span>Đang tra cứu quyền hạn và tổng hợp tài liệu...</span>
         </div>
     `;
-    chatContainer.appendChild(container);
-    scrollToBottom();
-    return id;
+
+  chatContainer.appendChild(container);
+  scrollToBottom();
+
+  return id;
 }
 
 function removeMessage(id) {
-    const el = document.getElementById(id);
-    if (el) el.remove();
+  document.getElementById(id)?.remove();
 }
 
+// ============================================================
+// 4. HIỂN THỊ CÂU TRẢ LỜI VÀ NGUỒN TÀI LIỆU
+// ============================================================
+
 function appendAiResponse(data) {
-    const chatContainer = document.getElementById("chatMessages");
-    const container = document.createElement("div");
-    container.className = "ai-message-container";
+  const chatContainer = document.getElementById("chatMessages");
+  if (!chatContainer) return;
 
-    const actionPill = data.action_taken || "PASSED";
-    const sources = data.sources || [];
+  const container = document.createElement("div");
+  container.className = "ai-message-container";
 
-    let sourcesHtml = "";
-    if (sources.length > 0) {
-        let cardsHtml = sources.map((s) => `
-            <div class="source-card">
-                <div class="source-card-header">
-                    <span class="source-title">
-                        📄 [${escapeHtml(s.doc_id)}] ${escapeHtml(s.title)}
-                    </span>
-                    <span class="source-tag ${s.classification}">${s.classification}</span>
-                </div>
-                <div class="source-snippet">
-                    "${escapeHtml(s.snippet)}"
-                </div>
-                <div class="source-actions">
-                    <button class="view-doc-btn" onclick="openDocModal('${s.doc_id}')">
-                        🔍 Xem tài liệu gốc
-                    </button>
-                </div>
-            </div>
-        `).join("");
+  const status = String(data.status || "UNKNOWN").toUpperCase();
+  const action = String(data.action_taken || "UNKNOWN").toUpperCase();
 
-        sourcesHtml = `
+  const denial =
+    data.denial_reason === "UNAUTHORIZED_DOCUMENT" ||
+    ["DENIED", "BLOCKED", "REJECTED_INPUT"].includes(status) ||
+    ["DENIED", "BLOCKED"].includes(action);
+
+  const rawSources = Array.isArray(data.sources) ? data.sources : [];
+
+  // Backend phải kiểm tra quyền truy cập trước khi trả sources.
+  // Frontend chỉ thực hiện kiểm soát cách hiển thị.
+  const sources = denial
+    ? []
+    : rawSources.filter((s) => s && s.doc_id && s.title);
+
+  const allowedActions = ["PASSED", "REDACTED", "BLOCKED", "DENIED"];
+
+  const safeAction = allowedActions.includes(action) ? action : "OTHER";
+
+  const latency = Number.isFinite(Number(data.latency_ms))
+    ? Math.round(Number(data.latency_ms))
+    : 0;
+
+  const answer =
+    denial && data.denial_reason === "UNAUTHORIZED_DOCUMENT"
+      ? "Bạn chưa có quyền truy cập tài liệu này. Vui lòng liên hệ bộ phận quản lý nếu cần hỗ trợ."
+      : String(data.answer || "Chưa có nội dung phản hồi.");
+
+  let sourcesHtml = "";
+
+  if (sources.length > 0) {
+    const cardsHtml = sources
+      .map((s) => {
+        const classification = ["Public", "Internal", "Restricted"].includes(
+          s.classification,
+        )
+          ? s.classification
+          : "";
+
+        return `
+                <div class="source-card">
+                    <div class="source-card-header">
+                        <span class="source-title">
+                            📄 [${escapeHtml(s.doc_id)}]
+                            ${escapeHtml(s.title)}
+                        </span>
+                        <span class="source-tag ${classification}">
+                            ${escapeHtml(s.classification || "")}
+                        </span>
+                    </div>
+
+                    <div class="source-snippet">
+                        ${escapeHtml(s.snippet || "")}
+                    </div>
+
+                    <div class="source-actions">
+                        <span class="source-preview-note">
+                            Nguồn tham khảo được hệ thống cho phép
+                        </span>
+                    </div>
+                </div>
+            `;
+      })
+      .join("");
+
+    sourcesHtml = `
             <div class="sources-container">
-                <div class="sources-header" onclick="toggleSources(this)">
-                    <span>📚 Nguồn trích dẫn (${sources.length} tài liệu)</span>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="sources-list">
+                <button type="button"
+                        class="sources-header"
+                        aria-expanded="false">
+                    <span>
+                        📚 Tài liệu tham khảo (${sources.length})
+                    </span>
+                    <span class="toggle-icon">▶</span>
+                </button>
+
+                <div class="sources-list" hidden>
                     ${cardsHtml}
                 </div>
             </div>
         `;
-    } else {
-        sourcesHtml = `
-            <div class="sources-container" style="border-top: none; margin-top: 8px;">
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">
-                    ℹ️ Không có tài liệu nào trong phạm vi được phép trích xuất.
-                </div>
-            </div>
-        `;
-    }
+  }
 
-    container.innerHTML = `
+  container.innerHTML = `
         <div class="ai-avatar">AI</div>
+
         <div class="ai-bubble">
             <div class="ai-meta-header">
                 <div>
-                    <strong>AI Assistant</strong> &bull; <span>${data.latency_ms || 0}ms</span> &bull; <span>${escapeHtml(data.mode || 'Controlled')}</span>
+                    <strong>AI Assistant</strong>
+                    &bull; <span>${latency}ms</span>
+                    &bull; <span>${escapeHtml(data.mode || "Controlled")}</span>
                 </div>
-                <span class="status-pill ${actionPill}">${actionPill}</span>
+
+                <span class="status-pill ${safeAction}">
+                    ${safeAction}
+                </span>
             </div>
-            <div style="white-space: pre-wrap;">${escapeHtml(data.answer)}</div>
+
+            <div class="ai-answer-text"
+                 style="white-space:pre-wrap">
+                ${escapeHtml(answer)}
+            </div>
+
             ${sourcesHtml}
         </div>
     `;
 
-    chatContainer.appendChild(container);
-    scrollToBottom();
+  const toggle = container.querySelector(".sources-header");
+  const sourceList = container.querySelector(".sources-list");
+
+  if (sourceList) {
+    sourceList.style.display = "none";
+  }
+
+  if (toggle) {
+    toggle.addEventListener("click", () => toggleSources(toggle));
+  }
+
+  chatContainer.appendChild(container);
+  scrollToBottom();
 }
 
 function appendErrorMessage(msg) {
-    const chatContainer = document.getElementById("chatMessages");
-    const container = document.createElement("div");
-    container.className = "ai-message-container";
-    container.innerHTML = `
-        <div class="ai-avatar" style="background: #ef4444;">!</div>
-        <div class="ai-bubble" style="border-color: #ef4444; color: #b91c1c;">
+  const chatContainer = document.getElementById("chatMessages");
+  if (!chatContainer) return;
+
+  const container = document.createElement("div");
+  container.className = "ai-message-container";
+
+  container.innerHTML = `
+        <div class="ai-avatar" style="background:#ef4444;">!</div>
+        <div class="ai-bubble"
+             style="border-color:#ef4444;color:#b91c1c;">
             ${escapeHtml(msg)}
         </div>
     `;
-    chatContainer.appendChild(container);
-    scrollToBottom();
+
+  chatContainer.appendChild(container);
+  scrollToBottom();
 }
 
-/**
- * ============================================================================
- * TÍNH NĂNG NEW CHAT & LƯU TRỮ CÁC ĐOẠN CHAT CŨ (LOCALSTORAGE)
- * ============================================================================
- */
-let currentSessionId = "session_" + Date.now();
+// ============================================================
+// 5. LƯU VÀ KHÔI PHỤC LỊCH SỬ CHAT
+// ============================================================
+
+function readSavedSessions() {
+  try {
+    const data = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
+
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.warn("Lịch sử Chat không hợp lệ:", err);
+    return [];
+  }
+}
 
 function createNewChat() {
-    // Nếu phiên hiện tại đã có tin nhắn thì lưu hoàn tất
-    if (currentChatHistory.length > 0) {
-        saveCurrentSessionToStorage();
-    }
+  if (currentChatHistory.length > 0) {
+    saveCurrentSessionToStorage();
+  }
 
-    // Reset lại màn hình chat mới
-    currentChatHistory = [];
-    currentSessionId = "session_" + Date.now();
+  currentChatHistory = [];
+  currentSessionId = "session_" + Date.now();
 
-    const chatContainer = document.getElementById("chatMessages");
+  const chatContainer = document.getElementById("chatMessages");
+
+  if (chatContainer) {
     chatContainer.innerHTML = `
-        <div class="zynovate-hero-canvas">
-            <h2 class="zyn-hero-title">
-                Cuộc trò chuyện mới
-            </h2>
-            <p class="zyn-hero-subtitle">
-                Hãy nhập câu hỏi bất kỳ về học vụ, quy chế hoặc thử nghiệm kiểm soát phân quyền RBAC.
-            </p>
-        </div>
-    `;
+            <div class="zynovate-hero-canvas">
+                <h2 class="zyn-hero-title">
+                    Cuộc trò chuyện mới
+                </h2>
+                <p class="zyn-hero-subtitle">
+                    Hãy nhập câu hỏi bất kỳ về học vụ, quy chế
+                    hoặc thử nghiệm kiểm soát phân quyền RBAC.
+                </p>
+            </div>
+        `;
+  }
 
-    document.getElementById("queryInput").value = "";
-    document.getElementById("queryInput").focus();
-    renderSavedChatSessions();
+  const input = document.getElementById("queryInput");
+  if (input) {
+    input.value = "";
+    input.focus();
+  }
+
+  renderSavedChatSessions();
 }
 
 function saveCurrentSessionToStorage() {
-    if (currentChatHistory.length === 0) return;
+  if (currentChatHistory.length === 0) return;
 
-    let sessions = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
-    const firstUserMsg = currentChatHistory.find(m => m.type === 'user');
-    const title = firstUserMsg ? firstUserMsg.text : "Đoạn chat mới";
+  const sessions = readSavedSessions();
 
-    const existingIdx = sessions.findIndex(s => s.id === currentSessionId);
-    const sessionData = {
-        id: currentSessionId,
-        title: title,
-        timestamp: new Date().toLocaleString('vi-VN'),
-        messages: currentChatHistory
-    };
+  const firstUserMsg = currentChatHistory.find((m) => m.type === "user");
 
-    if (existingIdx >= 0) {
-        sessions[existingIdx] = sessionData;
-    } else {
-        sessions.unshift(sessionData); // Đưa lên đầu
-    }
+  const title = firstUserMsg ? firstUserMsg.text : "Đoạn chat mới";
 
-    // Giữ tối đa 15 phiên chat gần nhất
-    if (sessions.length > 15) sessions = sessions.slice(0, 15);
+  const existingIdx = sessions.findIndex((s) => s.id === currentSessionId);
+
+  const sessionData = {
+    id: currentSessionId,
+    title,
+    timestamp: new Date().toLocaleString("vi-VN"),
+    messages: currentChatHistory,
+  };
+
+  if (existingIdx >= 0) {
+    sessions[existingIdx] = sessionData;
+  } else {
+    sessions.unshift(sessionData);
+  }
+
+  // Chỉ lưu tối đa 15 phiên Chat gần nhất.
+  if (sessions.length > 15) {
+    sessions.length = 15;
+  }
+
+  try {
     localStorage.setItem(getChatStorageKey(), JSON.stringify(sessions));
-    renderSavedChatSessions();
+  } catch (err) {
+    console.warn("Không thể lưu lịch sử Chat:", err);
+  }
+
+  renderSavedChatSessions();
 }
 
 function renderSavedChatSessions() {
-    const container = document.getElementById("chatHistorySection");
-    const list = document.getElementById("savedChatList");
-    if (!container || !list) return;
+  const container = document.getElementById("chatHistorySection");
+  const list = document.getElementById("savedChatList");
 
-    const sessions = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
-    if (sessions.length === 0) {
-        container.style.display = "none";
-        return;
+  if (!container || !list) return;
+
+  const sessions = readSavedSessions();
+
+  const search = removeVietnameseTones(
+    (document.getElementById("searchTestInput")?.value || "").toLowerCase(),
+  );
+
+  const filtered = sessions.filter((session) => {
+    const title = removeVietnameseTones(
+      String(session.title || "").toLowerCase(),
+    );
+    return title.includes(search);
+  });
+
+  container.style.display = sessions.length ? "block" : "none";
+  list.innerHTML = "";
+
+  filtered.forEach((session) => {
+    const item = document.createElement("div");
+    item.className = "query-item";
+
+    item.style.padding = "6px 10px";
+    item.style.fontSize = "0.76rem";
+
+    if (session.id === currentSessionId) {
+      item.style.background = "#f0edff";
+      item.style.color = "#6252ec";
+      item.style.fontWeight = "700";
     }
 
-    container.style.display = "block";
-    list.innerHTML = "";
-
-    sessions.forEach(sess => {
-        const item = document.createElement("div");
-        item.className = "query-item";
-        item.style.padding = "6px 10px";
-        item.style.fontSize = "0.76rem";
-        if (sess.id === currentSessionId) {
-            item.style.background = "#eff6ff";
-            item.style.color = "#1951fc";
-            item.style.fontWeight = "700";
-        }
-        item.innerHTML = `
-            <span style="font-size: 0.85rem;">🗨️</span>
-            <span class="query-item-title" title="${escapeHtml(sess.title)}">${escapeHtml(sess.title)}</span>
+    item.innerHTML = `
+            <span>🗨️</span>
+            <span class="query-item-title"
+                  title="${escapeHtml(session.title || "")}">
+                ${escapeHtml(session.title || "Đoạn chat")}
+            </span>
         `;
-        item.onclick = () => loadSavedSession(sess.id);
-        list.appendChild(item);
+
+    item.addEventListener("click", () => {
+      loadSavedSession(session.id);
     });
+
+    list.appendChild(item);
+  });
 }
 
 function loadSavedSession(sessionId) {
-    const sessions = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
-    const sess = sessions.find(s => s.id === sessionId);
-    if (!sess) return;
+  const sessions = readSavedSessions();
+  const session = sessions.find((s) => s.id === sessionId);
 
-    currentSessionId = sess.id;
-    currentChatHistory = sess.messages || [];
+  if (!session) return;
 
-    const chatContainer = document.getElementById("chatMessages");
-    chatContainer.innerHTML = "";
+  currentSessionId = session.id;
+  currentChatHistory = Array.isArray(session.messages) ? session.messages : [];
 
-    currentChatHistory.forEach(msg => {
-        if (msg.type === 'user') {
-            appendUserMessage(msg.text);
-        } else if (msg.type === 'ai') {
-            appendAiResponse(msg.data);
-        }
-    });
+  const chatContainer = document.getElementById("chatMessages");
+  if (!chatContainer) return;
 
-    renderSavedChatSessions();
+  chatContainer.innerHTML = "";
+
+  currentChatHistory.forEach((msg) => {
+    if (msg.type === "user") {
+      appendUserMessage(msg.text);
+    } else if (msg.type === "ai") {
+      appendAiResponse(msg.data);
+    }
+  });
+
+  renderSavedChatSessions();
 }
 
 function clearAllChats() {
-    if (confirm("Bạn có chắc muốn xóa tất cả lịch sử các đoạn chat cũ đã lưu không?")) {
-        localStorage.removeItem(getChatStorageKey());
-        currentChatHistory = [];
-        createNewChat();
-    }
+  const confirmed = confirm(
+    "Bạn có chắc muốn xóa tất cả lịch sử các đoạn chat cũ đã lưu không?",
+  );
+
+  if (!confirmed) return;
+
+  localStorage.removeItem(getChatStorageKey());
+  currentChatHistory = [];
+  createNewChat();
 }
 
+// ============================================================
+// 6. ĐIỀU KHIỂN NGUỒN TÀI LIỆU
+// ============================================================
+
 function toggleSources(headerEl) {
-    const list = headerEl.nextElementSibling;
-    const icon = headerEl.querySelector(".toggle-icon");
-    if (list.style.display === "none") {
-        list.style.display = "flex";
-        icon.innerText = "▼";
-    } else {
-        list.style.display = "none";
-        icon.innerText = "▶";
-    }
+  const list = headerEl.nextElementSibling;
+  if (!list) return;
+
+  const expanded = headerEl.getAttribute("aria-expanded") === "true";
+
+  headerEl.setAttribute("aria-expanded", String(!expanded));
+  list.hidden = expanded;
+  list.style.display = expanded ? "none" : "flex";
+
+  const icon = headerEl.querySelector(".toggle-icon");
+  if (icon) {
+    icon.textContent = expanded ? "▶" : "▼";
+  }
 }
 
 async function openDocModal(docId) {
-    const modal = document.getElementById("docModal");
-    const titleEl = document.getElementById("modalDocTitle");
-    const idEl = document.getElementById("modalDocId");
-    const classEl = document.getElementById("modalDocClassification");
-    const bodyEl = document.getElementById("modalDocBody");
-
-    bodyEl.innerText = "Đang tải nội dung văn bản...";
-    modal.style.display = "flex";
-
-    try {
-        const res = await fetch(getApiUrl("document", { doc_id: docId }));
-        const doc = await res.json();
-        titleEl.innerText = doc.title || docId;
-        idEl.innerText = `Mã: ${docId} | Đơn vị: ${doc.department || 'Nhà trường'}`;
-        classEl.className = `source-tag ${doc.classification}`;
-        classEl.innerText = doc.classification;
-        bodyEl.innerText = doc.content || "Không tìm thấy nội dung văn bản.";
-    } catch (err) {
-        bodyEl.innerText = "Lỗi nạp văn bản: " + err.message;
-    }
+  // Tạm khóa xem toàn văn tài liệu.
+  // api.php?action=document cần kiểm tra RBAC phía server.
+  appendErrorMessage(
+    "Chức năng xem toàn văn tạm khóa cho đến khi API kiểm tra quyền truy cập tài liệu.",
+  );
 }
 
 function closeDocModal() {
-    document.getElementById("docModal").style.display = "none";
+  const modal = document.getElementById("docModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
 }
 
+// ============================================================
+// 7. TIỆN ÍCH
+// ============================================================
+
 function scrollToBottom() {
-    const c = document.getElementById("chatMessages");
-    c.scrollTop = c.scrollHeight;
+  const container = document.getElementById("chatMessages");
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
 }
 
 function escapeHtml(text) {
-    if (!text) return "";
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  if (text === null || text === undefined) return "";
+
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function removeVietnameseTones(str) {
-    return str
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+  return String(str || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
 }
