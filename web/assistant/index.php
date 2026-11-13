@@ -62,8 +62,8 @@ $isControlled = ($config['mode'] === 'controlled');
             </div>
 
             <!-- Recent Chats (40 Ca Kiểm thử RBAC) -->
-            <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role']) ?>">
-            <input type="hidden" id="currentUserEmail" value="<?= htmlspecialchars($user['email'] ?? '') ?>">
+            <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" id="currentUserEmail" value="<?= htmlspecialchars($user['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             <div class="recent-header-row">
                 <span class="recent-title">Recent Tests</span>
                 <span class="recent-badge-count">40 Cases</span>
@@ -80,8 +80,8 @@ $isControlled = ($config['mode'] === 'controlled');
                         <?= mb_substr($user['full_name'], 0, 1, 'UTF-8') ?>
                     </div>
                     <div class="user-meta-texts">
-                        <span class="user-meta-name" title="<?= htmlspecialchars($user['full_name']) ?>"><?= htmlspecialchars($user['full_name']) ?></span>
-                        <span class="user-meta-role"><?= htmlspecialchars($user['email']) ?></span>
+                        <span class="user-meta-name" title="<?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                        <span class="user-meta-role"><?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
                 </div>
                 <a href="logout.php" class="btn-card-logout" title="Đăng xuất khỏi hệ thống">
@@ -111,9 +111,8 @@ $isControlled = ($config['mode'] === 'controlled');
                         <span>⚙️</span> Cấu hình
                     </a>
 
-                    </span>
-                    <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role']) ?>">
-                        <?= htmlspecialchars($user['role']) ?>
+                    <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>">
+                        <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>
                     </span>
 
                     <!-- Huy hiệu trạng thái bảo vệ -->
@@ -128,7 +127,7 @@ $isControlled = ($config['mode'] === 'controlled');
                 <!-- Zynovate Hero (Khi mở đầu) -->
                 <div class="zynovate-hero-canvas">
                     <h2 class="zyn-hero-title">
-                        Xin chào, <span><?= htmlspecialchars($user['full_name']) ?></span>
+                        Xin chào, <span><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
                     </h2>
                     <p class="zyn-hero-subtitle">
                         Hôm nay bạn cần hỗ trợ gì? Trợ lý AI sẵn sàng giải đáp mọi vấn đề của bạn.

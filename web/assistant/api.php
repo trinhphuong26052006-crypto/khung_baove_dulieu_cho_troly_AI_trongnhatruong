@@ -15,8 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 // Đường dẫn Python và Project gốc
-$pythonPath = 'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
-$projectDir = dirname(dirname(__DIR__));
+
+$projectDir = dirname(__DIR__, 2);
+
+$pythonPath = $projectDir
+    . DIRECTORY_SEPARATOR . '.venv'
+    . DIRECTORY_SEPARATOR . 'Scripts'
+    . DIRECTORY_SEPARATOR . 'python.exe';
+
+$runnerPath = __DIR__
+    . DIRECTORY_SEPARATOR . 'runner.py';
+
 
 // 1. Lấy danh sách Roles
 if ($action === 'roles') {
@@ -126,15 +135,29 @@ if ($action === 'chat') {
         $enableFilter = empty($cfg['ENABLE_OUTPUT_FILTER']) ? 'false' : 'true';
     }
 
-    // Thực thi Python runner
-    $cmd = escapeshellarg($pythonPath) . ' ' .
-           escapeshellarg(__DIR__ . '/runner.py') . ' ' .
-           escapeshellarg($query) . ' ' .
-           escapeshellarg($role) . ' ' .
-           $enableRbac . ' ' .
-           $enableFilter . ' 2>&1';
+if (!is_file($pythonPath) || !is_file($runnerPath)) {
+    http_response_code(500);
 
-    $output = shell_exec($cmd);
+    echo json_encode([
+        "status" => "ERROR",
+        "action_taken" => "ERROR",
+        "answer" => "Không tìm thấy Python hoặc runner.py.",
+        "sources" => []
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
+}
+ 
+
+$cmd = escapeshellarg($pythonPath) . ' ' .
+       escapeshellarg($runnerPath) . ' ' .
+       escapeshellarg($query) . ' ' .
+       escapeshellarg($role) . ' ' .
+       $enableRbac . ' ' .
+       $enableFilter . ' 2>&1';
+
+$output = shell_exec($cmd);
+
 
     // Bóc tách JSON payload sau marker
     $parts = explode('---JSON_OUTPUT_START---', $output);
