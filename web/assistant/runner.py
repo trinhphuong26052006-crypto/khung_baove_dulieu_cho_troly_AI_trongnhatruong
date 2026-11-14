@@ -69,7 +69,8 @@ def main():
         "latency_ms": outcome.get("latency_ms", 0),
         "mode": "Controlled" if enable_rbac else "Baseline",
         "retrieved_count": len(sources),
-        "sources": sources
+        "sources": sources,
+        "violations": outcome.get("violations", [])
     }
 
     print("\n---JSON_OUTPUT_START---")

@@ -76,6 +76,7 @@ CONFIG: Dict[str, Any] = {
     
     # Cấu hình kiểm soát an toàn đầu vào (P2.0)
     "MAX_INPUT_LENGTH": 500,
+    "ENABLE_INPUT_VALIDATION": True, # Bật/tắt Input Guard (chặn SQL injection, script...)
     "BLOCKED_KEYWORDS": [
         "sql injection", "drop table", "union select", 
         "ignore previous instructions", "bypass security"
@@ -83,6 +84,7 @@ CONFIG: Dict[str, Any] = {
     
     # Cấu hình kiểm soát phân quyền RBAC & Pre-retrieval (Nhiệm vụ Thảo: Baseline vs Controlled)
     "ENABLE_RBAC_PRERETRIEVAL": True, # True: Chế độ Controlled (có RBAC & Pre-retrieval) | False: Chế độ Baseline (truy xuất toàn bộ 96 docs)
+    "ENABLE_PERMISSION_CHECK": True,  # Alias tương thích ngược cho ENABLE_RBAC_PRERETRIEVAL
     "ENABLE_RELEVANCE_GATE": True,    # True: Kiểm tra mức độ liên quan chủ đề | False: Truy xuất thuần theo từ khóa
 
     # Cấu hình bộ lọc an toàn đầu ra (P5.0 - Nhiệm vụ Nhung)
@@ -344,7 +346,8 @@ def p3_retrieve_authorized_documents(
     - Nếu ENABLE_RBAC_PRERETRIEVAL = False (Baseline): Bỏ qua kiểm tra quyền, truy xuất toàn bộ (như vai trò QuanTri).
     - Áp dụng Relevance Gate nếu ENABLE_RELEVANCE_GATE = True.
     """
-    if CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", True):
+    enable_rbac = CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", CONFIG.get("ENABLE_PERMISSION_CHECK", True))
+    if enable_rbac:
         effective_role = user_role
     else:
         # Chế độ Baseline: bỏ qua phân quyền, cho phép tìm kiếm trên toàn bộ 96 tài liệu
@@ -411,17 +414,21 @@ def p5_validate_and_format_output(
       hoặc viện dẫn tên trường ngoài tài liệu tham khảo.
     - Cơ chế phòng thủ nghiêm ngặt (Fail-Closed): Nếu bộ lọc lỗi hoặc từ chối, chặn ngay lập tức.
     """
+    # Nếu tính năng Output Filter bị tắt (chế độ Baseline)
     if not CONFIG.get("ENABLE_OUTPUT_FILTER", True):
-        # Chế độ Baseline: bỏ qua bộ lọc an toàn đầu ra
-        dummy_result = FilterResult(
+        print("[Bước 5 - Output Filter]: ĐÃ TẮT BỘ LỌC ĐẦU RA (Baseline Mode - No Guardrails).")
+        filter_result = FilterResult(
             is_safe=True,
             action_taken="PASSED",
-            violations=[],
-            filtered_text=answer,
             original_text=answer,
-            source_grounded=True
+            filtered_text=answer,
+            violations=[],
+            source_grounded=bool(retrieved_docs and len(retrieved_docs) > 0)
         )
-        return answer, dummy_result
+        return answer, filter_result
+
+    # Cập nhật chế độ nghiêm ngặt của OutputFilter theo cấu hình
+    output_filter.strict_mode = CONFIG.get("STRICT_OUTPUT_FILTER", True)
 
     filter_result = output_filter.filter_response(
         response_text=answer,
@@ -492,16 +499,19 @@ def execute_end_to_end_pipeline(
     # -------------------------------------------------------------------------
     # Bước 1: Người dùng gửi câu hỏi và vai trò
     # -------------------------------------------------------------------------
-    is_valid, validated_or_error = p2_validate_input(raw_query)
-    if not is_valid:
-        print(f"[Bước 1 - LỖI ĐẦU VÀO]: {validated_or_error}")
-        p6_audit_log(components.security_logger, user_role, raw_query, [],
-                     status="REJECTED_INPUT", latency_ms=(time.time()-start_time)*1000,
-                     test_id=test_id)
-        return {"status": "REJECTED_INPUT", "answer": "", "retrieved_doc_ids": [],
-                "action_taken": "BLOCKED_INPUT", "latency_ms": round((time.time()-start_time)*1000, 2)}
-        
-    query = validated_or_error
+    if CONFIG.get("ENABLE_INPUT_VALIDATION", True):
+        is_valid, validated_or_error = p2_validate_input(raw_query)
+        if not is_valid:
+            print(f"[Bước 1 - LỖI ĐẦU VÀO]: {validated_or_error}")
+            p6_audit_log(components.security_logger, user_role, raw_query, [],
+                         status="REJECTED_INPUT", latency_ms=(time.time()-start_time)*1000,
+                         test_id=test_id)
+            return {"status": "REJECTED_INPUT", "answer": "", "retrieved_doc_ids": [],
+                    "action_taken": "BLOCKED_INPUT", "latency_ms": round((time.time()-start_time)*1000, 2)}
+        query = validated_or_error
+    else:
+        print("[Bước 1]: ĐÃ TẮT BỘ LỌC ĐẦU VÀO (Baseline Mode - Input Validation Disabled).")
+        query = (raw_query or "").strip()
     print(f"[Bước 1]: Tiếp nhận câu hỏi ({len(query)} ký tự) từ vai trò [{user_role}].")
     
     # -------------------------------------------------------------------------
@@ -645,6 +655,13 @@ def execute_end_to_end_pipeline(
         "action_taken": filter_result.action_taken,
         "is_safe": filter_result.is_safe,
         "latency_ms": round(elapsed_time * 1000, 2),
+        "violations": [
+            {
+                "violation_type": v.violation_type,
+                "severity": v.severity,
+                "description": v.description
+            } for v in filter_result.violations
+        ] if filter_result else []
     }
 
 
