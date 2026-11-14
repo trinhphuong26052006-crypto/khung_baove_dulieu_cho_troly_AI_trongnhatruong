@@ -2,9 +2,5 @@
     "mode": "controlled",
     "ENABLE_RBAC_PRERETRIEVAL": true,
     "ENABLE_OUTPUT_FILTER": true,
-<<<<<<< HEAD
-    "configured_at": "2026-11-13 07:43:54"
-=======
-    "configured_at": "2026-11-14 18:16:44"
->>>>>>> Thảo
+    "configured_at": "2026-11-14 18:48:15"
 }
