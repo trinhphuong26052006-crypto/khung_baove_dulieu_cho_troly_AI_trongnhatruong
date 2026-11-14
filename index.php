@@ -27,7 +27,7 @@
                 <a href="index.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; background: #1e3a5f; color: #60a5fa; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
                     <span>💬</span> Trợ lý AI
                 </a>
-                <a href="security_status.html" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+                <a href="security_status.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500;">
                     <span>🛡️</span> Trạng thái bảo mật
                 </a>
             </div>
