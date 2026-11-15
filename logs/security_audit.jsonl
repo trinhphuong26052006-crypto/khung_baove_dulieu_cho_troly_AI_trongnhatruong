@@ -1,0 +1,1 @@
+{"timestamp": "2026-11-13T10:20:22.035480+00:00", "role": "QuanTri", "query_sha256": "edcba0cfb3cbf9125b5a003db91d2f7d689a53690d322506cc6bcad41fc2ee70", "query_length": 43, "status": "SUCCESS", "retrieved_doc_ids": ["DOC-P002", "DOC-P005", "DOC-I003"], "action_taken": "PASSED", "violation_count": 0, "latency_ms": 47932.1, "test_id": null}

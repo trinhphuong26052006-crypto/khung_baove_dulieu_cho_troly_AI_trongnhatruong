@@ -14,38 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
-// Đường dẫn Python và Project (tự động phát hiện python có sẵn trên hệ thống)
-$projectDir = __DIR__;
+// Đường dẫn Python và Project gốc
 
-// Danh sách các đường dẫn Python tiềm năng
-$possiblePythonPaths = [
-    'python',
-    'python3',
-    'C:\\Users\\tuank\\AppData\\Local\\Programs\\Python\\Python313\\python.exe',
-    'C:\\Users\\tuank\\AppData\\Local\\Programs\\Python\\Python312\\python.exe',
-    'C:\\Users\\tuank\\AppData\\Local\\Programs\\Python\\Python311\\python.exe',
-    'C:\\Users\\tuank\\AppData\\Local\\Programs\\Python\\Python310\\python.exe',
-    'C:\\Python313\\python.exe',
-    'C:\\Python312\\python.exe',
-    'C:\\Python311\\python.exe',
-    'C:\\Python310\\python.exe',
-    'C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
-];
+$projectDir = dirname(__DIR__, 2);
 
-$pythonPath = 'python';
-foreach ($possiblePythonPaths as $p) {
-    if ($p === 'python' || $p === 'python3') {
-        // Kiểm tra xem lệnh python có chạy được không
-        $check = shell_exec("$p --version 2>&1");
-        if ($check && stripos($check, 'Python') !== false) {
-            $pythonPath = $p;
-            break;
-        }
-    } else if (file_exists($p)) {
-        $pythonPath = $p;
-        break;
-    }
-}
+$pythonPath = $projectDir
+    . DIRECTORY_SEPARATOR . '.venv'
+    . DIRECTORY_SEPARATOR . 'Scripts'
+    . DIRECTORY_SEPARATOR . 'python.exe';
+
+$runnerPath = __DIR__
+    . DIRECTORY_SEPARATOR . 'runner.py';
+
 
 // 1. Lấy danh sách Roles
 if ($action === 'roles') {
@@ -155,15 +135,29 @@ if ($action === 'chat') {
         $enableFilter = empty($cfg['ENABLE_OUTPUT_FILTER']) ? 'false' : 'true';
     }
 
-    // Thực thi Python runner
-    $cmd = escapeshellarg($pythonPath) . ' ' .
-           escapeshellarg($projectDir . '/runner.py') . ' ' .
-           escapeshellarg($query) . ' ' .
-           escapeshellarg($role) . ' ' .
-           $enableRbac . ' ' .
-           $enableFilter . ' 2>&1';
+if (!is_file($pythonPath) || !is_file($runnerPath)) {
+    http_response_code(500);
 
-    $output = shell_exec($cmd);
+    echo json_encode([
+        "status" => "ERROR",
+        "action_taken" => "ERROR",
+        "answer" => "Không tìm thấy Python hoặc runner.py.",
+        "sources" => []
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
+}
+ 
+
+$cmd = escapeshellarg($pythonPath) . ' ' .
+       escapeshellarg($runnerPath) . ' ' .
+       escapeshellarg($query) . ' ' .
+       escapeshellarg($role) . ' ' .
+       $enableRbac . ' ' .
+       $enableFilter . ' 2>&1';
+
+$output = shell_exec($cmd);
+
 
     // Bóc tách JSON payload sau marker
     $parts = explode('---JSON_OUTPUT_START---', $output);
@@ -178,64 +172,6 @@ if ($action === 'chat') {
             "sources" => []
         ], JSON_UNESCAPED_UNICODE);
     }
-    exit;
-}
-
-// 6. Lấy nhật ký audit logs và số liệu thống kê tích lũy cho Dashboard
-if ($action === 'logs') {
-    $logPath = $projectDir . '/data/logs/security_audit.log';
-    $logs = [];
-    $stats = [
-        "total" => 0,
-        "pass" => 0,
-        "block" => 0,
-        "redact" => 0,
-        "pass_rate" => 0.0,
-        "block_rate" => 0.0,
-        "redact_rate" => 0.0
-    ];
-
-    if (file_exists($logPath)) {
-        $lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if ($lines !== false) {
-            // Thống kê tích lũy trên TOÀN BỘ file log
-            foreach ($lines as $line) {
-                $decoded = json_decode($line, true);
-                if ($decoded) {
-                    $stats["total"]++;
-                    $act = $decoded['action_taken'] ?? '';
-                    if ($act === 'PASSED') {
-                        $stats["pass"]++;
-                    } else if ($act === 'BLOCKED' || $act === 'BLOCKED_INPUT') {
-                        $stats["block"]++;
-                    } else if ($act === 'REDACTED') {
-                        $stats["redact"]++;
-                    }
-                }
-            }
-
-            // Tính tỉ lệ phần trăm
-            if ($stats["total"] > 0) {
-                $stats["pass_rate"] = round(($stats["pass"] / $stats["total"]) * 100, 1);
-                $stats["block_rate"] = round(($stats["block"] / $stats["total"]) * 100, 1);
-                $stats["redact_rate"] = round(($stats["redact"] / $stats["total"]) * 100, 1);
-            }
-
-            // Lấy 100 sự kiện gần nhất cho danh sách lịch sử
-            $recent = array_slice($lines, -100);
-            foreach ($recent as $line) {
-                $decoded = json_decode($line, true);
-                if ($decoded) {
-                    $logs[] = $decoded;
-                }
-            }
-        }
-    }
-
-    echo json_encode([
-        "stats" => $stats,
-        "logs" => array_reverse($logs)
-    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
