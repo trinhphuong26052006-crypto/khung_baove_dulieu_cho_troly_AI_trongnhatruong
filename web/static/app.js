@@ -42,22 +42,19 @@ async function loadRoles() {
     }
 }
 
-// Mapping tài khoản thực tế theo vai trò được chọn
-const ACCOUNT_MAPPING = {
+// Mapping tên hiển thị vai trò người dùng
+const ROLE_DISPLAY_MAPPING = {
     "SinhVien": {
-        id: "SV001",
-        name: "SV001 - Sinh viên",
-        fullName: "SV001 - Nguyễn Văn A (Sinh viên)"
+        name: "Sinh viên",
+        role: "SinhVien"
     },
     "GiangVien": {
-        id: "GV002",
-        name: "GV002 - Giảng viên",
-        fullName: "GV002 - TS. Trần Văn B (Giảng viên)"
+        name: "Giảng viên",
+        role: "GiangVien"
     },
     "QuanTri": {
-        id: "QT003",
-        name: "QT003 - Quản trị viên",
-        fullName: "QT003 - Lê Văn C (Quản trị viên)"
+        name: "Quản trị viên",
+        role: "QuanTri"
     }
 };
 
@@ -83,12 +80,11 @@ function updateRoleUI(role) {
     roleLevels.innerText = roleInfo.accessible.join(", ");
     roleLevels.style.color = role === "SinhVien" ? "#34d399" : (role === "GiangVien" ? "#fbbf24" : "#f87171");
 
-    // Lưu trạng thái tài khoản thực tế vào localStorage để đồng bộ ngay lập tức sang trang Trạng thái bảo mật
-    const acc = ACCOUNT_MAPPING[role] || ACCOUNT_MAPPING["SinhVien"];
+    // Lưu trạng thái vai trò thực tế vào localStorage để đồng bộ ngay lập tức sang trang Trạng thái bảo mật
+    const roleObj = ROLE_DISPLAY_MAPPING[role] || { name: role, role: role };
     try {
         localStorage.setItem("CURRENT_USER_ROLE", role);
-        localStorage.setItem("CURRENT_USER_ACCOUNT", acc.name);
-        localStorage.setItem("CURRENT_USER_ACCOUNT_ID", acc.id);
+        localStorage.setItem("CURRENT_USER_ACCOUNT", roleObj.name);
     } catch(e) {}
 }
 
@@ -196,14 +192,14 @@ async function handleSendMessage(e) {
 
         // Lưu sự kiện truy vấn gần nhất vào localStorage để trang Trạng thái bảo mật cập nhật theo thời gian thực
         try {
-            const acc = ACCOUNT_MAPPING[role] || { id: "SV001", name: "SV001 - Sinh viên" };
+            const roleObj = ROLE_DISPLAY_MAPPING[role] || { name: role };
             const reqId = "REQ-" + Math.random().toString(36).substring(2, 6).toUpperCase();
             const eventPayload = {
                 req_id: reqId,
                 query: query,
                 role: role,
-                account: acc.name,
-                account_id: acc.id,
+                account: roleObj.name,
+                role_name: roleObj.name,
                 action_taken: data.action_taken || "PASSED",
                 is_safe: data.is_safe !== false,
                 latency_ms: data.latency_ms || 0,

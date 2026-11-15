@@ -10,13 +10,15 @@
         /* Tối ưu riêng cho trang Dashboard Trạng thái bảo mật */
         body {
             overflow: hidden;
+            background-color: #f5f6fc;
+            color: #1e1b4b;
         }
 
         .dashboard-main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: var(--bg-dark);
+            background-color: #f5f6fc;
             height: 100vh;
             overflow-y: auto;
         }
@@ -24,7 +26,7 @@
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             padding: 12px 10px;
         }
 
@@ -33,22 +35,22 @@
             align-items: center;
             gap: 12px;
             padding: 10px 14px;
-            border-radius: 8px;
-            color: var(--text-secondary);
+            border-radius: 10px;
+            color: #64748b;
             text-decoration: none;
             font-size: 0.88rem;
             font-weight: 500;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
         .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
+            background-color: #f8fafc;
+            color: #4338ca;
         }
 
         .nav-item.active {
-            background-color: #1e3a5f;
-            color: #60a5fa;
+            background-color: #f3f0ff;
+            color: #6d28d9;
             font-weight: 600;
         }
 
@@ -61,6 +63,7 @@
             margin-top: auto;
             padding: 16px;
             border-top: 1px solid var(--card-border);
+            background: #ffffff;
         }
 
         .user-account-label {
@@ -74,8 +77,8 @@
 
         .user-account-val {
             font-size: 0.85rem;
-            font-weight: 600;
-            color: #93c5fd;
+            font-weight: 700;
+            color: #4f46e5;
         }
 
         /* Vùng nội dung Dashboard */
@@ -85,18 +88,38 @@
             width: 100%;
         }
 
-        .dash-header-title {
-            font-size: 1.45rem;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-            color: #f8fafc;
-            margin-bottom: 4px;
+        .dash-hero-banner {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #9333ea 100%);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.35);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .dash-header-desc {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            margin-bottom: 24px;
+        .dash-hero-subtitle {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .dash-hero-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .dash-hero-desc {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.85);
         }
 
         /* 3 Thẻ Trạng thái tổng quan (Khu vực A) */
@@ -108,19 +131,20 @@
         }
 
         .stat-card {
-            background-color: var(--card-bg);
+            background-color: #ffffff;
             border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 18px 22px;
+            border-radius: 14px;
+            padding: 20px 24px;
+            box-shadow: var(--card-shadow);
         }
 
         .stat-card-title {
             font-size: 0.72rem;
-            color: var(--text-muted);
+            color: #6b7280;
             font-weight: 700;
             letter-spacing: 0.8px;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .stat-card-val {
@@ -131,50 +155,53 @@
 
         .val-allow,
         .val-pass {
-            color: #10b981;
+            color: #059669;
         }
 
         .val-deny,
         .val-block {
-            color: #ef4444;
+            color: #dc2626;
         }
 
         .val-redact {
-            color: #f59e0b;
+            color: #d97706;
         }
 
         .val-na {
-            color: #6b7280;
+            color: #9ca3af;
         }
 
         .pipeline-card {
-            background-color: var(--card-bg);
+            background-color: #ffffff;
             border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 14px 22px;
+            border-radius: 14px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
         }
 
         .pipe-status-tag {
-            background: #1e3a5f;
-            color: #60a5fa;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #ffffff;
             font-weight: 700;
             font-size: 0.78rem;
-            padding: 4px 14px;
-            border-radius: 6px;
+            padding: 5px 16px;
+            border-radius: 8px;
             letter-spacing: 0.5px;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
         }
 
         /* Section Card chung */
         .dash-section-card {
-            background-color: var(--card-bg);
+            background-color: #ffffff;
             border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 20px 24px;
+            border-radius: 14px;
+            padding: 22px 26px;
             margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
         }
 
         .section-header {
@@ -187,92 +214,129 @@
         .section-title {
             font-size: 1.05rem;
             font-weight: 700;
-            color: #f1f5f9;
+            color: #1e1b4b;
             letter-spacing: -0.2px;
         }
 
         .badge-right {
-            font-size: 0.78rem;
-            font-weight: 700;
-            padding: 3px 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 88px;
+            height: 26px;
+            box-sizing: border-box;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
             border-radius: 6px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .badge-right.ALLOW {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
         }
 
         .badge-right.DENY {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
         }
 
-        .badge-right.REDACTED {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
+        .badge-right.REDACTED,
+        .badge-right.REDACT {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
         }
 
         /* Khu vực B: Kết quả kiểm soát truy vấn gần nhất */
         .recent-req-meta {
             font-size: 0.85rem;
-            color: var(--text-secondary);
+            color: #6b7280;
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .recent-req-query {
             font-size: 0.92rem;
-            color: #f8fafc;
+            color: #1e1b4b;
             margin-bottom: 14px;
             line-height: 1.5;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border-left: 3px solid #6366f1;
         }
 
         .recent-step-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 0;
+            border-top: 1px solid #f1f5f9;
             font-size: 0.85rem;
         }
 
         .step-name {
-            color: var(--text-secondary);
+            color: #4b5563;
+            font-weight: 500;
         }
 
         .step-tag {
-            font-weight: 700;
-            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 88px;
+            height: 26px;
+            box-sizing: border-box;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            border-radius: 6px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .step-tag.ALLOW,
         .step-tag.PASS {
-            color: #10b981;
+            background: #ecfdf5;
+            color: #059669;
         }
 
         .step-tag.DENY,
         .step-tag.BLOCK {
-            color: #ef4444;
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .step-tag.REDACT,
         .step-tag.REDACTED {
-            color: #f59e0b;
+            background: #fef3c7;
+            color: #d97706;
         }
 
         .step-tag.NA {
-            color: #6b7280;
+            background: #f1f5f9;
+            color: #9ca3af;
         }
 
         .recent-explanation {
             margin-top: 14px;
             font-size: 0.85rem;
-            color: #10b981;
+            color: #059669;
             line-height: 1.5;
+            padding: 10px 14px;
+            background: #ecfdf5;
+            border-radius: 8px;
+            font-weight: 500;
         }
 
         .recent-explanation.denied {
-            color: #f87171;
+            color: #dc2626;
+            background: #fef2f2;
         }
 
         /* Khu vực C: Output Guardrails Metrics (Chỉ hiện số lần) */
@@ -280,8 +344,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
             font-size: 0.9rem;
         }
 
@@ -292,26 +356,27 @@
         .guard-label {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-weight: 600;
+            color: #1e1b4b;
         }
 
         .guard-num.pass {
-            color: #10b981;
+            color: #059669;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
 
         .guard-num.block {
-            color: #ef4444;
+            color: #dc2626;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
 
         .guard-num.redact {
-            color: #f59e0b;
+            color: #d97706;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
 
         /* Khu vực D: Security Alerts */
@@ -319,17 +384,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 11px 12px;
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            margin-bottom: 8px;
+            padding: 12px 14px;
+            background: #f8faff;
+            border: 1px solid #eef2ff;
+            border-radius: 10px;
+            margin-bottom: 10px;
             font-size: 0.86rem;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
 
         .alert-item:hover {
-            background: rgba(255, 255, 255, 0.04);
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
         }
 
         .alert-item:last-child {
@@ -337,33 +405,41 @@
         }
 
         .alert-label {
-            color: #e2e8f0;
+            color: #1e1b4b;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 500;
         }
 
         .alert-pill {
-            padding: 3px 10px;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 88px;
+            height: 26px;
+            box-sizing: border-box;
+            border-radius: 6px;
             font-size: 0.72rem;
             font-weight: 800;
             letter-spacing: 0.5px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .alert-pill.HIGH {
-            background: #7f1d1d;
-            color: #f87171;
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .alert-pill.MEDIUM {
-            background: #78350f;
-            color: #fbbf24;
+            background: #fef3c7;
+            color: #d97706;
         }
 
         .alert-pill.LOW {
-            background: #1e3a5f;
-            color: #60a5fa;
+            background: #ecfdf5;
+            color: #059669;
         }
 
         /* Khu vực E: Lịch sử kiểm soát */
@@ -371,15 +447,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 11px 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 14px;
+            border-bottom: 1px solid #f1f5f9;
             font-size: 0.86rem;
             cursor: pointer;
             transition: 0.2s;
+            border-radius: 8px;
         }
 
         .history-item:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: #f8fafc;
         }
 
         .history-item:last-child {
@@ -387,30 +464,38 @@
         }
 
         .history-meta {
-            color: #e2e8f0;
-            font-weight: 500;
+            color: #334155;
+            font-weight: 600;
         }
 
         .history-tag {
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 88px;
+            height: 26px;
+            box-sizing: border-box;
+            font-size: 0.72rem;
             font-weight: 800;
-            padding: 3px 12px;
-            border-radius: 4px;
+            letter-spacing: 0.5px;
+            border-radius: 6px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .history-tag.ALLOW {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
+            background: #ecfdf5;
+            color: #059669;
         }
 
         .history-tag.DENY {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .history-tag.REDACTED {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
+            background: #fef3c7;
+            color: #d97706;
         }
 
         /* Modal Chi tiết An toàn */
@@ -421,19 +506,21 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
 
         .modal-box {
-            background: var(--card-bg);
+            background: #ffffff;
             border: 1px solid var(--card-border);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 24px;
             width: 550px;
             max-width: 90vw;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
     </style>
 </head>
@@ -488,10 +575,10 @@
                 </a>
             </nav>
 
-            <!-- Tài khoản đăng nhập mô phỏng -->
+            <!-- Vai trò người dùng mô phỏng -->
             <div class="user-account-box">
-                <div class="user-account-label">TÀI KHOẢN</div>
-                <div class="user-account-val" id="currentUserDisplay">SV001 - Sinh viên</div>
+                <div class="user-account-label">VAI TRÒ</div>
+                <div class="user-account-val" id="currentUserDisplay">Sinh viên</div>
             </div>
         </aside>
 
@@ -500,17 +587,27 @@
             <!-- Header phía trên đồng nhất -->
             <header class="chat-header" style="flex-shrink: 0;">
                 <div class="chat-header-title">
-                    <span>🛡️ TRẠNG THÁI BẢO MẬT & HẬU KIỂM ĐẦU RA</span>
+                    <span style="color: #6366f1;">●</span>
+                    <span style="font-weight: 700;">Security & Monitoring</span>
                 </div>
                 <div class="header-badges">
-                    <span class="badge-mode controlled">🛡️ Controlled Mode</span>
-                    <span class="role-tag SinhVien" id="activeRoleTag">SinhVien</span>
+                    <a href="index.php" style="text-decoration: none; font-size: 0.78rem; font-weight: 600; color: #4f46e5; background: #ffffff; padding: 5px 14px; border-radius: 8px; border: 1px solid #c7d2fe; display: flex; align-items: center; gap: 6px;">
+                        <span>💬</span> Chat AI
+                    </a>
+                    <span class="role-tag QuanTri" id="activeRoleTag" style="padding: 5px 12px; border-radius: 8px;">QuanTri</span>
+                    <span class="badge-mode controlled" style="padding: 6px 14px; border-radius: 8px;">✨ Controlled Mode</span>
                 </div>
             </header>
 
             <div class="dash-content">
-                <div class="dash-header-title">TRẠNG THÁI BẢO MẬT</div>
-                <div class="dash-header-desc">Giám sát kiểm soát truy cập và bảo vệ dữ liệu đầu ra AI.</div>
+                <!-- Banner Hero Tím Gradient giống ảnh -->
+                <div class="dash-hero-banner">
+                    <div>
+                        <div class="dash-hero-subtitle">SECURITY MONITORING</div>
+                        <div class="dash-hero-title">TRẠNG THÁI BẢO MẬT</div>
+                        <div class="dash-hero-desc">Giám sát cấu hình phòng vệ, phân quyền truy cập và nhật ký bảo mật của trợ lý AI.</div>
+                    </div>
+                </div>
 
                 <!-- KHU VỰC A: TỔNG QUAN TRẠNG THÁI (3 THẺ CHUẨN) -->
                 <div class="cards-overview-row">
@@ -537,7 +634,7 @@
                         <div class="section-title">KẾT QUẢ KIỂM SOÁT GẦN NHẤT</div>
                         <span class="badge-right ALLOW" id="recentBadgeRight">ALLOW</span>
                     </div>
-                    <div class="recent-req-meta" id="recentMeta">REQ-005 • SV001 - Sinh viên</div>
+                    <div class="recent-req-meta" id="recentMeta">REQ-005 • Sinh viên</div>
                     <div class="recent-req-query"><strong>Yêu cầu:</strong> <span id="recentQueryText">Tra cứu lịch học
                             cá nhân</span></div>
 
@@ -589,12 +686,12 @@
                     <div class="section-title" style="margin-bottom: 14px;">SECURITY ALERTS</div>
                     <div id="alertsContainer">
                         <div class="alert-item"
-                            onclick="openAlertModal('Truy cập trái quyền', 'SV001', 'HIGH', 'Tài khoản Sinh viên cố tình gửi yêu cầu truy xuất mã hồ sơ kỷ luật Restricted DOC-R014. RBAC đã từ chối quyền truy cập.')">
+                            onclick="openAlertModal('Truy cập trái quyền', 'Sinh viên', 'HIGH', 'Vai trò Sinh viên gửi yêu cầu truy xuất mã hồ sơ kỷ luật Restricted DOC-R014. RBAC đã từ chối quyền truy cập.')">
                             <span class="alert-label">Truy cập trái quyền</span>
                             <span class="alert-pill HIGH">HIGH</span>
                         </div>
                         <div class="alert-item"
-                            onclick="openAlertModal('Dữ liệu cần che', 'SV001', 'MEDIUM', 'Phát hiện câu trả lời chứa số CCCD và số điện thoại cá nhân. Output Filter đã thực hiện che bằng nhãn an toàn.')">
+                            onclick="openAlertModal('Dữ liệu cần che', 'Sinh viên', 'MEDIUM', 'Phát hiện câu trả lời chứa số CCCD và số điện thoại cá nhân. Output Filter đã thực hiện che bằng nhãn an toàn.')">
                             <span class="alert-label">Dữ liệu cần che</span>
                             <span class="alert-pill MEDIUM">MEDIUM</span>
                         </div>
@@ -606,11 +703,11 @@
                     <div class="section-title" style="margin-bottom: 14px;">LỊCH SỬ KIỂM SOÁT</div>
                     <div id="historyContainer">
                         <div class="history-item">
-                            <span class="history-meta">REQ-005 • SV001</span>
+                            <span class="history-meta">REQ-005 • Sinh viên</span>
                             <span class="history-tag ALLOW">ALLOW</span>
                         </div>
                         <div class="history-item">
-                            <span class="history-meta">REQ-004 • SV001</span>
+                            <span class="history-meta">REQ-004 • Sinh viên</span>
                             <span class="history-tag DENY">DENY</span>
                         </div>
                     </div>
@@ -635,11 +732,11 @@
     </div>
 
     <script>
-        // Mapping tài khoản thực tế theo vai trò
-        const ACCOUNT_ROLE_MAPPING = {
-            "SinhVien": { id: "SV001", name: "SV001 - Sinh viên" },
-            "GiangVien": { id: "GV002", name: "GV002 - Giảng viên" },
-            "QuanTri": { id: "QT003", name: "QT003 - Quản trị viên" }
+        // Mapping tên hiển thị vai trò
+        const ROLE_DISPLAY_MAPPING = {
+            "SinhVien": "Sinh viên",
+            "GiangVien": "Giảng viên",
+            "QuanTri": "Quản trị viên"
         };
 
         // Đồng bộ tức thời và liên tục giữa các Tab
@@ -664,11 +761,11 @@
 
         function syncAccountFromStorage() {
             const role = localStorage.getItem("CURRENT_USER_ROLE") || "SinhVien";
-            const accName = localStorage.getItem("CURRENT_USER_ACCOUNT") || (ACCOUNT_ROLE_MAPPING[role] ? ACCOUNT_ROLE_MAPPING[role].name : "SV001 - Sinh viên");
+            const roleName = ROLE_DISPLAY_MAPPING[role] || role;
 
             const userDisplayEl = document.getElementById("currentUserDisplay");
             if (userDisplayEl) {
-                userDisplayEl.innerText = accName;
+                userDisplayEl.innerText = roleName;
             }
 
             const roleTagEl = document.getElementById("activeRoleTag");
@@ -679,6 +776,29 @@
         }
 
         let lastProcessedTimestamp = null;
+
+        async function manualRefreshData() {
+            const btn = document.getElementById("refreshBtn");
+            const icon = document.getElementById("refreshIcon");
+            const text = document.getElementById("refreshText");
+
+            // Hiệu ứng xoay icon và hiển thị trạng thái đang tải
+            if (icon) icon.style.transform = "rotate(360deg)";
+            if (text) text.innerText = "Đang đồng bộ...";
+            if (btn) btn.style.opacity = "0.75";
+
+            syncAccountFromStorage();
+            await syncDashboard();
+
+            setTimeout(() => {
+                if (icon) icon.style.transform = "rotate(0deg)";
+                if (text) text.innerText = "Đã cập nhật!";
+                if (btn) btn.style.opacity = "1";
+                setTimeout(() => {
+                    if (text) text.innerText = "Làm mới dữ liệu";
+                }, 1200);
+            }, 400);
+        }
 
         async function syncDashboard() {
             // A. Ưu tiên đọc sự kiện thời gian thực từ localStorage (vừa được gửi từ Tab 1)
@@ -731,13 +851,13 @@
             } else if (logs && logs.length > 0) {
                 const l = logs[0];
                 const r = l.role || "SinhVien";
-                const acc = ACCOUNT_ROLE_MAPPING[r] || { id: "SV001", name: `SV001 - ${r}` };
+                const roleName = ROLE_DISPLAY_MAPPING[r] || r;
                 renderLatestEvent({
                     req_id: "REQ-" + (l.query_sha256 ? l.query_sha256.substring(0, 4).toUpperCase() : "001"),
                     query: "Tra cứu thông tin học vụ nhà trường",
                     role: r,
-                    account: acc.name,
-                    account_id: acc.id,
+                    account: roleName,
+                    role_name: roleName,
                     action_taken: l.action_taken || "PASSED",
                     is_safe: l.action_taken !== "BLOCKED" && l.action_taken !== "BLOCKED_INPUT",
                     latency_ms: l.latency_ms || 0
@@ -750,7 +870,7 @@
 
         function renderLatestEvent(ev) {
             const role = ev.role || "SinhVien";
-            const accName = ev.account || (ACCOUNT_ROLE_MAPPING[role] ? ACCOUNT_ROLE_MAPPING[role].name : "SV001 - Sinh viên");
+            const roleName = ev.role_name || ROLE_DISPLAY_MAPPING[role] || role;
             const reqId = ev.req_id || "REQ-001";
             const actionTaken = ev.action_taken || "PASSED";
 
@@ -773,7 +893,7 @@
             document.getElementById("recentBadgeRight").innerText = accStatus;
             document.getElementById("recentBadgeRight").className = `badge-right ${accStatus}`;
 
-            document.getElementById("recentMeta").innerText = `${reqId} • ${accName}`;
+            document.getElementById("recentMeta").innerText = `${reqId} • ${roleName}`;
 
             // Làm sạch nội dung yêu cầu hiển thị ở mức an toàn (không hiển thị canary token / prompt nhạy cảm)
             let safeQueryDisplay = ev.query || "Tra cứu học vụ";
@@ -790,7 +910,7 @@
 
             const expl = document.getElementById("recentExplanation");
             if (isDenied) {
-                expl.innerText = "Tài khoản của bạn không có quyền truy cập thông tin được yêu cầu (Safe Refusal).";
+                expl.innerText = "Vai trò của bạn không có quyền truy cập thông tin được yêu cầu (Safe Refusal).";
                 expl.className = "recent-explanation denied";
                 expl.style.color = "#ef4444";
             } else if (isRedacted) {
@@ -813,10 +933,12 @@
             if (localEvent) {
                 const act = localEvent.action_taken || "PASSED";
                 const isDeny = (act === "BLOCKED" || act === "BLOCKED_INPUT");
+                const r = localEvent.role || "SinhVien";
+                const roleName = ROLE_DISPLAY_MAPPING[r] || r;
                 items.push({
                     id: localEvent.req_id || "REQ-NOW",
-                    account_id: localEvent.account_id || "SV001",
-                    role: localEvent.role || "SinhVien",
+                    role: r,
+                    role_name: roleName,
                     tag: isDeny ? "DENY" : (act === "REDACTED" ? "REDACTED" : "ALLOW"),
                     action_taken: act,
                     isDenied: isDeny,
@@ -829,7 +951,7 @@
             if (logs && logs.length > 0) {
                 logs.slice(0, 8).forEach((l, idx) => {
                     const r = l.role || "SinhVien";
-                    const acc = ACCOUNT_ROLE_MAPPING[r] || { id: "SV001" };
+                    const roleName = ROLE_DISPLAY_MAPPING[r] || r;
                     const act = l.action_taken || "PASSED";
                     const isDeny = (act === "BLOCKED" || act === "BLOCKED_INPUT");
                     const itmId = "REQ-" + (l.query_sha256 ? l.query_sha256.substring(0, 4).toUpperCase() : `00${idx + 1}`);
@@ -838,8 +960,8 @@
                     if (!localEvent || itmId !== localEvent.req_id) {
                         items.push({
                             id: itmId,
-                            account_id: acc.id,
                             role: r,
+                            role_name: roleName,
                             tag: isDeny ? "DENY" : (act === "REDACTED" ? "REDACTED" : "ALLOW"),
                             action_taken: act,
                             isDenied: isDeny,
@@ -855,8 +977,8 @@
             let histHtml = "";
             items.slice(0, 6).forEach(item => {
                 histHtml += `
-                    <div class="history-item" onclick="openAlertModal('Lịch sử truy xuất ${item.id}', '${item.account_id} - ${item.role}', '${item.isDenied ? "HIGH" : "LOW"}', 'Kết quả: ${item.tag} | Trạng thái: ${item.action_taken}')">
-                        <span class="history-meta">${item.id} • ${item.account_id} (${item.role})</span>
+                    <div class="history-item" onclick="openAlertModal('Lịch sử truy xuất ${item.id}', '${item.role_name}', '${item.isDenied ? "HIGH" : "LOW"}', 'Kết quả: ${item.tag} | Trạng thái: ${item.action_taken}')">
+                        <span class="history-meta">${item.id} • ${item.role_name}</span>
                         <span class="history-tag ${item.tag}">${item.tag}</span>
                     </div>
                 `;
@@ -869,18 +991,18 @@
             if (localEvent) {
                 const act = localEvent.action_taken || "PASSED";
                 const role = localEvent.role || "SinhVien";
-                const accId = localEvent.account_id || "SV001";
+                const roleName = ROLE_DISPLAY_MAPPING[role] || role;
                 const qText = localEvent.query || "";
                 const violations = localEvent.violations || [];
 
                 if (act === "BLOCKED" || act === "BLOCKED_INPUT") {
                     // Truy vấn đang hỏi bị CHẶN / TỪ CHỐI AN TOÀN
-                    let desc = `Tài khoản ${accId} (${role}) gửi yêu cầu: "${escapeHtml(qText)}". Hệ thống đã kích hoạt cơ chế RBAC và Output Guardrails để từ chối truy cập và ngăn chặn rò rỉ dữ liệu ngoài quyền hạn.`;
+                    let desc = `Vai trò ${roleName} gửi yêu cầu: "${escapeHtml(qText)}". Hệ thống đã kích hoạt cơ chế RBAC và Output Guardrails để từ chối truy cập và ngăn chặn rò rỉ dữ liệu ngoài quyền hạn.`;
                     if (violations.length > 0) {
                         desc += `<br><br><strong>Chi tiết vi phạm phát hiện:</strong><br>` + violations.map(v => `• [${v.severity}] ${v.violation_type}: ${v.description}`).join('<br>');
                     }
                     alertHtml += `
-                        <div class="alert-item" onclick="openAlertModal('Phát hiện truy cập ngoài phạm vi quyền', '${accId} - ${role}', 'HIGH', '${escapeModalText(desc)}')">
+                        <div class="alert-item" onclick="openAlertModal('Phát hiện truy cập ngoài phạm vi quyền', '${roleName}', 'HIGH', '${escapeModalText(desc)}')">
                             <span class="alert-label">
                                 <span style="color: #f87171;">⚠️</span> Phát hiện truy cập ngoài phạm vi quyền (${localEvent.req_id || "GẦN NHẤT"})
                             </span>
@@ -894,7 +1016,7 @@
                         desc += `<br><br><strong>Chi tiết xử lý:</strong><br>` + violations.map(v => `• [${v.severity}] ${v.violation_type}: ${v.description}`).join('<br>');
                     }
                     alertHtml += `
-                        <div class="alert-item" onclick="openAlertModal('Phát hiện dữ liệu nhạy cảm cần che', '${accId} - ${role}', 'MEDIUM', '${escapeModalText(desc)}')">
+                        <div class="alert-item" onclick="openAlertModal('Phát hiện dữ liệu nhạy cảm cần che', '${roleName}', 'MEDIUM', '${escapeModalText(desc)}')">
                             <span class="alert-label">
                                 <span style="color: #fbbf24;">🛡️</span> Phát hiện dữ liệu cần che (${localEvent.req_id || "GẦN NHẤT"})
                             </span>
@@ -903,9 +1025,9 @@
                     `;
                 } else {
                     // Truy vấn hợp lệ, an toàn
-                    let desc = `Yêu cầu: "${escapeHtml(qText)}" từ tài khoản ${accId} (${role}) được xác thực hợp lệ theo quyền hạn. Toàn bộ nội dung phản hồi đã qua kiểm soát an toàn và đối soát căn cứ thành công.`;
+                    let desc = `Yêu cầu: "${escapeHtml(qText)}" từ vai trò ${roleName} được xác thực hợp lệ theo quyền hạn. Toàn bộ nội dung phản hồi đã qua kiểm soát an toàn và đối soát căn cứ thành công.`;
                     alertHtml += `
-                        <div class="alert-item" onclick="openAlertModal('Truy vấn hợp lệ & an toàn', '${accId} - ${role}', 'LOW', '${escapeModalText(desc)}')">
+                        <div class="alert-item" onclick="openAlertModal('Truy vấn hợp lệ & an toàn', '${roleName}', 'LOW', '${escapeModalText(desc)}')">
                             <span class="alert-label">
                                 <span style="color: #34d399;">✓</span> Truy vấn hợp lệ & an toàn (${localEvent.req_id || "GẦN NHẤT"})
                             </span>
@@ -937,7 +1059,7 @@
 
         function openAlertModal(title, user, level, desc) {
             document.getElementById("modalTitle").innerText = title;
-            document.getElementById("modalMeta").innerText = `Tài khoản: ${user} • Mức độ: ${level} • Thời gian: Vừa xong`;
+            document.getElementById("modalMeta").innerText = `Vai trò: ${user} • Mức độ: ${level} • Thời gian: Vừa xong`;
             document.getElementById("modalDesc").innerText = desc;
             document.getElementById("alertModal").style.display = "flex";
         }
