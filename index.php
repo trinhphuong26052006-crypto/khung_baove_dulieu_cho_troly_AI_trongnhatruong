@@ -20,14 +20,14 @@
             </div>
 
             <!-- Điều hướng 3 trang chuẩn hệ thống -->
-            <div style="padding: 10px 14px 2px 14px; font-size: 0.7rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px;">
-                ĐIỀU HƯỚNG
+            <div style="padding: 12px 14px 4px 14px; font-size: 0.7rem; color: #9ca3af; font-weight: 700; letter-spacing: 0.5px;">
+                WORKSPACE
             </div>
             <div style="display: flex; flex-direction: column; gap: 4px; padding: 4px 10px 10px 10px; border-bottom: 1px solid var(--card-border);">
-                <a href="index.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; background: #1e3a5f; color: #60a5fa; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                <a href="index.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; background: #f3f0ff; color: #6d28d9; text-decoration: none; font-size: 0.85rem; font-weight: 600;">
                     <span>💬</span> Trợ lý AI
                 </a>
-                <a href="security_status.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500;">
+                <a href="security_status.php" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500;">
                     <span>🛡️</span> Trạng thái bảo mật
                 </a>
             </div>

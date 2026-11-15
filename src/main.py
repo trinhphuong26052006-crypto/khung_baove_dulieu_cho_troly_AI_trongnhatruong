@@ -76,13 +76,20 @@ CONFIG: Dict[str, Any] = {
     
     # Cấu hình kiểm soát an toàn đầu vào (P2.0)
     "MAX_INPUT_LENGTH": 500,
+    "ENABLE_INPUT_VALIDATION": True, # Bật/tắt Input Guard (chặn SQL injection, script...)
     "BLOCKED_KEYWORDS": [
         "sql injection", "drop table", "union select", 
         "ignore previous instructions", "bypass security"
     ],
     
-    # Cấu hình bộ lọc an toàn đầu ra (P5.0)
-    "STRICT_OUTPUT_FILTER": True, # Chặn toàn bộ phản hồi nếu vi phạm nghiêm trọng (lộ tài liệu Mật)
+    # Cấu hình kiểm soát phân quyền RBAC & Pre-retrieval (Nhiệm vụ Thảo: Baseline vs Controlled)
+    "ENABLE_RBAC_PRERETRIEVAL": True, # True: Chế độ Controlled (có RBAC & Pre-retrieval) | False: Chế độ Baseline (truy xuất toàn bộ 96 docs)
+    "ENABLE_PERMISSION_CHECK": True,  # Alias tương thích ngược cho ENABLE_RBAC_PRERETRIEVAL
+    "ENABLE_RELEVANCE_GATE": True,    # True: Kiểm tra mức độ liên quan chủ đề | False: Truy xuất thuần theo từ khóa
+
+    # Cấu hình bộ lọc an toàn đầu ra (P5.0 - Nhiệm vụ Nhung)
+    "ENABLE_OUTPUT_FILTER": True,     # True: Chế độ Controlled (bật bộ lọc an toàn đầu ra) | False: Chế độ Baseline (tắt lọc)
+    "STRICT_OUTPUT_FILTER": True,     # Chặn toàn bộ phản hồi nếu vi phạm nghiêm trọng (lộ tài liệu Mật)
 
     # Cấu hình nhật ký bảo mật (P6.0)
     "ENABLE_AUDIT_LOG": True,
@@ -335,17 +342,29 @@ def p3_retrieve_authorized_documents(
 ) -> List[Dict[str, Any]]:
     """
     [P3.0] Truy xuất tài liệu liên quan áp dụng Pre-retrieval Access Control:
-    - Tìm kiếm tài liệu thuộc quyền hạn của user_role.
-    - Áp dụng Relevance Gate: Lọc bỏ triệt để các tài liệu không liên quan đến câu hỏi.
+    - Nếu ENABLE_RBAC_PRERETRIEVAL = True (Controlled): Lọc tài liệu theo vai trò user_role.
+    - Nếu ENABLE_RBAC_PRERETRIEVAL = False (Baseline): Bỏ qua kiểm tra quyền, truy xuất toàn bộ (như vai trò QuanTri).
+    - Áp dụng Relevance Gate nếu ENABLE_RELEVANCE_GATE = True.
     """
+    enable_rbac = CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", CONFIG.get("ENABLE_PERMISSION_CHECK", True))
+    if enable_rbac:
+        effective_role = user_role
+    else:
+        # Chế độ Baseline: bỏ qua phân quyền, cho phép tìm kiếm trên toàn bộ 96 tài liệu
+        effective_role = "QuanTri"
+
     candidate_docs = rag_engine.retrieve_context(
         query=query, 
-        user_role=user_role, 
+        user_role=effective_role, 
         top_k=CONFIG["TOP_K_DOCUMENTS"]
     )
     
-    # Lọc chỉ giữ lại các tài liệu thực sự phù hợp với câu hỏi
-    relevant_docs = [doc for doc in candidate_docs if is_document_relevant(query, doc, user_role)]
+    # Lọc chỉ giữ lại các tài liệu thực sự phù hợp với câu hỏi nếu bật Relevance Gate
+    if CONFIG.get("ENABLE_RELEVANCE_GATE", True):
+        relevant_docs = [doc for doc in candidate_docs if is_document_relevant(query, doc, user_role)]
+    else:
+        relevant_docs = candidate_docs
+
     return relevant_docs
 
 
@@ -395,6 +414,22 @@ def p5_validate_and_format_output(
       hoặc viện dẫn tên trường ngoài tài liệu tham khảo.
     - Cơ chế phòng thủ nghiêm ngặt (Fail-Closed): Nếu bộ lọc lỗi hoặc từ chối, chặn ngay lập tức.
     """
+    # Nếu tính năng Output Filter bị tắt (chế độ Baseline)
+    if not CONFIG.get("ENABLE_OUTPUT_FILTER", True):
+        print("[Bước 5 - Output Filter]: ĐÃ TẮT BỘ LỌC ĐẦU RA (Baseline Mode - No Guardrails).")
+        filter_result = FilterResult(
+            is_safe=True,
+            action_taken="PASSED",
+            original_text=answer,
+            filtered_text=answer,
+            violations=[],
+            source_grounded=bool(retrieved_docs and len(retrieved_docs) > 0)
+        )
+        return answer, filter_result
+
+    # Cập nhật chế độ nghiêm ngặt của OutputFilter theo cấu hình
+    output_filter.strict_mode = CONFIG.get("STRICT_OUTPUT_FILTER", True)
+
     filter_result = output_filter.filter_response(
         response_text=answer,
         user_role=user_role,
@@ -464,23 +499,33 @@ def execute_end_to_end_pipeline(
     # -------------------------------------------------------------------------
     # Bước 1: Người dùng gửi câu hỏi và vai trò
     # -------------------------------------------------------------------------
-    is_valid, validated_or_error = p2_validate_input(raw_query)
-    if not is_valid:
-        print(f"[Bước 1 - LỖI ĐẦU VÀO]: {validated_or_error}")
-        p6_audit_log(components.security_logger, user_role, raw_query, [],
-                     status="REJECTED_INPUT", latency_ms=(time.time()-start_time)*1000,
-                     test_id=test_id)
-        return {"status": "REJECTED_INPUT", "answer": "", "retrieved_doc_ids": [],
-                "action_taken": "BLOCKED_INPUT", "latency_ms": round((time.time()-start_time)*1000, 2)}
-        
-    query = validated_or_error
+    if CONFIG.get("ENABLE_INPUT_VALIDATION", True):
+        is_valid, validated_or_error = p2_validate_input(raw_query)
+        if not is_valid:
+            print(f"[Bước 1 - LỖI ĐẦU VÀO]: {validated_or_error}")
+            p6_audit_log(components.security_logger, user_role, raw_query, [],
+                         status="REJECTED_INPUT", latency_ms=(time.time()-start_time)*1000,
+                         test_id=test_id)
+            return {"status": "REJECTED_INPUT", "answer": "", "retrieved_doc_ids": [],
+                    "action_taken": "BLOCKED_INPUT", "latency_ms": round((time.time()-start_time)*1000, 2)}
+        query = validated_or_error
+    else:
+        print("[Bước 1]: ĐÃ TẮT BỘ LỌC ĐẦU VÀO (Baseline Mode - Input Validation Disabled).")
+        query = (raw_query or "").strip()
     print(f"[Bước 1]: Tiếp nhận câu hỏi ({len(query)} ký tự) từ vai trò [{user_role}].")
     
     # -------------------------------------------------------------------------
     # Bước 2: PermissionChecker xác định các mức tài liệu được phép truy cập
     # -------------------------------------------------------------------------
-    allowed_classifications = components.permission_checker.get_allowed_classifications(user_role)
-    allowed_doc_ids = components.permission_checker.get_allowed_doc_ids(user_role)
+    enable_rbac = CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", True)
+    if enable_rbac:
+        allowed_classifications = components.permission_checker.get_allowed_classifications(user_role)
+        allowed_doc_ids = components.permission_checker.get_allowed_doc_ids(user_role)
+    else:
+        # Chế độ Baseline: Không áp dụng RBAC Pre-retrieval, coi như được truy cập toàn bộ tài liệu
+        allowed_classifications = ["Public", "Internal", "Restricted"]
+        allowed_doc_ids = set(components.permission_checker._metadata_by_id.keys())
+
     cls_str = ", ".join(allowed_classifications) if allowed_classifications else "Không có"
     print(f"[Bước 2 - PermissionChecker]: Mức tài liệu được phép truy cập: [{cls_str}] ({len(allowed_doc_ids)} tài liệu hợp lệ)")
     
@@ -495,18 +540,19 @@ def execute_end_to_end_pipeline(
     )
 
     # Defense-in-depth: dù Retriever phải lọc quyền trước retrieval, main.py vẫn
-    # kiểm tra lại ID tài liệu trước khi đưa context sang LLM.
-    unauthorized_docs = [
-        d for d in retrieved_docs
-        if d.get("doc_id") not in allowed_doc_ids
-    ]
-    if unauthorized_docs:
-        blocked_ids = [d.get("doc_id") for d in unauthorized_docs]
-        print(f"[CẢNH BÁO RBAC] Retriever trả về tài liệu ngoài quyền: {blocked_ids}. Đã loại bỏ.")
-        retrieved_docs = [
+    # kiểm tra lại ID tài liệu trước khi đưa context sang LLM (chỉ áp dụng ở Controlled mode).
+    if enable_rbac:
+        unauthorized_docs = [
             d for d in retrieved_docs
-            if d.get("doc_id") in allowed_doc_ids
+            if d.get("doc_id") not in allowed_doc_ids
         ]
+        if unauthorized_docs:
+            blocked_ids = [d.get("doc_id") for d in unauthorized_docs]
+            print(f"[CẢNH BÁO RBAC] Retriever trả về tài liệu ngoài quyền: {blocked_ids}. Đã loại bỏ.")
+            retrieved_docs = [
+                d for d in retrieved_docs
+                if d.get("doc_id") in allowed_doc_ids
+            ]
     
     # -------------------------------------------------------------------------
     # Bước 4: RAG Engine nhận kết quả hợp lệ để tạo câu trả lời
@@ -609,6 +655,13 @@ def execute_end_to_end_pipeline(
         "action_taken": filter_result.action_taken,
         "is_safe": filter_result.is_safe,
         "latency_ms": round(elapsed_time * 1000, 2),
+        "violations": [
+            {
+                "violation_type": v.violation_type,
+                "severity": v.severity,
+                "description": v.description
+            } for v in filter_result.violations
+        ] if filter_result else []
     }
 
 

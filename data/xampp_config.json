@@ -1,0 +1,4 @@
+{
+    "ENABLE_RBAC_PRERETRIEVAL": true,
+    "ENABLE_OUTPUT_FILTER": true
+}
