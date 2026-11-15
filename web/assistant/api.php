@@ -1,179 +1,134 @@
 <?php
 /**
- * API Gateway cho XAMPP Apache
- * Xử lý các request từ web frontend và gọi logic Python RAG / RBAC
+ * web/assistant/api.php
+ * XAMPP gateway for the school AI assistant.
+ * Local development only: UI-selected roles are not authenticated identities.
  */
+declare(strict_types=1);
+
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Cache-Control: no-store');
+header('X-Content-Type-Options: nosniff');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-// Đường dẫn Python và Project gốc
-
-$projectDir = dirname(__DIR__, 2);
-
-$pythonPath = $projectDir
-    . DIRECTORY_SEPARATOR . '.venv'
-    . DIRECTORY_SEPARATOR . 'Scripts'
-    . DIRECTORY_SEPARATOR . 'python.exe';
-
-$runnerPath = __DIR__
-    . DIRECTORY_SEPARATOR . 'runner.py';
-
-
-// 1. Lấy danh sách Roles
-if ($action === 'roles') {
-    echo json_encode([
-        "SinhVien" => [
-            "name" => "Sinh viên",
-            "accessible" => ["Public"],
-            "description" => "Chỉ xem các văn bản học vụ, học phí, biểu mẫu công khai."
-        ],
-        "GiangVien" => [
-            "name" => "Giảng viên",
-            "accessible" => ["Public", "Internal"],
-            "description" => "Xem văn bản công khai và tài liệu chuyên môn nội bộ nhà trường."
-        ],
-        "QuanTri" => [
-            "name" => "Quản trị viên",
-            "accessible" => ["Public", "Internal", "Restricted"],
-            "description" => "Toàn quyền truy cập cả hồ sơ kỷ luật, kiểm toán và văn bản mật."
-        ]
-    ], JSON_UNESCAPED_UNICODE);
+function respond(array $data, int $code = 200): void {
+    http_response_code($code);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     exit;
 }
 
-// 2. Lấy cấu hình
-if ($action === 'config') {
-    $configFile = $projectDir . '/data/xampp_config.json';
-    $cfg = [
-        "ENABLE_RBAC_PRERETRIEVAL" => true,
-        "ENABLE_OUTPUT_FILTER" => true
+function readJsonBody(): array {
+    $raw = file_get_contents('php://input');
+    if (!is_string($raw) || strlen($raw) > 16384) {
+        respond(['status' => 'ERROR', 'error' => 'Invalid request size.', 'sources' => []], 400);
+    }
+    $data = json_decode($raw, true);
+    if (!is_array($data) || json_last_error() !== JSON_ERROR_NONE) {
+        respond(['status' => 'ERROR', 'error' => 'Invalid JSON body.', 'sources' => []], 400);
+    }
+    return $data;
+}
+
+function readConfig(string $path): array {
+    $defaults = ['ENABLE_RBAC_PRERETRIEVAL' => true, 'ENABLE_OUTPUT_FILTER' => true];
+    if (!is_file($path)) {
+        return $defaults;
+    }
+    $data = json_decode((string)file_get_contents($path), true);
+    if (!is_array($data)) {
+        return $defaults;
+    }
+    return [
+        'ENABLE_RBAC_PRERETRIEVAL' => ($data['ENABLE_RBAC_PRERETRIEVAL'] ?? true) === true,
+        'ENABLE_OUTPUT_FILTER' => ($data['ENABLE_OUTPUT_FILTER'] ?? true) === true,
     ];
-    if (file_exists($configFile)) {
-        $cfg = json_decode(file_get_contents($configFile), true) ?: $cfg;
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $input = json_decode(file_get_contents('php://input'), true);
-        if (isset($input['ENABLE_RBAC_PRERETRIEVAL'])) {
-            $cfg['ENABLE_RBAC_PRERETRIEVAL'] = (bool)$input['ENABLE_RBAC_PRERETRIEVAL'];
-        }
-        if (isset($input['ENABLE_OUTPUT_FILTER'])) {
-            $cfg['ENABLE_OUTPUT_FILTER'] = (bool)$input['ENABLE_OUTPUT_FILTER'];
-        }
-        file_put_contents($configFile, json_encode($cfg, JSON_PRETTY_PRINT));
-    }
-
-    echo json_encode($cfg);
-    exit;
 }
 
-// 3. Lấy 40 câu hỏi mẫu
-if ($action === 'sample-queries') {
-    $qPath = $projectDir . '/tests/queries/test_queries.json';
-    if (file_exists($qPath)) {
-        echo file_get_contents($qPath);
-    } else {
-        echo json_encode([]);
-    }
-    exit;
+$action = isset($_GET['action']) && is_string($_GET['action']) ? $_GET['action'] : '';
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$projectDir = dirname(__DIR__, 2);
+$pythonPath = $projectDir . DIRECTORY_SEPARATOR . '.venv' . DIRECTORY_SEPARATOR . 'Scripts' . DIRECTORY_SEPARATOR . 'python.exe';
+$runnerPath = __DIR__ . DIRECTORY_SEPARATOR . 'runner.py';
+$configFile = $projectDir . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'xampp_config.json';
+
+// Restrict this demonstration API to requests from the local machine.
+// For deployment on a LAN/server, replace with proper authentication and authorization.
+$remoteAddress = $_SERVER['REMOTE_ADDR'] ?? '';
+if (!in_array($remoteAddress, ['127.0.0.1', '::1'], true)) {
+    respond(['status' => 'ERROR', 'error' => 'Local development access only.', 'sources' => []], 403);
 }
 
-// 4. Xem chi tiết tài liệu
+if ($action === 'roles' && $method === 'GET') {
+    respond([
+        'SinhVien' => ['name' => 'Sinh viên', 'accessible' => ['Public'], 'description' => 'Chỉ xem các văn bản học vụ, học phí, biểu mẫu công khai.'],
+        'GiangVien' => ['name' => 'Giảng viên', 'accessible' => ['Public', 'Internal'], 'description' => 'Xem văn bản công khai và tài liệu chuyên môn nội bộ nhà trường.'],
+        'QuanTri' => ['name' => 'Quản trị viên', 'accessible' => ['Public', 'Internal', 'Restricted'], 'description' => 'Vai trò kiểm thử có quyền truy cập tài liệu hạn chế.'],
+    ]);
+}
+
+if ($action === 'config') {
+    if ($method === 'GET') {
+        respond(readConfig($configFile));
+    }
+    // Prevent unauthenticated changes to security configuration.
+    respond(['status' => 'ERROR', 'error' => 'Configuration changes are disabled via this API.', 'sources' => []], 403);
+}
+
+if ($action === 'sample-queries' && $method === 'GET') {
+    $path = $projectDir . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'queries' . DIRECTORY_SEPARATOR . 'test_queries.json';
+    if (!is_file($path)) {
+        respond([]);
+    }
+    $data = json_decode((string)file_get_contents($path), true);
+    respond(is_array($data) ? $data : []);
+}
+
 if ($action === 'document') {
-    $docId = isset($_GET['doc_id']) ? preg_replace('/[^a-zA-Z0-9_-]/', '', $_GET['doc_id']) : '';
-    $metaFile = $projectDir . '/data/metadata/documents_metadata.json';
-    $foundMeta = null;
-    if (file_exists($metaFile)) {
-        $metaList = json_decode(file_get_contents($metaFile), true);
-        foreach ($metaList as $m) {
-            if ($m['doc_id'] === $docId) {
-                $foundMeta = $m;
-                break;
-            }
-        }
-    }
-
-    // Đọc nội dung file md
-    $content = '';
-    $filePath = $projectDir . '/' . ($foundMeta['file_path'] ?? '');
-    if (file_exists($filePath)) {
-        $content = file_get_contents($filePath);
-    }
-
-    echo json_encode([
-        "doc_id" => $docId,
-        "title" => $foundMeta['title'] ?? $docId,
-        "classification" => $foundMeta['classification'] ?? 'Public',
-        "department" => $foundMeta['department'] ?? '',
-        "university" => $foundMeta['university'] ?? '',
-        "content" => $content
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
+    respond([
+        'status' => 'DENIED',
+        'action_taken' => 'BLOCKED',
+        'answer' => 'Chức năng xem toàn văn tài liệu tạm khóa để bảo vệ dữ liệu.',
+        'sources' => [],
+    ], 403);
 }
 
-// 5. Chat qua RAG Pipeline
-if ($action === 'chat') {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $query = $input['query'] ?? '';
+if ($action === 'chat' && $method === 'POST') {
+    $input = readJsonBody();
+    $query = $input['query'] ?? null;
     $role = $input['role'] ?? 'SinhVien';
-
-    // Đọc cấu hình
-    $configFile = $projectDir . '/data/xampp_config.json';
-    $enableRbac = 'true';
-    $enableFilter = 'true';
-    if (file_exists($configFile)) {
-        $cfg = json_decode(file_get_contents($configFile), true);
-        $enableRbac = empty($cfg['ENABLE_RBAC_PRERETRIEVAL']) ? 'false' : 'true';
-        $enableFilter = empty($cfg['ENABLE_OUTPUT_FILTER']) ? 'false' : 'true';
+    if (!is_string($query) || trim($query) === '' || mb_strlen($query, 'UTF-8') > 500) {
+        respond(['status' => 'ERROR', 'error' => 'Câu hỏi không hợp lệ hoặc vượt quá 500 ký tự.', 'sources' => []], 400);
     }
-
-if (!is_file($pythonPath) || !is_file($runnerPath)) {
-    http_response_code(500);
-
-    echo json_encode([
-        "status" => "ERROR",
-        "action_taken" => "ERROR",
-        "answer" => "Không tìm thấy Python hoặc runner.py.",
-        "sources" => []
-    ], JSON_UNESCAPED_UNICODE);
-
-    exit;
-}
- 
-
-$cmd = escapeshellarg($pythonPath) . ' ' .
-       escapeshellarg($runnerPath) . ' ' .
-       escapeshellarg($query) . ' ' .
-       escapeshellarg($role) . ' ' .
-       $enableRbac . ' ' .
-       $enableFilter . ' 2>&1';
-
-$output = shell_exec($cmd);
-
-
-    // Bóc tách JSON payload sau marker
-    $parts = explode('---JSON_OUTPUT_START---', $output);
-    if (count($parts) >= 2) {
-        $jsonStr = trim($parts[1]);
-        echo $jsonStr;
-    } else {
-        echo json_encode([
-            "status" => "ERROR",
-            "action_taken" => "BLOCKED",
-            "answer" => "Lỗi thực thi pipeline Python từ XAMPP: " . substr($output, 0, 500),
-            "sources" => []
-        ], JSON_UNESCAPED_UNICODE);
+    if (!is_string($role) || !in_array($role, ['SinhVien', 'GiangVien', 'QuanTri'], true)) {
+        respond(['status' => 'ERROR', 'error' => 'Vai trò không hợp lệ.', 'sources' => []], 400);
     }
-    exit;
+    if (!is_file($pythonPath) || !is_file($runnerPath)) {
+        respond(['status' => 'ERROR', 'error' => 'Không tìm thấy Python hoặc runner.py.', 'sources' => []], 500);
+    }
+    $cfg = readConfig($configFile);
+    $rbac = $cfg['ENABLE_RBAC_PRERETRIEVAL'] ? 'true' : 'false';
+    $filter = $cfg['ENABLE_OUTPUT_FILTER'] ? 'true' : 'false';
+    $cmd = escapeshellarg($pythonPath) . ' ' . escapeshellarg($runnerPath) . ' ' . escapeshellarg(trim($query)) . ' ' . escapeshellarg($role) . ' ' . $rbac . ' ' . $filter . ' 2>&1';
+    $output = shell_exec($cmd);
+    if (!is_string($output)) {
+        error_log('Chat gateway: Python produced no output.');
+        respond(['status' => 'ERROR', 'error' => 'Không nhận được phản hồi từ Python.', 'sources' => []], 502);
+    }
+    $marker = '---JSON_OUTPUT_START---';
+    $position = strrpos($output, $marker);
+    if ($position === false) {
+        error_log('Chat gateway: JSON marker missing; output bytes=' . strlen($output));
+        respond(['status' => 'ERROR', 'error' => 'Pipeline Python không trả kết quả hợp lệ. Kiểm tra log máy chủ.', 'sources' => []], 502);
+    }
+    $payload = trim(substr($output, $position + strlen($marker)));
+    $decoded = json_decode($payload, true);
+    if (!is_array($decoded) || json_last_error() !== JSON_ERROR_NONE) {
+        error_log('Chat gateway: Invalid JSON after marker.');
+        respond(['status' => 'ERROR', 'error' => 'Phản hồi Python không phải JSON hợp lệ.', 'sources' => []], 502);
+    }
+    if (($decoded['status'] ?? '') === 'ERROR') {
+        respond($decoded, 502);
+    }
+    respond($decoded);
 }
 
-echo json_encode(["status" => "XAMPP Gateway Ready"]);
-
+respond(['status' => 'ERROR', 'error' => 'Endpoint hoặc phương thức không được hỗ trợ.', 'sources' => []], 404);

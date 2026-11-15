@@ -1,140 +1,377 @@
+
+import time
 import sys
 import json
-import traceback
 from pathlib import Path
 
+# ============================================================
+# 1. PROJECT CONFIGURATION
+# ============================================================
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 if sys.platform == "win32":
     try:
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        sys.stdout.reconfigure(
+            encoding="utf-8",
+            errors="replace"
+        )
+        sys.stderr.reconfigure(
+            encoding="utf-8",
+            errors="replace"
+        )
     except (AttributeError, OSError):
         pass
 
-from src.main import initialize_system, execute_end_to_end_pipeline, CONFIG
+VALID_ROLES = {
+    "SinhVien",
+    "GiangVien",
+    "QuanTri"
+}
 
-VALID_ROLES = {"SinhVien", "GiangVien", "QuanTri"}
-CLASSIFICATIONS = {"Public", "Internal", "Restricted"}
+CLASSIFICATIONS = {
+    "Public",
+    "Internal",
+    "Restricted"
+}
 
+
+# ============================================================
+# 2. JSON OUTPUT
+# ============================================================
 
 def emit(payload):
-    print("\n---JSON_OUTPUT_START---")
-    print(json.dumps(payload, ensure_ascii=False))
+    print("\n---JSON_OUTPUT_START---", flush=True)
+    print(
+        json.dumps(payload, ensure_ascii=False),
+        flush=True
+    )
 
+
+# ============================================================
+# 3. LOAD DOCUMENT METADATA
+# ============================================================
 
 def load_metadata():
-    path = PROJECT_ROOT / "data" / "metadata" / "documents_metadata.json"
+    path = (
+        PROJECT_ROOT
+        / "data"
+        / "metadata"
+        / "documents_metadata.json"
+    )
+
     if not path.is_file():
         return {}
+
     with path.open("r", encoding="utf-8") as handle:
         data = json.load(handle)
+
     if isinstance(data, dict):
         data = data.get("documents", [])
+
     if not isinstance(data, list):
         return {}
-    return {item["doc_id"]: item for item in data
-            if isinstance(item, dict) and isinstance(item.get("doc_id"), str)}
 
+    return {
+        item["doc_id"]: item
+        for item in data
+        if isinstance(item, dict)
+        and isinstance(item.get("doc_id"), str)
+    }
+
+
+# ============================================================
+# 4. SYSTEM MODE
+# ============================================================
 
 def get_mode(rbac, output_filter):
     if rbac and output_filter:
         return "Controlled"
+
     if not rbac and not output_filter:
         return "Baseline"
+
     return "Custom"
 
 
+# ============================================================
+# 5. MAIN PIPELINE
+# ============================================================
+
 def main():
+
+    # --------------------------------------------------------
+    # Validate arguments
+    # --------------------------------------------------------
+
     if len(sys.argv) < 3:
-        emit({"error": "Thiếu tham số query hoặc role"})
+        emit({
+            "status": "ERROR",
+            "error": "Missing query or role",
+            "sources": []
+        })
         return
 
     query = sys.argv[1].strip()
     role = sys.argv[2]
+
     if role not in VALID_ROLES:
-        emit({"error": "Vai trò không hợp lệ"})
+        emit({
+            "status": "ERROR",
+            "error": "Invalid role",
+            "sources": []
+        })
         return
+
     if not query:
-        emit({"error": "Câu hỏi không được để trống"})
+        emit({
+            "status": "ERROR",
+            "error": "Question cannot be empty",
+            "sources": []
+        })
         return
 
-    enable_rbac = sys.argv[3].lower() == "true" if len(sys.argv) > 3 else True
-    enable_filter = sys.argv[4].lower() == "true" if len(sys.argv) > 4 else True
-    mode = get_mode(enable_rbac, enable_filter)
+    enable_rbac = (
+        sys.argv[3].lower() == "true"
+        if len(sys.argv) > 3
+        else True
+    )
 
-    # Chỉ dùng Baseline/Custom trong môi trường thử nghiệm được kiểm soát.
-    CONFIG["ENABLE_RBAC_PRERETRIEVAL"] = enable_rbac
-    CONFIG["ENABLE_OUTPUT_FILTER"] = enable_filter
+    enable_filter = (
+        sys.argv[4].lower() == "true"
+        if len(sys.argv) > 4
+        else True
+    )
+
+    mode = get_mode(
+        enable_rbac,
+        enable_filter
+    )
 
     try:
+
+        # ----------------------------------------------------
+        # Import Python pipeline
+        # ----------------------------------------------------
+
+        from src.main import (
+            initialize_system,
+            execute_end_to_end_pipeline,
+            CONFIG
+        )
+
+        CONFIG["ENABLE_RBAC_PRERETRIEVAL"] = enable_rbac
+        CONFIG["ENABLE_OUTPUT_FILTER"] = enable_filter
+
+        # ----------------------------------------------------
+        # PERFORMANCE: Initialize RAG
+        # ----------------------------------------------------
+
+        t0 = time.perf_counter()
+
         components = initialize_system()
-        outcome = execute_end_to_end_pipeline(query, role, components)
+
+        t1 = time.perf_counter()
+
+        # ----------------------------------------------------
+        # PERFORMANCE: Execute pipeline
+        # ----------------------------------------------------
+
+        outcome = execute_end_to_end_pipeline(
+            query,
+            role,
+            components
+        )
+
+        t2 = time.perf_counter()
+
+        print(
+            f"[PERF] Khoi tao RAG: {t1 - t0:.2f}s",
+            file=sys.stderr,
+            flush=True
+        )
+
+        print(
+            f"[PERF] Xu ly pipeline: {t2 - t1:.2f}s",
+            file=sys.stderr,
+            flush=True
+        )
+
+        # ----------------------------------------------------
+        # Validate pipeline response
+        # ----------------------------------------------------
+
         if not isinstance(outcome, dict):
-            raise TypeError("Pipeline phải trả về dict")
+            raise TypeError(
+                "Pipeline must return a dictionary"
+            )
+
+        # ----------------------------------------------------
+        # PERFORMANCE: Load metadata and authorized documents
+        # ----------------------------------------------------
+
+        t_sources_start = time.perf_counter()
 
         metadata = load_metadata()
-        retrieved_ids = outcome.get("retrieved_doc_ids") or []
+
+        retrieved_ids = (
+            outcome.get("retrieved_doc_ids") or []
+        )
+
         if not isinstance(retrieved_ids, list):
             retrieved_ids = []
 
-        # Quyền được kiểm tra lại cho phần hiển thị nguồn, kể cả khi Baseline.
-        authorized_docs = components.rag_engine.retriever.get_authorized_documents(role)
+        authorized_docs = (
+            components
+            .rag_engine
+            .retriever
+            .get_authorized_documents(role)
+        )
+
         docs_map = {
             doc["doc_id"]: doc.get("content", "")
             for doc in authorized_docs
-            if isinstance(doc, dict) and isinstance(doc.get("doc_id"), str)
+            if isinstance(doc, dict)
+            and isinstance(doc.get("doc_id"), str)
         }
 
-        status = str(outcome.get("status") or "UNKNOWN")
-        action = str(outcome.get("action_taken") or "UNKNOWN")
-        denial_reason = outcome.get("denial_reason")
-        is_denied = (
-            denial_reason == "UNAUTHORIZED_DOCUMENT"
-            or status.upper() in {"DENIED", "BLOCKED", "FORBIDDEN"}
-            or action.upper() in {"BLOCKED", "DENIED"}
+        # ----------------------------------------------------
+        # Check status and access denial
+        # ----------------------------------------------------
+
+        status = str(
+            outcome.get("status") or "UNKNOWN"
         )
 
-        # Nếu hậu kiểm đã thay đổi câu trả lời, không mặc định coi các tài liệu
-        # truy xuất là bằng chứng cho phần nội dung còn lại.
-        allow_sources = not is_denied and action.upper() not in {"REDACTED", "FILTERED"}
+        action = str(
+            outcome.get("action_taken") or "UNKNOWN"
+        )
+
+        denial_reason = outcome.get("denial_reason")
+
+        is_denied = (
+            denial_reason == "UNAUTHORIZED_DOCUMENT"
+            or status.upper() in {
+                "DENIED",
+                "BLOCKED",
+                "FORBIDDEN"
+            }
+            or action.upper() in {
+                "BLOCKED",
+                "DENIED"
+            }
+        )
+
+        allow_sources = (
+            not is_denied
+            and action.upper() not in {
+                "REDACTED",
+                "FILTERED"
+            }
+        )
+
+        # ----------------------------------------------------
+        # Build authorized source list
+        # ----------------------------------------------------
+
         sources = []
+
         if allow_sources:
             seen = set()
+
             for doc_id in retrieved_ids:
-                if not isinstance(doc_id, str) or doc_id in seen:
+
+                if (
+                    not isinstance(doc_id, str)
+                    or doc_id in seen
+                ):
                     continue
+
                 seen.add(doc_id)
+
                 if doc_id not in docs_map:
                     continue
+
                 meta = metadata.get(doc_id)
+
                 if not isinstance(meta, dict):
                     continue
-                classification = meta.get("classification")
-                allowed_roles = meta.get("allowed_roles", [])
+
+                classification = meta.get(
+                    "classification"
+                )
+
+                allowed_roles = meta.get(
+                    "allowed_roles",
+                    []
+                )
+
                 if classification not in CLASSIFICATIONS:
                     continue
-                if not isinstance(allowed_roles, list) or role not in allowed_roles:
+
+                if (
+                    not isinstance(allowed_roles, list)
+                    or role not in allowed_roles
+                ):
                     continue
+
                 content = docs_map[doc_id]
+
                 if not isinstance(content, str):
                     content = ""
+
                 sources.append({
                     "doc_id": doc_id,
-                    "title": meta.get("title") or doc_id,
+                    "title": (
+                        meta.get("title") or doc_id
+                    ),
                     "classification": classification,
-                    "department": meta.get("department") or "Nhà trường",
-                    "university": meta.get("university") or "Trường Đại học",
-                    "snippet": (content[:350].strip() + "...") if content else ""
+                    "department": (
+                        meta.get("department")
+                        or "Nhà trường"
+                    ),
+                    "university": (
+                        meta.get("university")
+                        or "Trường Đại học"
+                    ),
+                    "snippet": (
+                        content[:350].strip() + "..."
+                        if content
+                        else ""
+                    )
                 })
 
+        t_sources_end = time.perf_counter()
+
+        print(
+            "[PERF] Xu ly metadata va sources: "
+            f"{t_sources_end - t_sources_start:.2f}s",
+            file=sys.stderr,
+            flush=True
+        )
+
+        # ----------------------------------------------------
+        # Prepare answer
+        # ----------------------------------------------------
+
         answer = outcome.get("answer") or ""
+
         if not isinstance(answer, str):
             answer = str(answer)
+
         if denial_reason == "UNAUTHORIZED_DOCUMENT":
-            answer = "Bạn chưa có quyền truy cập tài liệu này. Vui lòng liên hệ bộ phận quản lý nếu cần hỗ trợ."
+            answer = (
+                "Bạn chưa có quyền truy cập tài liệu này. "
+                "Vui lòng liên hệ bộ phận quản lý "
+                "nếu cần hỗ trợ."
+            )
+
+        # ----------------------------------------------------
+        # Final JSON response
+        # ----------------------------------------------------
 
         emit({
             "answer": answer,
@@ -143,36 +380,43 @@ def main():
             "is_safe": outcome.get("is_safe"),
             "denial_reason": denial_reason,
             "role": role,
-            "latency_ms": outcome.get("latency_ms", 0),
+            "latency_ms": outcome.get(
+                "latency_ms",
+                0
+            ),
             "mode": mode,
             "retrieved_count": len(sources),
             "sources": sources,
-            "sources_label": "Tài liệu được truy xuất (chưa xác minh là trích dẫn trực tiếp)",
+            "sources_label": (
+                "Tài liệu được truy xuất "
+                "(chưa xác minh là trích dẫn trực tiếp)"
+            )
         })
+
     except Exception as exc:
-        # Không gửi traceback, đường dẫn nội bộ hoặc dữ liệu nhạy cảm về frontend.
-        print(f"Runner error: {type(exc).__name__}: {exc}", file=sys.stderr)
-        emit({"error": "Hệ thống tạm thời không xử lý được yêu cầu.",
-              "status": "ERROR", "sources": [], "retrieved_count": 0})
 
-<<<<<<< HEAD
-    response_payload = {
-        "answer": outcome.get("answer", ""),
-        "status": outcome.get("status", "SUCCESS"),
-        "action_taken": outcome.get("action_taken", "PASSED"),
-        "is_safe": outcome.get("is_safe", True),
-        "role": role,
-        "latency_ms": outcome.get("latency_ms", 0),
-        "mode": "Controlled" if enable_rbac else "Baseline",
-        "retrieved_count": len(sources),
-        "sources": sources,
-        "violations": outcome.get("violations", [])
-    }
+        print(
+            f"Runner error: "
+            f"{type(exc).__name__}: {exc}",
+            file=sys.stderr,
+            flush=True
+        )
 
-    print("\n---JSON_OUTPUT_START---")
-    print(json.dumps(response_payload, ensure_ascii=False))
-=======
->>>>>>> Thảo
+        emit({
+            "error": (
+                "Python pipeline failed. "
+                "Check server logs."
+            ),
+            "status": "ERROR",
+            "action_taken": "ERROR",
+            "sources": [],
+            "retrieved_count": 0
+        })
+
+
+# ============================================================
+# 6. ENTRY POINT
+# ============================================================
 
 if __name__ == "__main__":
     main()

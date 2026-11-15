@@ -1,5 +1,5 @@
 <?php
-/** Security Dashboard – module Phương. Read-only; QuanTri only. */
+/** Security Dashboard – module Phuong. Read-only; QuanTri only. */
 if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 require_once __DIR__ . '/auth_check.php';
 check_auth();
@@ -7,7 +7,7 @@ $user = $_SESSION['user'] ?? [];
 if (($user['role'] ?? '') !== 'QuanTri') {
     http_response_code(403);
     header('Content-Type: text/html; charset=utf-8');
-    exit('403 – Bạn không có quyền truy cập trang quản trị bảo mật.');
+    exit('403 – You are not authorized to access the security dashboard.');
 }
 header('Cache-Control: no-store, private');
 header('X-Content-Type-Options: nosniff');
@@ -30,17 +30,20 @@ $filter = $cfg['ENABLE_OUTPUT_FILTER'];
 $mode = $rbac && $filter ? 'Controlled' : (!$rbac && !$filter ? 'Baseline' : 'Custom');
 $logPath = $root . '/logs/security_audit.jsonl';
 $events = []; $total = 0; $counts = ['PASSED'=>0,'REDACTED'=>0,'BLOCKED'=>0,'DENIED'=>0,'OTHER'=>0];
-$logState = 'Không tìm thấy tệp nhật ký';
+$logState = 'Audit log file not found';
 if (is_file($logPath) && is_readable($logPath)) {
     $fh = @fopen($logPath, 'rb');
     if ($fh) {
-        $logState = 'Đã kết nối nhật ký';
+        $logState = 'Audit log connected';
         // Scan log without loading entire file into RAM. Latest 50 valid records only.
         while (($line = fgets($fh, 1048576)) !== false) {
             $entry = json_decode($line, true);
             if (!is_array($entry)) continue;
             $total++;
-            $status = strtoupper((string)($entry['status'] ?? 'OTHER'));
+            $status = strtoupper((string)($entry['status'] ?? $entry['action_taken'] ?? 'OTHER'));
+            if (in_array($status, ['BLOCKED_INPUT', 'BLOCK'], true)) $status = 'BLOCKED';
+            if (in_array($status, ['PASS', 'ALLOWED', 'ALLOW'], true)) $status = 'PASSED';
+            if ($status === 'REDACT') $status = 'REDACTED';
             if (!array_key_exists($status, $counts)) $status = 'OTHER';
             $counts[$status]++;
             $events[] = [
@@ -54,7 +57,7 @@ if (is_file($logPath) && is_readable($logPath)) {
         }
         fclose($fh);
         $events = array_reverse($events);
-    } else { $logState = 'Không thể mở nhật ký'; }
+    } else { $logState = 'Unable to open audit log'; }
 }
 // Aggregate last seven calendar days from valid log timestamps (no synthetic events).
 $daily = [];
@@ -74,7 +77,10 @@ if (is_file($logPath) && is_readable($logPath)) {
             if ($stamp === false) continue;
             $day = date('Y-m-d', $stamp);
             if (!isset($daily[$day])) continue;
-            $status = strtoupper((string)($entry['status'] ?? 'OTHER'));
+            $status = strtoupper((string)($entry['status'] ?? $entry['action_taken'] ?? 'OTHER'));
+            if (in_array($status, ['BLOCKED_INPUT', 'BLOCK'], true)) $status = 'BLOCKED';
+            if (in_array($status, ['PASS', 'ALLOWED', 'ALLOW'], true)) $status = 'PASSED';
+            if ($status === 'REDACT') $status = 'REDACTED';
             if (!isset($daily[$day][$status])) $status = 'OTHER';
             $daily[$day][$status]++;
         }
@@ -92,16 +98,52 @@ foreach ($counts as $name=>$number) {
     $offset = $next;
 }
 $donutGradient = $segments ? 'conic-gradient('.implode(', ', $segments).')' : 'conic-gradient(#e9edfa 0% 100%)';
+// --- Security Status integration: derive only from actual audit records ---
+$guardCounts = ['PASS'=>0, 'BLOCK'=>0, 'REDACT'=>0, 'UNKNOWN'=>0];
+$statusHistory = [];
+$securityAlerts = [];
+foreach ($events as $event) {
+    $raw = strtoupper(trim((string)($event['action'] ?? '')));
+    $stat = strtoupper(trim((string)($event['status'] ?? '')));
+    if (in_array($raw, ['REDACTED','REDACT'], true) || $stat === 'REDACTED') {
+        $guard = 'REDACT';
+    } elseif (in_array($raw, ['BLOCKED','BLOCKED_INPUT','DENIED','BLOCK'], true) || in_array($stat, ['BLOCKED','DENIED'], true)) {
+        $guard = 'BLOCK';
+    } elseif (in_array($raw, ['PASSED','PASS','ALLOWED','ALLOW'], true) || $stat === 'PASSED') {
+        $guard = 'PASS';
+    } else {
+        $guard = 'UNKNOWN';
+    }
+    $guardCounts[$guard]++;
+    $statusHistory[] = [
+        'time'=>$event['time'], 'role'=>$event['role'], 'guard'=>$guard,
+        'status'=>$stat, 'action'=>$raw, 'latency'=>$event['latency']
+    ];
+    if ($guard === 'BLOCK' || $guard === 'REDACT') {
+        $securityAlerts[] = [
+            'time'=>$event['time'], 'role'=>$event['role'],
+            'level'=>$guard === 'BLOCK' ? 'HIGH' : 'MEDIUM',
+            'label'=>$guard === 'BLOCK' ? 'Request blocked or denied' : 'Sensitive output redacted',
+            'detail'=>$guard === 'BLOCK'
+                ? 'The audit log records a blocked or denied request. Inspect the pipeline logs to identify the enforcing control.'
+                : 'The audit log records output redaction. Sensitive content is never displayed on this dashboard.'
+        ];
+    }
+}
+// $events is newest-first; use the first event for latest status.
+$latestStatus = $statusHistory[0] ?? null;
+$pipelineStatus = $latestStatus === null ? 'NO DATA' : 'LOGS AVAILABLE';
+$accessStatus = $latestStatus === null ? 'N/A' : (in_array($latestStatus['status'], ['DENIED'], true) ? 'DENY' : 'UNVERIFIED');
+$filterStatus = $latestStatus === null || $latestStatus['guard'] === 'UNKNOWN' ? 'N/A' : $latestStatus['guard'];
 ?>
-
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Security Dashboard | AI Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https\://fonts.googleapis.com">
+<link rel="preconnect" href="https\://fonts.gstatic.com" crossorigin>
+<link href="https\://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght\@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
     --purple:#6252ec;
@@ -1216,32 +1258,80 @@ button {
         transition:none!important
     }
 }
+/* ===== Security Status: additional status sections; existing dashboard preserved ===== */
+.status-section{margin-top:18px}
+.status-section h2{margin:0 0 14px;font-size:14px;font-weight:800}
+.status-sub{font-size:11px;line-height:1.65;color:#8490aa;margin:4px 0 15px}
+.status-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:17px 0}
+.status-summary .status-tile{border:1px solid #e5e1fa;background:linear-gradient(145deg,#f8f6ff,#fff);border-radius:14px;padding:17px}
+.status-tile .status-kicker{font-size:10px;color:#66738f;font-weight:800;letter-spacing:.6px}
+.status-tile .status-result{font-size:19px;font-weight:800;margin-top:10px;overflow-wrap:anywhere;color:#5742c4}
+.status-tile .status-result.good{color:#098765}.status-tile .status-result.bad{color:#d34b62}.status-tile .status-result.warn{color:#bd781b}
+.guard-counters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.guard-counter{border:1px solid #e6e9f4;border-radius:12px;padding:15px;background:#fff}
+.guard-counter small{display:block;font-size:10px;font-weight:800;color:#73809b}.guard-counter strong{display:block;font-size:24px;margin-top:8px;color:#453e92}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-top:18px}
+.status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #edf0f7;padding:12px 0;font-size:11px}
+.status-row:last-child{border-bottom:0}
+.status-pill{display:inline-block;border-radius:7px;padding:6px 9px;font-size:10px;font-weight:800;background:#f0efff;color:#5742c4;white-space:nowrap}
+.status-pill.high,.status-pill.block{background:#fff0f2;color:#c93351}.status-pill.medium,.status-pill.redact{background:#fff4df;color:#a86d11}.status-pill.pass{background:#e8faf3;color:#07855d}
+.status-alert{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #ebe8f6;border-radius:10px;background:#fbfaff;padding:12px;margin-bottom:9px;color:#37435d;font-size:11px;cursor:pointer}
+.status-alert:hover{background:#f1efff}
+.status-empty{padding:20px;text-align:center;color:#95a0b6;font-size:11px}
+.status-modal[hidden]{display:none}.status-modal{position:fixed;inset:0;z-index:9999;background:rgba(20,18,48,.6);display:flex;align-items:center;justify-content:center;padding:18px}
+.status-modal-dialog{background:#fff;border-radius:17px;width:min(520px,100%);padding:25px;box-shadow:0 22px 55px #14123055}
+.status-modal-dialog h2{font-size:18px;margin:0 0 12px}.status-modal-dialog p{font-size:12px;line-height:1.7;color:#53617c;overflow-wrap:anywhere}
+.status-modal-close{border:0;background:#6550ee;color:white;padding:10px 18px;border-radius:9px;cursor:pointer;font-size:12px;font-weight:700}
+@media(max-width:850px){.status-grid{grid-template-columns:1fr}.status-summary{grid-template-columns:1fr 1fr}.guard-counters{grid-template-columns:1fr 1fr}}
+@media(max-width:450px){.status-summary{grid-template-columns:1fr}}
+/* Inspired by the supplied reference: vivid but accessible, original typography retained */
+:root{--purple:#7452ef;--purple-deep:#5c3cce;--ink:#171b4a;--line:#e7e8f7;--sidebar:#251f54}
+body{background:linear-gradient(130deg,#e9e9ff,#f5f6ff 60%,#f0e9ff)}
+.sidebar{background:linear-gradient(155deg,#211e4d 0%,#35286d 58%,#5133a2 100%);border-right:0;color:#fff;position:relative}
+.sidebar::after{content:"";position:absolute;left:0;right:0;bottom:110px;height:140px;background:linear-gradient(165deg,transparent 48%,rgba(157,109,255,.16) 49%);pointer-events:none}
+.brand strong,.topbar-label{color:inherit}.brand small{color:#c7bde9}.nav-caption{color:#b8afe0}.nav a{color:#e2dafa}.nav a.active{background:linear-gradient(105deg,#8065ec,#a38cf4);color:#fff;box-shadow:0 8px 20px #17114250}.nav a:hover{background:#6350b0;color:#fff}.nav .nav-note{color:#d1c6fa}
+.profile-trigger{background:#ffffff13;border-color:#ffffff2c;color:#fff}.profile-trigger:hover{background:#ffffff22}.profile-info small,.chevron{color:#d5c9f7}.profile-menu{color:#20224b}.avatar{background:linear-gradient(140deg,#c5b2ff,#8065f5)}
+.workspace{background:#f7f8ff}.topbar{background:#fff}.content{background:linear-gradient(180deg,#f2f4ff,#fafbff 60%,#f7f8ff)}
+.intro{background:linear-gradient(112deg,#4330a9,#7957e9 68%,#9b70f4)}
+.stat{box-shadow:0 9px 25px #5758b51a;border-width:1.5px}
+.stat:nth-child(1){background:linear-gradient(135deg,#e2fff0,#f7fffb);border-color:#a5e9c5}
+.stat:nth-child(2){background:linear-gradient(135deg,#e9e5ff,#faf8ff);border-color:#d0c5ff}
+.stat:nth-child(3){background:linear-gradient(135deg,#e0eeff,#f9fcff);border-color:#b7d3ff}
+.stat:nth-child(4){background:linear-gradient(135deg,#ffe4ec,#fff9fb);border-color:#ffbfce}
+.panel{box-shadow:0 8px 26px #6d6db010;border-color:#e5e8f7}
+.panels>.panel:first-child{border-top:4px solid #8065f4}.panels>.panel:nth-child(2){border-top:4px solid #28b68d}
+.chart-panel:first-child{border-top:4px solid #745cf1}.chart-panel:nth-child(2){border-top:4px solid #4a94e5}.audit{border-top:4px solid #fb9a58}
+.status-summary .status-tile:nth-child(1){background:linear-gradient(130deg,#e9f0ff,#fff);border-color:#c5d9ff}
+.status-summary .status-tile:nth-child(2){background:linear-gradient(130deg,#e6fbf0,#fff);border-color:#b5e9cf}
+.status-summary .status-tile:nth-child(3){background:linear-gradient(130deg,#f1e9ff,#fff);border-color:#d8c7ff}
+.guard-counter:nth-child(1){background:#edfff7;border-color:#bcebd4}.guard-counter:nth-child(2){background:#fff0e4;border-color:#ffd4b0}.guard-counter:nth-child(3){background:#f1eaff;border-color:#d6c6ff}.guard-counter:nth-child(4){background:#f0f5ff;border-color:#cfdeff}
+.logs tbody tr:hover{background:#f1efff}.status-alert:hover{border-color:#c8bbff}
+@media(max-width:700px){.sidebar{background:linear-gradient(120deg,#251e55,#51349b)}.nav a{color:#f1eaff}}
 </style>
 </head>
-
 <body>
 <div class="app">
 <aside class="sidebar">
   <div class="mac" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="brand"><div class="logo">AI</div><div><strong>ASSISTANT</strong><small>AI Assistant Data Protection Framework<br>for Schools</small></div></div>
   <div class="nav-caption">WORKSPACE</div>
-  <nav class="nav" aria-label="Điều hướng chính">
+  <nav class="nav" aria-label="Main navigation">
     <a href="index.php"><span class="nav-ico">💬</span>Chat AI</a>
     <a href="security.php" class="active" aria-current="page"><span class="nav-ico">🛡️</span>Security Dashboard</a>
-    <a href="setup.php"><span class="nav-ico">⚙️</span>Cấu hình</a>
+    <a href="setup.php"><span class="nav-ico">⚙️</span>Settings</a>
   </nav>
   <div class="sidebar-spacer"></div>
   <div class="profile-wrap" id="profileWrap">
     <button type="button" class="profile-trigger" id="profileTrigger" aria-expanded="false" aria-controls="profileMenu">
-      <span class="avatar"><?=esc(mb_substr((string)($user['full_name'] ?? 'Q'),0,1,'UTF-8'))?></span>
-      <span class="profile-info"><strong><?=esc($user['full_name'] ?? 'Quản trị viên')?></strong><small><?=esc($user['email'] ?? '')?></small></span>
+      <span class="avatar"><?=esc((function_exists('mb_substr') ? mb_substr((string)($user['full_name'] ?? 'Q'),0,1,'UTF-8') : substr((string)($user['full_name'] ?? 'Q'),0,1)))?></span>
+      <span class="profile-info"><strong><?=esc($user['full_name'] ?? 'Administrator')?></strong><small><?=esc($user['email'] ?? '')?></small></span>
       <span class="chevron" aria-hidden="true">⌃</span>
     </button>
     <div class="profile-menu" id="profileMenu" hidden>
-      <div class="profile-head"><strong><?=esc($user['full_name'] ?? 'Quản trị viên')?></strong><span><?=esc($user['email'] ?? '')?> · <?=esc($user['role'] ?? '')?></span></div>
-      <a href="index.php">💬 &nbsp;Trở về Chat AI</a>
-      <a href="setup.php">⚙️ &nbsp;Cấu hình hệ thống</a>
-      <a class="logout" href="logout.php">↪ &nbsp;Đăng xuất</a>
+      <div class="profile-head"><strong><?=esc($user['full_name'] ?? 'Administrator')?></strong><span><?=esc($user['email'] ?? '')?> · <?=esc($user['role'] ?? '')?></span></div>
+      <a href="index.php">💬 &nbsp;Back to Chat AI</a>
+      <a href="setup.php">⚙️ &nbsp;System Settings</a>
+      <a class="logout" href="logout.php">↪ &nbsp;Sign Out</a>
     </div>
   </div>
 </aside>
@@ -1251,24 +1341,24 @@ button {
   <div class="topbar-actions"><a class="outline-btn" href="index.php">💬 Chat AI</a><span class="role-badge"><?=esc($user['role'] ?? '')?></span><span class="mode-badge">✨ <?=esc($mode)?> mode</span></div>
 </header>
 <main class="content">
-  <div class="intro"><div><div class="eyebrow">SECURITY MONITORING</div><h1>Security Dashboard</h1><p>Giám sát cấu hình phòng vệ, phân quyền truy cập và nhật ký bảo mật của trợ lý AI.</p></div><a class="refresh" href="security.php">↻ Làm mới dữ liệu</a></div>
-  <section class="stats" aria-label="Tổng quan bảo mật">
-    <div class="stat"><div class="stat-label">🛡️ RBAC Pre-Retrieval</div><div class="stat-value <?=$rbac?'green':'orange'?>"><?=$rbac?'ON':'OFF'?></div><div class="stat-hint">Theo cấu hình trên máy chủ</div></div>
-    <div class="stat"><div class="stat-label">✨ Output Filter</div><div class="stat-value <?=$filter?'green':'orange'?>"><?=$filter?'ON':'OFF'?></div><div class="stat-hint">Theo cấu hình trên máy chủ</div></div>
-    <div class="stat"><div class="stat-label">📋 Audit Events</div><div class="stat-value violet"><?=number_format($total)?></div><div class="stat-hint">Bản ghi JSON hợp lệ</div></div>
-    <div class="stat"><div class="stat-label">🔒 Blocked / Denied</div><div class="stat-value"><?=number_format($counts['BLOCKED']+$counts['DENIED'])?></div><div class="stat-hint">Theo trường status trong log</div></div>
+  <div class="intro"><div><div class="eyebrow">SECURITY MONITORING</div><h1>Security Dashboard</h1><p>Monitor AI access controls, protection settings, security events, and audit activity.</p></div><a class="refresh" href="security.php">↻ Refresh Data</a></div>
+  <section class="stats" aria-label="Security overview">
+    <div class="stat"><div class="stat-label">🛡️ RBAC Pre-Retrieval</div><div class="stat-value <?=$rbac?'green':'orange'?>"><?=$rbac?'ON':'OFF'?></div><div class="stat-hint">Server configuration</div></div>
+    <div class="stat"><div class="stat-label">✨ Output Filter</div><div class="stat-value <?=$filter?'green':'orange'?>"><?=$filter?'ON':'OFF'?></div><div class="stat-hint">Server configuration</div></div>
+    <div class="stat"><div class="stat-label">📋 Audit Events</div><div class="stat-value violet"><?=number_format($total)?></div><div class="stat-hint">Valid JSON audit records</div></div>
+    <div class="stat"><div class="stat-label">🔒 Blocked / Denied</div><div class="stat-value"><?=number_format($counts['BLOCKED']+$counts['DENIED'])?></div><div class="stat-hint">Based on audit log status</div></div>
   </section>
   <section class="panels">
-    <div class="panel"><h2>Trạng thái các lớp bảo vệ</h2><div class="setting"><span>Kiểm soát quyền trước truy xuất</span><span class="flag <?=$rbac?'on':'off'?>"><?=$rbac?'BẬT':'TẮT'?></span></div><div class="setting"><span>Hậu kiểm nội dung trả lời</span><span class="flag <?=$filter?'on':'off'?>"><?=$filter?'BẬT':'TẮT'?></span></div><div class="setting"><span>Chế độ hệ thống</span><strong><?=esc($mode)?></strong></div><p class="panel-sub">Trạng thái phản ánh cấu hình, không chứng minh bộ lọc hoạt động chính xác. Baseline chỉ dùng trong môi trường kiểm thử.</p></div>
-    <div class="panel"><h2>Ma trận phân quyền RBAC</h2><table class="matrix"><thead><tr><th>Vai trò</th><th>Public</th><th>Internal</th><th>Restricted</th></tr></thead><tbody><tr><td>SinhVien</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td></tr><tr><td>GiangVien</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td></tr><tr><td>QuanTri</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr></tbody></table><p class="panel-sub">Ma trận chính sách dự kiến. Các API đọc tài liệu vẫn phải tự kiểm tra quyền truy cập.</p></div>
+    <div class="panel"><h2>Protection Layer Status</h2><div class="setting"><span>Pre-retrieval access control</span><span class="flag <?=$rbac?'on':'off'?>"><?=$rbac?'ON':'OFF'?></span></div><div class="setting"><span>Output response filtering</span><span class="flag <?=$filter?'on':'off'?>"><?=$filter?'ON':'OFF'?></span></div><div class="setting"><span>System mode</span><strong><?=esc($mode)?></strong></div><p class="panel-sub">These indicators reflect configuration, not verified enforcement. Baseline mode is intended for testing only.</p></div>
+    <div class="panel"><h2>RBAC Access Matrix</h2><table class="matrix"><thead><tr><th>Role</th><th>Public</th><th>Internal</th><th>Restricted</th></tr></thead><tbody><tr><td>Student <small>(SinhVien)</small></td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td></tr><tr><td>Lecturer <small>(GiangVien)</small></td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td></tr><tr><td>Administrator <small>(QuanTri)</small></td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr></tbody></table><p class="panel-sub">Policy matrix. Document APIs must independently enforce authorization.</p></div>
   </section>
-  <section class="charts" aria-label="Biểu đồ nhật ký bảo mật">
+  <section class="charts" aria-label="Security audit charts">
     <div class="panel chart-panel">
-      <div class="chart-title"><h2>Phân bố sự kiện bảo mật</h2><span class="log-state">Theo nhật ký thực tế</span></div>
-      <div class="chart-sub">Tỷ lệ phản hồi hợp lệ, đã lọc và bị từ chối trong toàn bộ bản ghi đọc được.</div>
+      <div class="chart-title"><h2>Security Event Distribution</h2><span class="log-state">Actual audit data</span></div>
+      <div class="chart-sub">Distribution of allowed, redacted, blocked, and denied audit events.</div>
       <div class="donut-layout">
-        <div class="donut" style="background:<?=esc($donutGradient)?>" role="img" aria-label="Biểu đồ phân bố <?=number_format($total)?> sự kiện">
-          <div class="donut-center"><strong><?=number_format($total)?></strong><small>Sự kiện</small></div>
+        <div class="donut" style="background:<?=esc($donutGradient)?>" role="img" aria-label="Distribution of <?=number_format($total)?> events">
+          <div class="donut-center"><strong><?=number_format($total)?></strong><small>Events</small></div>
         </div>
         <div class="legend">
           <?php foreach ($counts as $name=>$num): ?>
@@ -1276,17 +1366,17 @@ button {
           <?php endforeach; ?>
         </div>
       </div>
-      <div class="chart-note"><?= $total === 0 ? 'Chưa có dữ liệu nhật ký để phân tích; biểu đồ hiện trạng thái trống.' : 'Số liệu được tổng hợp từ trường status, không phải kết quả đánh giá độ chính xác của mô hình.' ?></div>
+      <div class="chart-note"><?= $total === 0 ? 'No audit records available. The chart is empty.' : 'Counts are derived from audit status fields, not model accuracy metrics.' ?></div>
     </div>
     <div class="panel chart-panel">
-      <div class="chart-title"><h2>Xu hướng bảo mật 7 ngày</h2><span class="log-state">7 ngày gần nhất</span></div>
-      <div class="chart-sub">Số sự kiện theo ngày và trạng thái, lấy từ thời gian ghi trong nhật ký.</div>
+      <div class="chart-title"><h2>7-Day Security Trend</h2><span class="log-state">Last 7 days</span></div>
+      <div class="chart-sub">Daily event counts grouped by status using recorded timestamps.</div>
       <?php if ($dailyMax === 0): ?>
-        <div class="trend-empty">Chưa có sự kiện hợp lệ có thời gian trong 7 ngày gần đây.</div>
+        <div class="trend-empty">No timestamped events found in the past seven days.</div>
       <?php else: ?>
-        <div class="trend-chart" role="img" aria-label="Biểu đồ cột chồng số sự kiện bảo mật trong bảy ngày">
+        <div class="trend-chart" role="img" aria-label="Stacked security event chart for the past seven days">
           <?php foreach ($daily as $day=>$values): $dayTotal=array_sum($values); $height=($dayTotal/$dailyMax)*140; ?>
-            <div class="trend-col" title="<?=esc($day)?>: <?=number_format($dayTotal)?> sự kiện">
+            <div class="trend-col" title="<?=esc($day)?>: <?=number_format($dayTotal)?> events">
               <div class="trend-total"><?= $dayTotal ? number_format($dayTotal) : '' ?></div>
               <div class="trend-stack" style="height:<?=round($height,2)?>px">
                 <?php foreach ($values as $status=>$n): if ($n <= 0 || $dayTotal <= 0) continue; ?>
@@ -1298,10 +1388,66 @@ button {
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
-      <div class="chart-note">Các ngày không có bản ghi được thể hiện bằng 0; không tạo dữ liệu mẫu.</div>
+      <div class="chart-note">Days without events are shown as zero. No sample data is generated.</div>
     </div>
   </section>
-  <section class="panel audit"><div class="audit-head"><h2>Security Audit · Sự kiện gần đây</h2><span class="log-state"><?=esc($logState)?></span></div><div class="counts"><?php foreach($counts as $name=>$num): ?><span><?=esc($name)?>: <?=number_format($num)?></span><?php endforeach; ?></div><p class="panel-sub">Hiển thị tối đa 50 sự kiện gần nhất; không công khai nội dung câu hỏi, mã tài liệu hoặc dữ liệu nhạy cảm.</p><div class="table-wrap"><table class="logs"><thead><tr><th>Thời gian</th><th>Vai trò</th><th>Trạng thái</th><th>Hành động</th><th>Độ trễ (ms)</th></tr></thead><tbody><?php if (!$events): ?><tr><td colspan="5" class="empty">Chưa có bản ghi nhật ký hợp lệ để hiển thị.</td></tr><?php else: foreach($events as $e): ?><tr><td><?=esc($e['time'] ?: '—')?></td><td><?=esc($e['role'])?></td><td><span class="flag"><?=esc($e['status'])?></span></td><td><?=esc($e['action'])?></td><td><?=is_numeric($e['latency'])?esc(round((float)$e['latency'],2)):'—'?></td></tr><?php endforeach; endif; ?></tbody></table></div><div class="footer-note">Dữ liệu tổng hợp từ nhật ký máy chủ. Số liệu không được tạo giả lập.</div></section>
+  <section class="panel audit"><div class="audit-head"><h2>Security Audit · Recent Events</h2><span class="log-state"><?=esc($logState)?></span></div><div class="counts"><?php foreach($counts as $name=>$num): ?><span><?=esc($name)?>: <?=number_format($num)?></span><?php endforeach; ?></div><p class="panel-sub">Displays up to 50 recent events without exposing prompts, document IDs, or sensitive data.</p><div class="table-wrap"><table class="logs"><thead><tr><th>Timestamp</th><th>Role</th><th>Status</th><th>Action</th><th>Latency (ms)</th></tr></thead><tbody><?php if (!$events): ?><tr><td colspan="5" class="empty">No valid audit events to display.</td></tr><?php else: foreach($events as $e): ?><tr><td><?=esc($e['time'] ?: '—')?></td><td><?=esc($e['role'])?></td><td><span class="flag"><?=esc($e['status'])?></span></td><td><?=esc($e['action'])?></td><td><?=is_numeric($e['latency'])?esc(round((float)$e['latency'],2)):'—'?></td></tr><?php endforeach; endif; ?></tbody></table></div><div class="footer-note">Metrics are computed from server-side audit logs. No simulated data is used.</div></section>
+<!-- ===== SECURITY STATUS INTEGRATION: ORIGINAL SECTIONS PRESERVED ===== -->
+<section class="status-section" aria-label="Security status monitoring">
+  <div class="panel">
+    <h2>🛡️ Security Status · Latest Control Outcome</h2>
+    <p class="status-sub">Indicators are derived from configuration and real audit records. N/A means insufficient evidence, not verified security.</p>
+    <div class="status-summary">
+      <div class="status-tile"><div class="status-kicker">ACCESS CONTROL</div><div class="status-result <?= $accessStatus==='DENY'?'bad':'' ?>"><?=esc($accessStatus)?></div><p class="status-sub">Access decisions are displayed only when explicitly recorded in the audit log.</p></div>
+      <div class="status-tile"><div class="status-kicker">OUTPUT FILTER</div><div class="status-result <?= $filterStatus==='PASS'?'good':($filterStatus==='BLOCK'?'bad':'warn') ?>"><?=esc($filterStatus)?></div><p class="status-sub">Recorded output guardrail action; no inference from response content.</p></div>
+      <div class="status-tile"><div class="status-kicker">PIPELINE STATUS</div><div class="status-result"><?=esc($pipelineStatus)?></div><p class="status-sub">Existing logs do not establish that the pipeline is currently online.</p></div>
+    </div>
+    <div class="status-row"><span>Current system mode</span><span class="status-pill"><?=esc($mode)?></span></div>
+    <div class="status-row"><span>RBAC Pre-Retrieval</span><span class="status-pill <?= $rbac?'pass':'medium' ?>"><?= $rbac?'ON':'OFF' ?></span></div>
+    <div class="status-row"><span>Output Filter</span><span class="status-pill <?= $filter?'pass':'medium' ?>"><?= $filter?'ON':'OFF' ?></span></div>
+  </div>
+</section>
+<section class="panel status-section" aria-label="Output guardrail counters">
+  <h2>✨ Output Guardrails · Latest 50 Records</h2>
+  <p class="status-sub">Counts reflect status/action_taken from up to 50 recent events, not lifetime totals.</p>
+  <div class="guard-counters">
+    <?php foreach ($guardCounts as $label=>$number): ?>
+    <div class="guard-counter"><small><?=esc($label)?></small><strong><?=number_format($number)?></strong></div>
+    <?php endforeach; ?>
+  </div>
+</section>
+<div class="status-grid">
+  <section class="panel" aria-label="Security alerts">
+    <h2>🚨 Security Alerts</h2>
+    <p class="status-sub">Alerts reflect BLOCK/REDACT audit actions; causes remain unverified when evidence is incomplete.</p>
+    <?php if (!$securityAlerts): ?>
+      <div class="status-empty">No BLOCK/REDACT alerts in the latest 50 events.</div>
+    <?php else: foreach(array_slice($securityAlerts,0,8) as $alert): ?>
+      <button type="button" class="status-alert" data-alert='<?=esc(json_encode($alert,JSON_UNESCAPED_UNICODE|JSON_INVALID_UTF8_SUBSTITUTE|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_TAG|JSON_HEX_AMP))?>'>
+        <span><?=esc($alert['label'])?><br><small><?=esc($alert['time'] ?: 'No timestamp')?> · <?=esc($alert['role'])?></small></span>
+        <span class="status-pill <?=strtolower($alert['level'])?>"><?=esc($alert['level'])?></span>
+      </button>
+    <?php endforeach; endif; ?>
+  </section>
+  <section class="panel" aria-label="Control history">
+    <h2>📜 Recent Control History</h2>
+    <p class="status-sub">Queries, document contents, and identifying information are not displayed.</p>
+    <?php if (!$statusHistory): ?>
+      <div class="status-empty">No valid records available.</div>
+    <?php else: foreach(array_slice($statusHistory,0,8) as $item): ?>
+      <div class="status-row"><span><?=esc($item['time'] ?: 'No timestamp')?><br><small><?=esc($item['role'])?> · <?=esc($item['action'] ?: $item['status'])?></small></span><span class="status-pill <?=strtolower($item['guard'])?>"><?=esc($item['guard'])?></span></div>
+    <?php endforeach; endif; ?>
+  </section>
+</div>
+<div class="status-modal" id="securityStatusModal" hidden role="dialog" aria-modal="true" aria-labelledby="securityStatusModalTitle">
+  <div class="status-modal-dialog">
+    <h2 id="securityStatusModalTitle">Alert Details</h2>
+    <p id="securityStatusModalMeta"></p>
+    <p id="securityStatusModalDetail"></p>
+    <button type="button" class="status-modal-close" id="securityStatusModalClose">Close</button>
+  </div>
+</div>
+<!-- ===== END SECURITY STATUS ===== -->
 </main>
 </div></div>
 <script>
@@ -1313,6 +1459,30 @@ button {
  trigger.addEventListener('click',function(){setOpen(menu.hidden);});
  document.addEventListener('click',function(event){if(!wrap.contains(event.target))setOpen(false);});
  document.addEventListener('keydown',function(event){if(event.key==='Escape'){setOpen(false);trigger.focus();}});
+})();
+</script>
+<script>
+// Read-only modal; no API polling, no Chat/RAG invocation, no role mutation.
+(function(){
+  const modal=document.getElementById('securityStatusModal');
+  const close=document.getElementById('securityStatusModalClose');
+  if(!modal||!close)return;
+  function hide(){modal.hidden=true;}
+  document.querySelectorAll('[data-alert]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      try {
+        const alert=JSON.parse(btn.getAttribute('data-alert'));
+        document.getElementById('securityStatusModalMeta').textContent=
+          'Role: '+(alert.role||'—')+' · Severity: '+(alert.level||'—')+' · Timestamp: '+(alert.time||'—');
+        document.getElementById('securityStatusModalDetail').textContent=alert.detail||'No additional details';
+        modal.hidden=false;
+        close.focus();
+      } catch(e) { /* Invalid log-derived payload; do not render */ }
+    });
+  });
+  close.addEventListener('click',hide);
+  modal.addEventListener('click',function(e){if(e.target===modal)hide();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)hide();});
 })();
 </script>
 </body></html>

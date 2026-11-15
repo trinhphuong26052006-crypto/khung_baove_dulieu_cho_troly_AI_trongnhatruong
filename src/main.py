@@ -372,28 +372,39 @@ def p3_retrieve_authorized_documents(
 # --- [P4.0] XỬ LÝ SINH CÂU TRẢ LỜI BẰNG AI / RAG (SAFE AI GENERATION) ---------
 
 def p4_generate_safe_answer(
-    query: str, 
-    user_role: str, 
-    retrieved_docs: List[Dict[str, Any]], 
+    query: str,
+    user_role: str,
+    retrieved_docs: List[Dict[str, Any]],
     rag_engine: RAGEngine
 ) -> str:
-    """
-    [P4.0] Lắp ráp ngữ cảnh an toàn vào Prompt và gửi tới mô hình AI (Ollama).
-    Nếu không tìm thấy tài liệu phù hợp trong phạm vi quyền, hệ thống tự động từ chối
-    một cách lịch sự theo đúng nguyên tắc bảo vệ dữ liệu.
-    """
+    """Tạo prompt an toàn, gọi Ollama và đo thời gian từng thao tác."""
+    t0 = time.perf_counter()
     prompt = rag_engine.build_prompt(
         query=query,
         user_role=user_role,
         retrieved_docs=retrieved_docs
     )
-    
+    t1 = time.perf_counter()
+    print(
+        f"[PERF P4] Build prompt: {t1 - t0:.2f}s",
+        file=sys.stderr, flush=True
+    )
+    print(
+        f"[PERF P4] Prompt length: {len(prompt)} characters",
+        file=sys.stderr, flush=True
+    )
+
     if CONFIG["VERBOSE_DEBUG"]:
         print("\n--- [DEBUG] NỘI DUNG PROMPT GỬI ĐẾN LLM ---")
         print("[ĐÃ ẨN] Không hiển thị prompt/context trong log debug.")
         print("-------------------------------------------\n")
-        
+
     answer = rag_engine.query_ollama(prompt)
+    t2 = time.perf_counter()
+    print(
+        f"[PERF P4] Ollama generation: {t2 - t1:.2f}s",
+        file=sys.stderr, flush=True
+    )
     return answer
 
 
@@ -495,6 +506,16 @@ def execute_end_to_end_pipeline(
     Điều phối toàn bộ quy trình theo 5 bước chuẩn hóa từ khi tiếp nhận câu hỏi đến khi hiển thị.
     """
     start_time = time.time()
+
+    # Đo thời gian các bước mà không thay đổi logic xử lý.
+    perf_last = time.perf_counter()
+
+    def mark_perf(stage: str) -> None:
+        nonlocal perf_last
+        now = time.perf_counter()
+        print(f"[PERF MAIN] {stage}: {now - perf_last:.2f}s", file=sys.stderr, flush=True)
+        perf_last = now
+
     print_section_divider(f"QUY TRÌNH XỬ LÝ TRUY VẤN - VAI TRÒ: [{user_role}]")
     
     # -------------------------------------------------------------------------
@@ -530,6 +551,8 @@ def execute_end_to_end_pipeline(
     cls_str = ", ".join(allowed_classifications) if allowed_classifications else "Không có"
     print(f"[Bước 2 - PermissionChecker]: Mức tài liệu được phép truy cập: [{cls_str}] ({len(allowed_doc_ids)} tài liệu hợp lệ)")
     
+    mark_perf("P1-P2 - Input Validation + PermissionChecker")
+
     # -------------------------------------------------------------------------
     # Bước 3: Retriever chỉ tìm kiếm trong những tài liệu thuộc phạm vi được phép
     # -------------------------------------------------------------------------
@@ -555,6 +578,8 @@ def execute_end_to_end_pipeline(
                 if d.get("doc_id") in allowed_doc_ids
             ]
     
+    mark_perf("P3 - Retrieval + RBAC")
+
     # -------------------------------------------------------------------------
     # Bước 4: RAG Engine nhận kết quả hợp lệ để tạo câu trả lời
     # -------------------------------------------------------------------------
@@ -615,6 +640,8 @@ def execute_end_to_end_pipeline(
             rag_engine=components.rag_engine
         )
     
+    mark_perf("P4 - Generate Answer / Ollama if docs found")
+
     # -------------------------------------------------------------------------
     # Bước 5: Output Filter kiểm tra lại câu trả lời trước khi hiển thị
     # -------------------------------------------------------------------------
@@ -626,6 +653,8 @@ def execute_end_to_end_pipeline(
         output_filter=components.output_filter,
         allowed_doc_ids=allowed_doc_ids
     )
+    mark_perf("P5 - Output Filter")
+
     elapsed_time = time.time() - start_time
     
     print("\n" + "=" * 76)
@@ -649,6 +678,8 @@ def execute_end_to_end_pipeline(
         status=audit_status, filter_result=filter_result,
         latency_ms=elapsed_time * 1000, test_id=test_id,
     )
+    mark_perf("P6 - Display + Audit Log")
+
     return {
         "status": audit_status,
         "answer": final_answer,

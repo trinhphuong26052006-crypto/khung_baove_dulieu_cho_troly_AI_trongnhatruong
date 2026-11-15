@@ -5,9 +5,22 @@ require_once __DIR__ . '/auth_check.php';
 // Kiểm tra phiên đăng nhập và cấu hình
 check_auth();
 
-$user = $_SESSION['user'];
-$config = $_SESSION['app_config'];
-$isControlled = ($config['mode'] === 'controlled');
+$user = is_array($_SESSION['user'] ?? null) ? $_SESSION['user'] : [];
+$config = is_array($_SESSION['app_config'] ?? null) ? $_SESSION['app_config'] : [];
+// Fallback to the same server configuration used by the Security Dashboard.
+$cfgPath = dirname(__DIR__, 2) . '/data/xampp_config.json';
+$serverCfg = is_file($cfgPath) ? json_decode((string)@file_get_contents($cfgPath), true) : null;
+if (is_array($serverCfg)) {
+    $rbacEnabled = ($serverCfg['ENABLE_RBAC_PRERETRIEVAL'] ?? true) === true;
+    $filterEnabled = ($serverCfg['ENABLE_OUTPUT_FILTER'] ?? true) === true;
+    $displayMode = $rbacEnabled && $filterEnabled ? 'Controlled' : (!$rbacEnabled && !$filterEnabled ? 'Baseline' : 'Custom');
+} else {
+    $sessionMode = strtolower((string)($config['mode'] ?? ''));
+    $displayMode = in_array($sessionMode, ['controlled', 'baseline'], true) ? ucfirst($sessionMode) : 'Unknown';
+}
+$isControlled = ($displayMode === 'Controlled');
+// Release the PHP session lock before loading assets or sending chat requests.
+if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -77,7 +90,7 @@ $isControlled = ($config['mode'] === 'controlled');
             <div class="sidebar-user-card">
                 <div class="user-card-info">
                     <div class="user-avatar-circle">
-                        <?= mb_substr($user['full_name'], 0, 1, 'UTF-8') ?>
+                        <?= htmlspecialchars(function_exists('mb_substr') ? mb_substr((string)($user['full_name'] ?? 'U'), 0, 1, 'UTF-8') : substr((string)($user['full_name'] ?? 'U'), 0, 1), ENT_QUOTES, 'UTF-8') ?>
                     </div>
                     <div class="user-meta-texts">
                         <span class="user-meta-name" title="<?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
@@ -117,7 +130,7 @@ $isControlled = ($config['mode'] === 'controlled');
 
                     <!-- Huy hiệu trạng thái bảo vệ -->
                     <span class="zyn-status-badge">
-                        <span>✨</span> <?= $isControlled ? 'Đang bảo vệ (Controlled)' : 'Đối chứng (Baseline)' ?>
+                        <span>✨</span> <?= htmlspecialchars($displayMode === 'Controlled' ? 'Đang bảo vệ (Controlled)' : ($displayMode === 'Baseline' ? 'Đối chứng (Baseline)' : ($displayMode === 'Custom' ? 'Tùy chỉnh (Custom)' : 'Chưa xác định')), ENT_QUOTES, 'UTF-8') ?>
                     </span>
                 </div>
             </header>
