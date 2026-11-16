@@ -397,37 +397,92 @@ function removeMessage(id) {
 }
 
 // ============================================================
-// 7. NORMALIZE SECURITY EVENT STATUS
+// 7. NORMALIZE SECURITY STATUS - STRICT EVIDENCE
 // ============================================================
 
-function normalizeSecurityStatus(status, action) {
-  const statusMap = {
-    PASSED: "PASSED",
-    PASS: "PASSED",
-    ALLOWED: "PASSED",
-    ALLOW: "PASSED",
-
-    REDACTED: "REDACTED",
-    REDACT: "REDACTED",
-
-    BLOCKED: "BLOCKED",
-    BLOCK: "BLOCKED",
-    BLOCKED_INPUT: "BLOCKED",
-    REJECTED_INPUT: "BLOCKED",
-
-    DENIED: "DENIED",
-    DENY: "DENIED",
-  };
-
-  const normalizedStatus = String(status || "UNKNOWN")
+function normalizeToken(value) {
+  return String(value || "")
     .trim()
-    .toUpperCase();
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+}
 
-  const normalizedAction = String(action || "UNKNOWN")
-    .trim()
-    .toUpperCase();
+function normalizeAccessStatus(data) {
+  const access = normalizeToken(data.access_status);
+  const reason = normalizeToken(data.denial_reason);
+  const status = normalizeToken(data.status);
+  const action = normalizeToken(data.action_taken);
 
-  return statusMap[normalizedStatus] || statusMap[normalizedAction] || "OTHER";
+  if (
+    reason === "UNAUTHORIZED_DOCUMENT" ||
+    ["DENIED", "FORBIDDEN"].includes(access) ||
+    ["DENIED", "FORBIDDEN"].includes(status) ||
+    ["DENIED", "FORBIDDEN"].includes(action)
+  ) {
+    return "DENIED";
+  }
+
+  if (["ALLOWED", "ALLOW", "AUTHORIZED"].includes(access)) {
+    return "ALLOWED";
+  }
+
+  return "UNVERIFIED";
+}
+
+function normalizeOutputFilterStatus(data) {
+  const filter = normalizeToken(data.output_filter_status);
+
+  if (["PASS", "PASSED"].includes(filter)) {
+    return "PASSED";
+  }
+
+  if (["BLOCKED", "BLOCK"].includes(filter)) {
+    return "BLOCKED";
+  }
+
+  if (["REDACTED", "REDACT"].includes(filter)) {
+    return "REDACTED";
+  }
+
+  return "UNVERIFIED";
+}
+
+function normalizeSecurityStatus(data) {
+  const accessStatus = normalizeAccessStatus(data);
+  const filterStatus = normalizeOutputFilterStatus(data);
+
+  const rawStatus = normalizeToken(data.status);
+  const rawAction = normalizeToken(data.action_taken);
+
+  // RBAC denial has priority.
+  if (accessStatus === "DENIED") {
+    return "DENIED";
+  }
+
+  // Explicit security blocking.
+  if (
+    ["BLOCKED", "BLOCKED_INPUT", "REJECTED_INPUT"].includes(rawStatus) ||
+    ["BLOCKED", "BLOCK"].includes(rawAction) ||
+    filterStatus === "BLOCKED"
+  ) {
+    return "BLOCKED";
+  }
+
+  if (filterStatus === "REDACTED") {
+    return "REDACTED";
+  }
+
+  // Authorization must have explicit evidence.
+  if (accessStatus !== "ALLOWED") {
+    return "UNVERIFIED";
+  }
+
+  // Output filtering must also have explicit PASS evidence.
+  if (filterStatus !== "PASSED") {
+    return "UNVERIFIED";
+  }
+
+  return "PASSED";
 }
 
 // ============================================================
@@ -440,41 +495,81 @@ function appendAiResponse(data) {
   if (!chatContainer) return;
 
   const container = document.createElement("div");
-
   container.className = "ai-message-container";
 
-  const status = String(data.status || "UNKNOWN")
-    .trim()
-    .toUpperCase();
+  // ----------------------------------------------------------
+  // A. Determine security status from explicit backend evidence
+  // ----------------------------------------------------------
 
-  const action = String(data.action_taken || "UNKNOWN")
-    .trim()
-    .toUpperCase();
+  const accessStatus = normalizeAccessStatus(data);
+  const filterStatus = normalizeOutputFilterStatus(data);
+  const displayStatus = normalizeSecurityStatus(data);
 
-  // Keep BLOCKED and DENIED as separate security outcomes.
-  // Backend status takes priority over action_taken.
-  const displayStatus = normalizeSecurityStatus(status, action);
+  const isDenied = accessStatus === "DENIED";
+  const isBlocked = displayStatus === "BLOCKED";
 
-  const denial =
-    data.denial_reason === "UNAUTHORIZED_DOCUMENT" ||
-    ["DENIED", "BLOCKED"].includes(displayStatus);
+  // ----------------------------------------------------------
+  // B. Determine whether references may be displayed
+  // ----------------------------------------------------------
 
   const rawSources = Array.isArray(data.sources) ? data.sources : [];
 
-  // Backend authorization remains the security authority.
-  // The frontend only controls which references are displayed.
-  const sources = denial
-    ? []
-    : rawSources.filter((source) => source && source.doc_id && source.title);
+  // Backend must explicitly authorize the returned references.
+  // Do not display references when authorization is unverified.
+  const sourcesAuthorized =
+    accessStatus === "ALLOWED" &&
+    data.sources_authorized === true &&
+    !isDenied &&
+    !isBlocked;
 
-  const latency = Number.isFinite(Number(data.latency_ms))
-    ? Math.round(Number(data.latency_ms))
+  const sources = sourcesAuthorized
+    ? rawSources.filter((source) => {
+        return (
+          source &&
+          typeof source.doc_id === "string" &&
+          source.doc_id.trim() !== "" &&
+          typeof source.title === "string" &&
+          source.title.trim() !== ""
+        );
+      })
+    : [];
+
+  // ----------------------------------------------------------
+  // C. Response content
+  // ----------------------------------------------------------
+
+  let answer = String(data.answer || "No response content is available.");
+
+  if (isDenied) {
+    answer =
+      "Bạn không có quyền truy cập tài liệu hoặc thông tin được yêu cầu. " +
+      "Vui lòng liên hệ quản trị viên nếu bạn cần được cấp quyền.";
+  } else if (isBlocked) {
+    answer =
+      "Yêu cầu đã bị chặn bởi cơ chế kiểm soát bảo mật. " +
+      "Hệ thống không cung cấp nội dung bị hạn chế.";
+  } else if (accessStatus === "UNVERIFIED") {
+    answer =
+      answer +
+      "\n\n[UNVERIFIED] Hệ thống chưa có đủ bằng chứng để xác nhận quyền truy cập. " +
+      "Không thể kết luận yêu cầu đã được cấp quyền thành công.";
+  }
+
+  // ----------------------------------------------------------
+  // D. Latency and mode
+  // ----------------------------------------------------------
+
+  const latencyValue = Number(data.latency_ms);
+
+  const latency = Number.isFinite(latencyValue)
+    ? Math.max(0, Math.round(latencyValue))
     : 0;
 
-  const answer =
-    data.denial_reason === "UNAUTHORIZED_DOCUMENT"
-      ? "You are not authorized to access this document. Please contact the administrator if you need assistance."
-      : String(data.answer || "No response content is available.");
+  const mode = String(data.mode || "Unknown");
+
+  // ----------------------------------------------------------
+  // E. Render authorized references
+  // ----------------------------------------------------------
 
   let sourcesHtml = "";
 
@@ -488,33 +583,33 @@ function appendAiResponse(data) {
           : "";
 
         return `
-          <div class="source-card">
+        <div class="source-card">
 
-            <div class="source-card-header">
+          <div class="source-card-header">
 
-              <span class="source-title">
-                📄 [${escapeHtml(source.doc_id)}]
-                ${escapeHtml(source.title)}
-              </span>
+            <span class="source-title">
+              📄 [${escapeHtml(source.doc_id)}]
+              ${escapeHtml(source.title)}
+            </span>
 
-              <span class="source-tag ${classification}">
-                ${escapeHtml(source.classification || "")}
-              </span>
-
-            </div>
-
-            <div class="source-snippet">
-              ${escapeHtml(source.snippet || "")}
-            </div>
-
-            <div class="source-actions">
-              <span class="source-preview-note">
-                References authorized by the system
-              </span>
-            </div>
+            <span class="source-tag ${classification}">
+              ${escapeHtml(classification)}
+            </span>
 
           </div>
-        `;
+
+          <div class="source-snippet">
+            ${escapeHtml(source.snippet || "")}
+          </div>
+
+          <div class="source-actions">
+            <span class="source-preview-note">
+              References authorized by the system
+            </span>
+          </div>
+
+        </div>
+      `;
       })
       .join("");
 
@@ -526,10 +621,7 @@ function appendAiResponse(data) {
           class="sources-header"
           aria-expanded="false"
         >
-          <span>
-            📚 References (${sources.length})
-          </span>
-
+          <span>📚 References (${sources.length})</span>
           <span class="toggle-icon">▶</span>
         </button>
 
@@ -540,6 +632,10 @@ function appendAiResponse(data) {
       </div>
     `;
   }
+
+  // ----------------------------------------------------------
+  // F. Render AI message
+  // ----------------------------------------------------------
 
   container.innerHTML = `
     <div class="ai-avatar">AI</div>
@@ -553,7 +649,7 @@ function appendAiResponse(data) {
           &bull;
           <span>${latency}ms</span>
           &bull;
-          <span>${escapeHtml(data.mode || "Controlled")}</span>
+          <span>${escapeHtml(mode)}</span>
         </div>
 
         <span class="status-pill ${displayStatus}">
@@ -565,22 +661,18 @@ function appendAiResponse(data) {
       <div
         class="ai-answer-text"
         style="white-space:pre-wrap"
-      >
-        ${escapeHtml(answer)}
-      </div>
+      >${escapeHtml(answer)}</div>
 
       ${sourcesHtml}
 
     </div>
   `;
 
+  // ----------------------------------------------------------
+  // G. References expand/collapse
+  // ----------------------------------------------------------
+
   const toggle = container.querySelector(".sources-header");
-
-  const sourceList = container.querySelector(".sources-list");
-
-  if (sourceList) {
-    sourceList.style.display = "none";
-  }
 
   if (toggle) {
     toggle.addEventListener("click", () => {

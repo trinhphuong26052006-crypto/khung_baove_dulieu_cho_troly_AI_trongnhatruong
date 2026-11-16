@@ -242,35 +242,74 @@ def main():
         # Check status and access denial
         # ----------------------------------------------------
 
-        status = str(
-            outcome.get("status") or "UNKNOWN"
-        )
+        # ----------------------------------------------------
+        # Check original pipeline status
+        # ----------------------------------------------------
 
-        action = str(
+        raw_status = str(
+            outcome.get("status") or "UNKNOWN"
+        ).strip().upper()
+
+        raw_action = str(
             outcome.get("action_taken") or "UNKNOWN"
-        )
+        ).strip().upper()
 
         denial_reason = outcome.get("denial_reason")
 
-        is_denied = (
-            denial_reason == "UNAUTHORIZED_DOCUMENT"
-            or status.upper() in {
-                "DENIED",
-                "BLOCKED",
-                "FORBIDDEN"
-            }
-            or action.upper() in {
-                "BLOCKED",
-                "DENIED"
-            }
+        BLOCKED_VALUES = {
+            "BLOCKED",
+            "BLOCK",
+            "BLOCKED_INPUT",
+            "REJECTED_INPUT"
+        }
+
+        DENIED_VALUES = {
+            "DENIED",
+            "DENY",
+            "FORBIDDEN"
+        }
+
+        REDACTED_VALUES = {
+            "REDACTED",
+            "REDACT",
+            "FILTERED"
+        }
+
+        PASS_VALUES = {
+            "PASSED",
+            "PASS",
+            "ALLOWED",
+            "ALLOW"
+        }
+
+        # Explicit security decisions from the backend
+        is_blocked = (
+            raw_status in BLOCKED_VALUES
+            or raw_action in BLOCKED_VALUES
         )
 
-        allow_sources = (
-            not is_denied
-            and action.upper() not in {
-                "REDACTED",
-                "FILTERED"
-            }
+        is_denied = (
+            denial_reason == "UNAUTHORIZED_DOCUMENT"
+            or raw_status in DENIED_VALUES
+            or raw_action in DENIED_VALUES
+        )
+
+        is_redacted = (
+            raw_status in REDACTED_VALUES
+            or raw_action in REDACTED_VALUES
+        )
+
+        # A positive status is only a candidate.
+        # It must still be supported by authorized evidence.
+        is_pass_candidate = (
+            raw_status in PASS_VALUES
+            or raw_action in PASS_VALUES
+        )
+
+        allow_sources = not (
+            is_blocked
+            or is_denied
+            or is_redacted
         )
 
         # ----------------------------------------------------
@@ -346,6 +385,53 @@ def main():
 
         t_sources_end = time.perf_counter()
 
+        # ----------------------------------------------------
+        # FINAL SECURITY STATUS - FAIL CLOSED
+        # ----------------------------------------------------
+
+        has_authorized_evidence = len(sources) > 0
+
+        safety_confirmed = (
+            outcome.get("is_safe") is True
+        )
+
+        if is_blocked:
+            final_status = "BLOCKED"
+
+        elif is_denied:
+            final_status = "DENIED"
+
+        elif is_redacted:
+            final_status = "REDACTED"
+
+        elif (
+            is_pass_candidate
+            and has_authorized_evidence
+            and safety_confirmed
+        ):
+            final_status = "PASSED"
+
+        else:
+            # No sufficient evidence:
+            # Never report PASSED.
+            final_status = "UNVERIFIED"
+
+        # Prevent an unsupported answer from appearing verified.
+        if final_status == "UNVERIFIED" and not has_authorized_evidence:
+            answer = outcome.get("answer") or ""
+
+            if not isinstance(answer, str):
+                answer = str(answer)
+
+            answer = (
+                "LƯU Ý: Phản hồi này chưa được xác minh "
+                "bằng tài liệu được phép truy cập. "
+                "Hệ thống chưa có đủ bằng chứng để xác nhận "
+                "độ tin cậy của nội dung.\n\n"
+                + answer
+            )
+
+
         print(
             "[PERF] Xu ly metadata va sources: "
             f"{t_sources_end - t_sources_start:.2f}s",
@@ -375,8 +461,14 @@ def main():
 
         emit({
             "answer": answer,
-            "status": status,
-            "action_taken": action,
+            "status": final_status,
+            "action_taken": (
+                "BLOCKED" if is_blocked else
+                "DENIED" if is_denied else
+                "REDACTED" if is_redacted else
+    "PASSED" if final_status == "PASSED" else
+    "UNVERIFIED"
+),
             "is_safe": outcome.get("is_safe"),
             "denial_reason": denial_reason,
             "role": role,
