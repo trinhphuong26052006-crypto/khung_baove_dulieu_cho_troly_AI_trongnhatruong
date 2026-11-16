@@ -447,43 +447,64 @@ function normalizeOutputFilterStatus(data) {
   return "UNVERIFIED";
 }
 
-function normalizeSecurityStatus(data) {
-  const accessStatus = normalizeAccessStatus(data);
-  const filterStatus = normalizeOutputFilterStatus(data);
 
-  const rawStatus = normalizeToken(data.status);
-  const rawAction = normalizeToken(data.action_taken);
+function normalizeSecurityStatus(status, action) {
+  const statusMap = {
+    PASSED: "PASSED",
+    PASS: "PASSED",
+    ALLOWED: "PASSED",
+    ALLOW: "PASSED",
 
-  // RBAC denial has priority.
-  if (accessStatus === "DENIED") {
-    return "DENIED";
-  }
+    UNVERIFIED: "UNVERIFIED",
+    UNKNOWN: "UNVERIFIED",
+    OTHER: "UNVERIFIED",
 
-  // Explicit security blocking.
+    REDACTED: "REDACTED",
+    REDACT: "REDACTED",
+    FILTERED: "REDACTED",
+
+    BLOCKED: "BLOCKED",
+    BLOCK: "BLOCKED",
+    BLOCKED_INPUT: "BLOCKED",
+    REJECTED_INPUT: "BLOCKED",
+
+    DENIED: "DENIED",
+    DENY: "DENIED",
+    FORBIDDEN: "DENIED"
+  };
+
+  const normalizedStatus = String(status || "")
+    .trim()
+    .toUpperCase();
+
+  const normalizedAction = String(action || "")
+    .trim()
+    .toUpperCase();
+
+  // Explicit backend status always has priority.
+  // UNVERIFIED must never fall through to ALLOW/PASS.
   if (
-    ["BLOCKED", "BLOCKED_INPUT", "REJECTED_INPUT"].includes(rawStatus) ||
-    ["BLOCKED", "BLOCK"].includes(rawAction) ||
-    filterStatus === "BLOCKED"
+    Object.prototype.hasOwnProperty.call(
+      statusMap,
+      normalizedStatus
+    )
   ) {
-    return "BLOCKED";
+    return statusMap[normalizedStatus];
   }
 
-  if (filterStatus === "REDACTED") {
-    return "REDACTED";
+  // Use action only when status is missing or unknown.
+  if (
+    Object.prototype.hasOwnProperty.call(
+      statusMap,
+      normalizedAction
+    )
+  ) {
+    return statusMap[normalizedAction];
   }
 
-  // Authorization must have explicit evidence.
-  if (accessStatus !== "ALLOWED") {
-    return "UNVERIFIED";
-  }
-
-  // Output filtering must also have explicit PASS evidence.
-  if (filterStatus !== "PASSED") {
-    return "UNVERIFIED";
-  }
-
-  return "PASSED";
+  return "UNVERIFIED";
 }
+
 
 // ============================================================
 // 8. RENDER AI RESPONSE AND SECURITY STATUS
