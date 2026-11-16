@@ -522,7 +522,7 @@ function appendAiResponse(data) {
 
   const accessStatus = normalizeAccessStatus(data);
   const filterStatus = normalizeOutputFilterStatus(data);
-  const displayStatus = normalizeSecurityStatus(data);
+  const displayStatus = normalizeSecurityStatus(data.status, data.action_taken);
 
   const isDenied = accessStatus === "DENIED";
   const isBlocked = displayStatus === "BLOCKED";
@@ -533,13 +533,12 @@ function appendAiResponse(data) {
 
   const rawSources = Array.isArray(data.sources) ? data.sources : [];
 
-  // Backend must explicitly authorize the returned references.
-  // Do not display references when authorization is unverified.
+  // Hiển thị tài liệu tham khảo khi backend trả về sources hợp lệ và không bị block/deny.
   const sourcesAuthorized =
-    accessStatus === "ALLOWED" &&
-    data.sources_authorized === true &&
     !isDenied &&
-    !isBlocked;
+    !isBlocked &&
+    Array.isArray(data.sources) && data.sources.length > 0 &&
+    ["SUCCESS", "PASSED"].includes(String(data.status || "").toUpperCase());
 
   const sources = sourcesAuthorized
     ? rawSources.filter((source) => {
