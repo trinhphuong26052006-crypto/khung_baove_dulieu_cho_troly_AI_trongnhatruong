@@ -108,7 +108,11 @@ if (is_file($logPath) && is_readable($logPath)) {
 
                 'status' => $status,
 
-                'action' => (string)($entry['action_taken'] ?? '—'),
+                'action' => (string)(
+                $entry['action_taken']
+                ?? $entry['action']
+                ?? '—'
+            ),
 
                 'latency' => $entry['latency_ms'] ?? null,
 
@@ -1289,11 +1293,47 @@ button {
 }
 
 .table-wrap {
+    max-width: 100%;
+    max-height: 380px;
+    overflow: auto;
+    margin-top: 12px;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    border-radius: 10px;
+}
 
-    overflow-x:auto;
+.table-wrap:hover {
+    scrollbar-color: #a99bf5 #f4f2ff;
+}
 
-    margin-top:12px
+.table-wrap::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
 
+.table-wrap::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.table-wrap:hover::-webkit-scrollbar-thumb {
+    background: #a99bf5;
+}
+
+.table-wrap::-webkit-scrollbar-thumb:hover {
+    background: #7058ed;
+}
+
+.logs thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #faf9ff;
 }
 
 .logs {
@@ -2583,6 +2623,101 @@ button:focus-visible,a:focus-visible{outline:3px solid rgba(98,82,236,.35);outli
 @media(max-width:380px){.stats{grid-template-columns:1fr}.topbar-actions>*{font-size:9px}.donut-layout{justify-content:center}.legend{width:100%}.trend-total{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
+/* ==========================================
+   SECURITY STATUS - INDEPENDENT SCROLL AREAS
+   ========================================== */
+
+/* Recent Control History */
+.control-history-scroll {
+    display: block;
+    width: 100%;
+    height: 340px;
+    max-height: 340px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 0 8px 0 0;
+    box-sizing: border-box;
+
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+/* Show scrollbar only when hovering */
+.control-history-scroll:hover {
+    scrollbar-color: #a99bf5 #f4f2ff;
+}
+
+.control-history-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.control-history-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.control-history-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.control-history-scroll:hover::-webkit-scrollbar-thumb {
+    background: #a99bf5;
+}
+
+/* Security Alerts */
+.security-alert-scroll {
+    display: block;
+    width: 100%;
+    height: 340px;
+    max-height: 340px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 8px;
+    box-sizing: border-box;
+
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.security-alert-scroll:hover {
+    scrollbar-color: #a99bf5 #f4f2ff;
+}
+
+.security-alert-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.security-alert-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.security-alert-scroll:hover::-webkit-scrollbar-thumb {
+    background: #a99bf5;
+}
+
+/* Prevent grid children from expanding the dashboard */
+.status-grid > .panel {
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Keep history rows compact */
+.control-history-scroll .status-row {
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+    .control-history-scroll,
+    .security-alert-scroll {
+        height: 300px;
+        max-height: 300px;
+    }
+}
+
 </style>
 
 </head>
@@ -2772,38 +2907,123 @@ button:focus-visible,a:focus-visible{outline:3px solid rgba(98,82,236,.35);outli
     <div class="status-row"><span>Output Filter</span><span class="status-pill <?= $filter?'pass':'medium' ?>"><?= $filter?'ON':'OFF' ?></span></div>
   </div>
 </section>
-<section class="panel status-section" aria-label="Output Guardrails counters">
-  <h2>✨ Output Guardrails · Last 50 Records</h2>
-  <p class="status-sub">Counters are classified from the status/action_taken fields of the 50 most recent events, not the system-wide total.</p>
-  <div class="guard-counters">
-    <?php foreach ($guardCounts as $label=>$number): ?>
-    <div class="guard-counter"><small><?=esc($label)?></small><strong><?=number_format($number)?></strong></div>
-    <?php endforeach; ?>
-  </div>
-</section>
+
+
+
 <div class="status-grid">
-  <section class="panel" aria-label="Security alerts">
-    <h2>🚨 Security Alerts</h2>
-    <p class="status-sub">Alerts are derived from BLOCKED, DENIED, and REDACTED audit events. Root causes are not inferred when logs lack details.</p>
-    <?php if (!$securityAlerts): ?>
-      <div class="status-empty">No BLOCKED, DENIED, or REDACTED alerts were found in the 50 most recent events.</div>
-    <?php else: foreach(array_slice($securityAlerts,0,8) as $alert): ?>
-      <button type="button" class="status-alert" data-alert='<?=esc(json_encode($alert,JSON_UNESCAPED_UNICODE|JSON_INVALID_UTF8_SUBSTITUTE))?>'>
-        <span><?=esc($alert['label'])?><br><small><?=esc($alert['time'] ?: 'No timestamp')?> · <?=esc($alert['role'])?></small></span>
-        <span class="status-pill <?=strtolower($alert['level'])?>"><?=esc($alert['level'])?></span>
-      </button>
-    <?php endforeach; endif; ?>
-  </section>
-  <section class="panel" aria-label="Control history">
+
+    <!-- SECURITY ALERTS -->
+    <section class="panel" aria-label="Security alerts">
+
+        <h2>🚨 Security Alerts</h2>
+
+        <p class="status-sub">
+            Alerts are derived from BLOCKED, DENIED, and REDACTED
+            audit events. Root causes are not inferred when logs lack details.
+        </p>
+
+        <div class="security-alert-scroll">
+
+            <?php if (!$securityAlerts): ?>
+
+                <div class="status-empty">
+                    No BLOCKED, DENIED, or REDACTED alerts were found
+                    in the 50 most recent events.
+                </div>
+
+            <?php else: ?>
+
+                <?php foreach (array_slice($securityAlerts, 0, 8) as $alert): ?>
+
+                    <button
+                        type="button"
+                        class="status-alert"
+                        data-alert='<?= esc(json_encode(
+                            $alert,
+                            JSON_UNESCAPED_UNICODE |
+                            JSON_INVALID_UTF8_SUBSTITUTE
+                        )) ?>'
+                    >
+
+                        <span>
+                            <?= esc($alert['label']) ?>
+
+                            <br>
+
+                            <small>
+                                <?= esc($alert['time'] ?: 'No timestamp') ?>
+                                ·
+                                <?= esc($alert['role']) ?>
+                            </small>
+                        </span>
+
+                        <span class="status-pill <?= strtolower($alert['level']) ?>">
+                            <?= esc($alert['level']) ?>
+                        </span>
+
+                    </button>
+
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECENT CONTROL HISTORY -->
+    <section class="panel" aria-label="Control history">
+
     <h2>📜 Recent Control History</h2>
-    <p class="status-sub">Query content, document contents, and identifying information are not displayed.</p>
-    <?php if (!$statusHistory): ?>
-      <div class="status-empty">No valid records are available.</div>
-    <?php else: foreach(array_slice($statusHistory,0,8) as $item): ?>
-      <div class="status-row"><span><?=esc($item['time'] ?: 'No timestamp')?><br><small><?=esc($item['role'])?> · <?=esc($item['action'] ?: $item['status'])?></small></span><span class="status-pill <?=strtolower($item['guard'])?>"><?=esc($item['guard'])?></span></div>
-    <?php endforeach; endif; ?>
-  </section>
+
+    <p class="status-sub">
+        Query content, document contents, and identifying
+        information are not displayed.
+    </p>
+
+    <div class="control-history-scroll">
+
+        <?php if (!$statusHistory): ?>
+
+            <div class="status-empty">
+                No valid records are available.
+            </div>
+
+        <?php else: ?>
+
+            <?php foreach ($statusHistory as $item): ?>
+
+                <div class="status-row">
+
+                    <span>
+                        <?= esc($item['time'] ?: 'No timestamp') ?>
+
+                        <br>
+
+                        <small>
+                            <?= esc($item['role']) ?>
+                            ·
+                            <?= esc($item['action'] ?: $item['status']) ?>
+                        </small>
+                    </span>
+
+                    <span class="status-pill <?= strtolower($item['guard']) ?>">
+                        <?= esc($item['guard']) ?>
+                    </span>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
+
+    </div>
+
+</section>
+
 </div>
+
 <div class="status-modal" id="securityStatusModal" hidden role="dialog" aria-modal="true" aria-labelledby="securityStatusModalTitle">
   <div class="status-modal-dialog">
     <h2 id="securityStatusModalTitle">Alert Details</h2>

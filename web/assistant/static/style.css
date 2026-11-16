@@ -1641,3 +1641,35 @@ textarea:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Security verification status */
+
+.status-pill.UNVERIFIED {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+
+.status-pill.PASSED {
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.status-pill.DENIED {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.status-pill.BLOCKED {
+  color: #9a3412;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+}
+
+.status-pill.REDACTED {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
