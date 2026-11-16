@@ -46,7 +46,20 @@ function readConfig(string $path): array {
 $action = isset($_GET['action']) && is_string($_GET['action']) ? $_GET['action'] : '';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $projectDir = dirname(__DIR__, 2);
-$pythonPath = $projectDir . DIRECTORY_SEPARATOR . '.venv' . DIRECTORY_SEPARATOR . 'Scripts' . DIRECTORY_SEPARATOR . 'python.exe';
+$candidatePythons = [
+    $projectDir . DIRECTORY_SEPARATOR . '.venv' . DIRECTORY_SEPARATOR . 'Scripts' . DIRECTORY_SEPARATOR . 'python.exe',
+    'C:\\Users\\tuank\\AppData\\Local\\Programs\\Python\\Python313\\python.exe',
+    'python'
+];
+
+$pythonPath = '';
+foreach ($candidatePythons as $p) {
+    if ($p === 'python' || is_file($p)) {
+        $pythonPath = $p;
+        break;
+    }
+}
+
 $runnerPath = __DIR__ . DIRECTORY_SEPARATOR . 'runner.py';
 $configFile = $projectDir . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'xampp_config.json';
 
@@ -101,7 +114,7 @@ if ($action === 'chat' && $method === 'POST') {
     if (!is_string($role) || !in_array($role, ['SinhVien', 'GiangVien', 'QuanTri'], true)) {
         respond(['status' => 'ERROR', 'error' => 'Vai trò không hợp lệ.', 'sources' => []], 400);
     }
-    if (!is_file($pythonPath) || !is_file($runnerPath)) {
+    if (empty($pythonPath) || !is_file($runnerPath)) {
         respond(['status' => 'ERROR', 'error' => 'Không tìm thấy Python hoặc runner.py.', 'sources' => []], 500);
     }
     $cfg = readConfig($configFile);
