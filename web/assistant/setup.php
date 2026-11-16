@@ -2,7 +2,7 @@
 session_start();
 require_once __DIR__ . '/auth_check.php';
 
-// Chưa đăng nhập thì quay về trang Login
+// Redirect unauthenticated users to the login page
 if (empty($_SESSION['user'])) {
     header('Location: login.php');
     exit;
@@ -34,11 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cấu Hình Phân Quyền RBAC & RAG - Bước 2</title>
+    <title>RBAC & RAG Configuration | Step 2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -226,8 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="setup-main-card">
             <div class="setup-header-row">
                 <div>
-                    <span class="step-pill">BƯỚC 2: THIẾT LẬP THỰC NGHIỆM</span>
-                    <h2 class="setup-title-h2">Chọn Cơ Chế Kiểm Soát Dữ Liệu</h2>
+                    <span class="step-pill">STEP 2: EXPERIMENT CONFIGURATION</span>
+                    <h2 class="setup-title-h2">Choose Data Protection Mode</h2>
                 </div>
                 <div class="user-badge-profile">
                     <div class="user-text-col">
@@ -246,12 +246,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Controlled -->
                     <div class="mode-choice-card selected" id="boxControlled" onclick="selectMode('controlled')">
                         <div class="mode-choice-icon">🛡️</div>
-                        <h3 class="mode-choice-title" style="color: #1951fc;">Chế Độ Controlled</h3>
-                        <p class="mode-choice-desc">Hệ thống kích hoạt toàn bộ cơ chế phân quyền RBAC và kiểm duyệt dữ liệu an toàn.</p>
+                        <h3 class="mode-choice-title" style="color: #1951fc;">Controlled Mode</h3>
+                        <p class="mode-choice-desc">The system enables RBAC access control and output safety filtering.</p>
                         <ul class="feature-bullets">
-                            <li><span style="color: #059669;">✔</span> <strong>Pre-retrieval RBAC:</strong> Lọc tài liệu theo vai trò</li>
-                            <li><span style="color: #059669;">✔</span> Sinh viên không thể quét tài liệu Mật/Nội bộ</li>
-                            <li><span style="color: #059669;">✔</span> Phòng thủ 2 lớp (Defense-in-depth)</li>
+                            <li><span style="color: #059669;">✔</span> <strong>Pre-retrieval RBAC:</strong> Filter documents by user role</li>
+                            <li><span style="color: #059669;">✔</span> SinhVien cannot retrieve Restricted or Internal documents</li>
+                            <li><span style="color: #059669;">✔</span> Two-layer defense (Defense in Depth)</li>
                             <li><span style="color: #059669;">✔</span> <strong>Đạt chuẩn ATTT:</strong> Ngăn chặn 100% rò rỉ</li>
                         </ul>
                     </div>
@@ -259,20 +259,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Baseline -->
                     <div class="mode-choice-card" id="boxBaseline" onclick="selectMode('baseline')">
                         <div class="mode-choice-icon">⚠️</div>
-                        <h3 class="mode-choice-title" style="color: #d97706;">Chế Độ Baseline</h3>
-                        <p class="mode-choice-desc">Mô hình RAG truyền thống tắt kiểm soát phân quyền để làm nhóm đối chứng thực nghiệm.</p>
+                        <h3 class="mode-choice-title" style="color: #d97706;">Baseline Mode</h3>
+                        <p class="mode-choice-desc">Traditional RAG mode with access controls disabled for experimental comparison.</p>
                         <ul class="feature-bullets">
                             <li><span style="color: #dc2626;">✘</span> <strong>Không phân quyền:</strong> Tìm trên toàn bộ 96 văn bản</li>
-                            <li><span style="color: #dc2626;">✘</span> Sinh viên có thể bị lọt dữ liệu kỷ luật/tài chính</li>
-                            <li><span style="color: #0284c7;">ℹ</span> Phục vụ đo lường tỷ lệ rò rỉ dữ liệu (Data Leakage)</li>
+                            <li><span style="color: #dc2626;">✘</span> Sensitive disciplinary or financial data may be exposed to unauthorized roles</li>
+                            <li><span style="color: #0284c7;">ℹ</span> Used to measure data leakage during testing</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="guardrail-toggle-panel">
                     <div>
-                        <div style="font-size: 0.88rem; font-weight: 700; color: #1e293b; margin-bottom: 3px;">Kích hoạt bộ lọc an toàn đầu ra (Output Guardrails)</div>
-                        <div style="font-size: 0.78rem; color: #64748b;">Tự động che giấu thông tin định danh cá nhân (PII: CCCD, Số điện thoại, Điểm số).</div>
+                        <div style="font-size: 0.88rem; font-weight: 700; color: #1e293b; margin-bottom: 3px;">Enable Output Guardrails</div>
+                        <div style="font-size: 0.78rem; color: #64748b;">Automatically mask personally identifiable information (PII), such as identity numbers, phone numbers, and grades.</div>
                     </div>
                     <label class="switch">
                         <input type="checkbox" name="enable_filter" checked>
@@ -281,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <button type="submit" class="btn-start-chat">
-                    Xác nhận cấu hình & Bắt đầu hỏi đáp
+                    Save Configuration & Start Chat
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>

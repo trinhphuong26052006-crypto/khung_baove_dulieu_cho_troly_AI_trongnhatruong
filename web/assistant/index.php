@@ -23,11 +23,11 @@ $isControlled = ($displayMode === 'Controlled');
 if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
 ?>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> AI Assistant - Trợ Lý Học Vụ & An Toàn Thông Tin</title>
+    <title>AI Assistant | Academic Support & Data Protection</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
             <div id="chatHistorySection" style="display: none; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--zyn-border);">
                 <div class="recent-header-row" style="padding: 2px 6px 6px;">
                     <span class="recent-title" style="color: var(--zyn-primary);">CHATS</span>
-                    <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Xóa tất cả chat cũ">Xóa hết</span>
+                    <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Clear all saved chats">Clear all</span>
                 </div>
                 <div id="savedChatList" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;"></div>
             </div>
@@ -83,7 +83,7 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
             </div>
 
             <div class="sidebar-recent-list" id="sampleQueryList">
-                <div style="font-size: 0.78rem; color: #94a3b8; padding: 12px; text-align: center;">Đang tải danh sách ca test...</div>
+                <div style="font-size: 0.78rem; color: #94a3b8; padding: 12px; text-align: center;">Loading test cases...</div>
             </div>
 
             <!-- User Card ở đáy Sidebar (như hình Alex Carter) -->
@@ -97,7 +97,7 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                         <span class="user-meta-role"><?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></span>
                     </div>
                 </div>
-                <a href="logout.php" class="btn-card-logout" title="Đăng xuất khỏi hệ thống">
+                <a href="logout.php" class="btn-card-logout" title="Sign out">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
@@ -119,9 +119,14 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                 </div>
 
                 <div class="header-right-actions">
-                    <!-- Nút cấu hình Baseline / Controlled -->
-                    <a href="setup.php" class="header-action-btn" title="Cấu hình chế độ bảo mật">
-                        <span>⚙️</span> Cấu hình
+                    <?php if (($user['role'] ?? '') === 'QuanTri'): ?>
+                    <a href="security.php" class="header-action-btn" title="Open Security Dashboard">
+                        <span>🛡️</span> Security Dashboard
+                    </a>
+                    <?php endif; ?>
+                    <!-- Configure Baseline / Controlled mode -->
+                    <a href="setup.php" class="header-action-btn" title="Configure security mode">
+                        <span>⚙️</span> Settings
                     </a>
 
                     <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>">
@@ -130,7 +135,7 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
 
                     <!-- Huy hiệu trạng thái bảo vệ -->
                     <span class="zyn-status-badge">
-                        <span>✨</span> <?= htmlspecialchars($displayMode === 'Controlled' ? 'Đang bảo vệ (Controlled)' : ($displayMode === 'Baseline' ? 'Đối chứng (Baseline)' : ($displayMode === 'Custom' ? 'Tùy chỉnh (Custom)' : 'Chưa xác định')), ENT_QUOTES, 'UTF-8') ?>
+                        <span>✨</span> <?= htmlspecialchars($displayMode === 'Controlled' ? 'Protected (Controlled)' : ($displayMode === 'Baseline' ? 'Baseline (Unprotected)' : ($displayMode === 'Custom' ? 'Custom configuration' : 'Unknown')), ENT_QUOTES, 'UTF-8') ?>
                     </span>
                 </div>
             </header>
@@ -140,10 +145,10 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                 <!-- Zynovate Hero (Khi mở đầu) -->
                 <div class="zynovate-hero-canvas">
                     <h2 class="zyn-hero-title">
-                        Xin chào, <span><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                        Hello, <span><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
                     </h2>
                     <p class="zyn-hero-subtitle">
-                        Hôm nay bạn cần hỗ trợ gì? Trợ lý AI sẵn sàng giải đáp mọi vấn đề của bạn.
+                        How can I help you today? Your AI assistant is ready to answer your questions.
                     </p>
 
                     <!-- 4 Feature Action Cards (như trong ảnh mẫu) -->
@@ -152,8 +157,8 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                             <div class="card-left-group">
                                 <div class="card-icon-bubble purple">📝</div>
                                 <div class="card-texts">
-                                    <h4>Quy Chế & Học Vụ</h4>
-                                    <p>Đăng ký tín chỉ, thang điểm, điều kiện tốt nghiệp.</p>
+                                    <h4>Academic Policies</h4>
+                                    <p>Course registration, grading scales, and graduation requirements.</p>
                                 </div>
                             </div>
                             <div class="card-arrow-btn">→</div>
@@ -163,8 +168,8 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                             <div class="card-left-group">
                                 <div class="card-icon-bubble blue">💳</div>
                                 <div class="card-texts">
-                                    <h4>Tài Chính & Học Phí</h4>
-                                    <p>Cổng thanh toán điện tử, xét miễn giảm học phí.</p>
+                                    <h4>Finance & Tuition</h4>
+                                    <p>Online payments, tuition waivers, and financial aid.</p>
                                 </div>
                             </div>
                             <div class="card-arrow-btn">→</div>
@@ -174,8 +179,8 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                             <div class="card-left-group">
                                 <div class="card-icon-bubble orange">🔒</div>
                                 <div class="card-texts">
-                                    <h4>Kiểm Tra Phòng Vệ</h4>
-                                    <p>Thử nghiệm truy vấn tài liệu Mật / Kỷ luật.</p>
+                                    <h4>Security Testing</h4>
+                                    <p>Test access to restricted and disciplinary documents.</p>
                                 </div>
                             </div>
                             <div class="card-arrow-btn">→</div>
@@ -185,8 +190,8 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                             <div class="card-left-group">
                                 <div class="card-icon-bubble indigo">📋</div>
                                 <div class="card-texts">
-                                    <h4>Thủ Tục & Biểu Mẫu</h4>
-                                    <p>Phúc khảo bài thi, giấy xác nhận sinh viên.</p>
+                                    <h4>Procedures & Forms</h4>
+                                    <p>Exam appeals and student verification forms.</p>
                                 </div>
                             </div>
                             <div class="card-arrow-btn">→</div>
@@ -210,16 +215,16 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                     <div class="input-bottom-row">
                         <div class="input-action-pills">
                             <span class="pill-tool-btn" onclick="quickFillQuery('Quy chế đào tạo đại học tín chỉ quy định như thế nào?')">
-                                <span>🌐</span> Học vụ
+                                <span>🌐</span> Academics
                             </span>
                             <span class="pill-tool-btn" onclick="quickFillQuery('Hướng dẫn thủ tục miễn giảm học phí?')">
-                                <span>💳</span> Học phí
+                                <span>💳</span> Tuition
                             </span>
                             <span class="pill-tool-btn" onclick="quickFillQuery('Quyết định kỷ luật cán bộ nội bộ mật')">
-                                <span>🔒</span> Thử nghiệm RBAC
+                                <span>🔒</span> RBAC Testing
                             </span>
                         </div>
-                        <button type="submit" id="sendBtn" class="send-btn" title="Gửi câu hỏi">
+                        <button type="submit" id="sendBtn" class="send-btn" title="Send message">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="22" y1="2" x2="11" y2="13"></line>
                                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -236,14 +241,14 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <h4 id="modalDocTitle" style="font-size: 1.05rem; font-weight: 800; color: #1e1b4b; margin-bottom: 4px;">Chi tiết văn bản</h4>
+                    <h4 id="modalDocTitle" style="font-size: 1.05rem; font-weight: 800; color: #1e1b4b; margin-bottom: 4px;">Document Details</h4>
                     <span id="modalDocClassification" class="source-tag Public">Public</span>
                     <span id="modalDocId" style="font-size: 0.78rem; color: #64748b; margin-left: 8px;"></span>
                 </div>
                 <button class="close-btn" onclick="closeDocModal()">&times;</button>
             </div>
             <div id="modalDocBody" class="modal-body">
-                Đang tải nội dung văn bản...
+                Loading document content...
             </div>
         </div>
     </div>

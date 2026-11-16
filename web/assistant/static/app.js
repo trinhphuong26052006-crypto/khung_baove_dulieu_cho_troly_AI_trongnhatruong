@@ -1,6 +1,6 @@
 /**
- * TRỢ LÝ AI NHÀ TRƯỜNG - FRONTEND JAVASCRIPT
- * Chat AI, RBAC, lịch sử hội thoại và nguồn tham khảo.
+ * SCHOOL AI ASSISTANT - FRONTEND JAVASCRIPT
+ * Chat AI, RBAC, conversation history, and document references.
  */
 
 let rolesData = {};
@@ -8,9 +8,14 @@ let sampleQueries = [];
 let currentChatHistory = [];
 let currentSessionId = "session_" + Date.now();
 
+// ============================================================
+// 1. STORAGE AND API CONFIGURATION
+// ============================================================
+
 function getChatStorageKey() {
   const emailEl = document.getElementById("currentUserEmail");
   const userEmail = emailEl ? emailEl.value : "default";
+
   return "ai_chat_sessions_" + userEmail;
 }
 
@@ -20,12 +25,18 @@ function getApiUrl(endpoint, params = {}) {
       action: endpoint,
       ...params,
     }).toString();
+
     return `api.php?${query}`;
   }
 
   const query = new URLSearchParams(params).toString();
+
   return query ? `/api/${endpoint}?${query}` : `/api/${endpoint}`;
 }
+
+// ============================================================
+// 2. INITIALIZATION
+// ============================================================
 
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.all([loadRoles(), loadConfig(), loadSampleQueries()]);
@@ -41,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ============================================================
-// 1. TẢI VAI TRÒ VÀ CẤU HÌNH
+// 3. LOAD ROLES AND CONFIGURATION
 // ============================================================
 
 async function loadRoles() {
@@ -56,7 +67,7 @@ async function loadRoles() {
 
     rolesData = await res.json();
   } catch (err) {
-    console.error("Lỗi khi tải vai trò:", err);
+    console.error("Failed to load roles:", err);
   }
 }
 
@@ -83,19 +94,19 @@ async function loadConfig() {
 
     badge.textContent =
       mode === "Controlled"
-        ? "✨ Đang bảo vệ (Controlled)"
+        ? "Protected (Controlled)"
         : mode === "Baseline"
-          ? "⚠️ Đối chứng (Baseline)"
-          : "⚙️ Cấu hình tùy chỉnh";
+          ? "Baseline (Unprotected)"
+          : "Custom Configuration";
 
     badge.dataset.mode = mode;
   } catch (err) {
-    console.error("Không tải được cấu hình:", err);
+    console.error("Unable to load configuration:", err);
   }
 }
 
 // ============================================================
-// 2. DANH SÁCH CÂU HỎI KIỂM THỬ
+// 4. SAMPLE TEST QUERIES
 // ============================================================
 
 async function loadSampleQueries() {
@@ -122,10 +133,10 @@ async function loadSampleQueries() {
 
     renderSampleQueryList(sampleQueries);
   } catch (err) {
-    console.error("Lỗi tải câu hỏi mẫu:", err);
+    console.error("Failed to load sample queries:", err);
 
     if (listEl) {
-      listEl.textContent = "Lỗi tải câu hỏi mẫu";
+      listEl.textContent = "Failed to load sample queries.";
     }
   }
 }
@@ -138,7 +149,7 @@ function renderSampleQueryList(queries) {
   listEl.innerHTML = "";
 
   if (!Array.isArray(queries) || queries.length === 0) {
-    listEl.textContent = "Không tìm thấy câu hỏi phù hợp";
+    listEl.textContent = "No matching test cases found.";
     return;
   }
 
@@ -204,7 +215,7 @@ function selectSampleQuery(item) {
 }
 
 // ============================================================
-// 3. GỬI CÂU HỎI VÀ NHẬN PHẢN HỒI
+// 5. SEND QUERY AND RECEIVE RESPONSE
 // ============================================================
 
 async function handleSendMessage(e) {
@@ -228,7 +239,7 @@ async function handleSendMessage(e) {
   currentChatHistory.push({
     type: "user",
     text: query,
-    time: new Date().toLocaleTimeString("vi-VN"),
+    time: new Date().toLocaleTimeString("en-US"),
   });
 
   input.value = "";
@@ -246,7 +257,6 @@ async function handleSendMessage(e) {
       body: JSON.stringify({ query, role }),
     });
 
-    // Đọc phản hồi dạng text trước để phát hiện lỗi JSON.
     const responseText = await res.text();
 
     let data;
@@ -254,7 +264,7 @@ async function handleSendMessage(e) {
     try {
       data = JSON.parse(responseText);
     } catch (parseError) {
-      console.error("Chat API returned invalid JSON:", {
+      console.error("Invalid JSON response:", {
         httpStatus: res.status,
         responsePreview: responseText.slice(0, 500),
       });
@@ -309,16 +319,20 @@ async function handleSendMessage(e) {
     const message =
       err instanceof TypeError
         ? "Cannot connect to Chat API. Check Apache and the Network tab."
-        : err?.message ||
-          "An unexpected error occurred while contacting the server.";
+        : err?.message || "An unexpected error occurred.";
 
     appendErrorMessage(message);
+
     saveCurrentSessionToStorage();
   } finally {
     sendBtn.disabled = false;
     input.focus();
   }
 }
+
+// ============================================================
+// 6. CHAT MESSAGE COMPONENTS
+// ============================================================
 
 function appendUserMessage(text) {
   const chatContainer = document.getElementById("chatMessages");
@@ -366,7 +380,7 @@ function appendLoadingMessage() {
       "
     >
       <span>
-        Đang tra cứu quyền hạn và tổng hợp tài liệu...
+        Checking access permissions and retrieving relevant documents...
       </span>
     </div>
   `;
@@ -383,7 +397,41 @@ function removeMessage(id) {
 }
 
 // ============================================================
-// 4. HIỂN THỊ CÂU TRẢ LỜI VÀ NGUỒN TÀI LIỆU
+// 7. NORMALIZE SECURITY EVENT STATUS
+// ============================================================
+
+function normalizeSecurityStatus(status, action) {
+  const statusMap = {
+    PASSED: "PASSED",
+    PASS: "PASSED",
+    ALLOWED: "PASSED",
+    ALLOW: "PASSED",
+
+    REDACTED: "REDACTED",
+    REDACT: "REDACTED",
+
+    BLOCKED: "BLOCKED",
+    BLOCK: "BLOCKED",
+    BLOCKED_INPUT: "BLOCKED",
+    REJECTED_INPUT: "BLOCKED",
+
+    DENIED: "DENIED",
+    DENY: "DENIED",
+  };
+
+  const normalizedStatus = String(status || "UNKNOWN")
+    .trim()
+    .toUpperCase();
+
+  const normalizedAction = String(action || "UNKNOWN")
+    .trim()
+    .toUpperCase();
+
+  return statusMap[normalizedStatus] || statusMap[normalizedAction] || "OTHER";
+}
+
+// ============================================================
+// 8. RENDER AI RESPONSE AND SECURITY STATUS
 // ============================================================
 
 function appendAiResponse(data) {
@@ -395,45 +443,48 @@ function appendAiResponse(data) {
 
   container.className = "ai-message-container";
 
-  const status = String(data.status || "UNKNOWN").toUpperCase();
+  const status = String(data.status || "UNKNOWN")
+    .trim()
+    .toUpperCase();
 
-  const action = String(data.action_taken || "UNKNOWN").toUpperCase();
+  const action = String(data.action_taken || "UNKNOWN")
+    .trim()
+    .toUpperCase();
+
+  // Keep BLOCKED and DENIED as separate security outcomes.
+  // Backend status takes priority over action_taken.
+  const displayStatus = normalizeSecurityStatus(status, action);
 
   const denial =
     data.denial_reason === "UNAUTHORIZED_DOCUMENT" ||
-    ["DENIED", "BLOCKED", "REJECTED_INPUT"].includes(status) ||
-    ["DENIED", "BLOCKED"].includes(action);
+    ["DENIED", "BLOCKED"].includes(displayStatus);
 
   const rawSources = Array.isArray(data.sources) ? data.sources : [];
 
-  // Kiểm tra RBAC phải thực hiện ở backend.
-  // Frontend chỉ kiểm soát phần hiển thị.
+  // Backend authorization remains the security authority.
+  // The frontend only controls which references are displayed.
   const sources = denial
     ? []
-    : rawSources.filter((s) => s && s.doc_id && s.title);
-
-  const allowedActions = ["PASSED", "REDACTED", "BLOCKED", "DENIED"];
-
-  const safeAction = allowedActions.includes(action) ? action : "OTHER";
+    : rawSources.filter((source) => source && source.doc_id && source.title);
 
   const latency = Number.isFinite(Number(data.latency_ms))
     ? Math.round(Number(data.latency_ms))
     : 0;
 
   const answer =
-    denial && data.denial_reason === "UNAUTHORIZED_DOCUMENT"
-      ? "Bạn chưa có quyền truy cập tài liệu này. Vui lòng liên hệ bộ phận quản lý nếu cần hỗ trợ."
-      : String(data.answer || "Chưa có nội dung phản hồi.");
+    data.denial_reason === "UNAUTHORIZED_DOCUMENT"
+      ? "You are not authorized to access this document. Please contact the administrator if you need assistance."
+      : String(data.answer || "No response content is available.");
 
   let sourcesHtml = "";
 
   if (sources.length > 0) {
     const cardsHtml = sources
-      .map((s) => {
+      .map((source) => {
         const classification = ["Public", "Internal", "Restricted"].includes(
-          s.classification,
+          source.classification,
         )
-          ? s.classification
+          ? source.classification
           : "";
 
         return `
@@ -442,23 +493,23 @@ function appendAiResponse(data) {
             <div class="source-card-header">
 
               <span class="source-title">
-                📄 [${escapeHtml(s.doc_id)}]
-                ${escapeHtml(s.title)}
+                📄 [${escapeHtml(source.doc_id)}]
+                ${escapeHtml(source.title)}
               </span>
 
               <span class="source-tag ${classification}">
-                ${escapeHtml(s.classification || "")}
+                ${escapeHtml(source.classification || "")}
               </span>
 
             </div>
 
             <div class="source-snippet">
-              ${escapeHtml(s.snippet || "")}
+              ${escapeHtml(source.snippet || "")}
             </div>
 
             <div class="source-actions">
               <span class="source-preview-note">
-                Nguồn tham khảo được hệ thống cho phép
+                References authorized by the system
               </span>
             </div>
 
@@ -476,7 +527,7 @@ function appendAiResponse(data) {
           aria-expanded="false"
         >
           <span>
-            📚 Tài liệu tham khảo (${sources.length})
+            📚 References (${sources.length})
           </span>
 
           <span class="toggle-icon">▶</span>
@@ -505,8 +556,8 @@ function appendAiResponse(data) {
           <span>${escapeHtml(data.mode || "Controlled")}</span>
         </div>
 
-        <span class="status-pill ${safeAction}">
-          ${safeAction}
+        <span class="status-pill ${displayStatus}">
+          ${displayStatus}
         </span>
 
       </div>
@@ -542,7 +593,11 @@ function appendAiResponse(data) {
   scrollToBottom();
 }
 
-function appendErrorMessage(msg) {
+// ============================================================
+// 9. ERROR MESSAGE
+// ============================================================
+
+function appendErrorMessage(message) {
   const chatContainer = document.getElementById("chatMessages");
 
   if (!chatContainer) return;
@@ -561,7 +616,7 @@ function appendErrorMessage(msg) {
       class="ai-bubble"
       style="border-color:#ef4444;color:#b91c1c;"
     >
-      ${escapeHtml(msg)}
+      ${escapeHtml(message)}
     </div>
   `;
 
@@ -571,7 +626,7 @@ function appendErrorMessage(msg) {
 }
 
 // ============================================================
-// 5. LƯU VÀ KHÔI PHỤC LỊCH SỬ CHAT
+// 10. SAVE AND RESTORE CHAT HISTORY
 // ============================================================
 
 function readSavedSessions() {
@@ -580,7 +635,7 @@ function readSavedSessions() {
 
     return Array.isArray(data) ? data : [];
   } catch (err) {
-    console.warn("Lịch sử Chat không hợp lệ:", err);
+    console.warn("Invalid chat history:", err);
 
     return [];
   }
@@ -602,12 +657,12 @@ function createNewChat() {
       <div class="zynovate-hero-canvas">
 
         <h2 class="zyn-hero-title">
-          Cuộc trò chuyện mới
+          New Conversation
         </h2>
 
         <p class="zyn-hero-subtitle">
-          Hãy nhập câu hỏi bất kỳ về học vụ, quy chế
-          hoặc thử nghiệm kiểm soát phân quyền RBAC.
+          Ask any question about academic services and policies
+          or test RBAC access control.
         </p>
 
       </div>
@@ -629,16 +684,20 @@ function saveCurrentSessionToStorage() {
 
   const sessions = readSavedSessions();
 
-  const firstUserMsg = currentChatHistory.find((m) => m.type === "user");
+  const firstUserMsg = currentChatHistory.find(
+    (message) => message.type === "user",
+  );
 
-  const title = firstUserMsg ? firstUserMsg.text : "Đoạn chat mới";
+  const title = firstUserMsg ? firstUserMsg.text : "New Chat";
 
-  const existingIdx = sessions.findIndex((s) => s.id === currentSessionId);
+  const existingIdx = sessions.findIndex(
+    (session) => session.id === currentSessionId,
+  );
 
   const sessionData = {
     id: currentSessionId,
     title,
-    timestamp: new Date().toLocaleString("vi-VN"),
+    timestamp: new Date().toLocaleString("en-US"),
     messages: currentChatHistory,
   };
 
@@ -648,7 +707,7 @@ function saveCurrentSessionToStorage() {
     sessions.unshift(sessionData);
   }
 
-  // Chỉ lưu tối đa 15 phiên Chat gần nhất.
+  // Keep a maximum of 15 recent chat sessions.
   if (sessions.length > 15) {
     sessions.length = 15;
   }
@@ -656,7 +715,7 @@ function saveCurrentSessionToStorage() {
   try {
     localStorage.setItem(getChatStorageKey(), JSON.stringify(sessions));
   } catch (err) {
-    console.warn("Không thể lưu lịch sử Chat:", err);
+    console.warn("Unable to save chat history:", err);
   }
 
   renderSavedChatSessions();
@@ -708,7 +767,7 @@ function renderSavedChatSessions() {
         class="query-item-title"
         title="${escapeHtml(session.title || "")}"
       >
-        ${escapeHtml(session.title || "Đoạn chat")}
+        ${escapeHtml(session.title || "Chat")}
       </span>
     `;
 
@@ -723,7 +782,7 @@ function renderSavedChatSessions() {
 function loadSavedSession(sessionId) {
   const sessions = readSavedSessions();
 
-  const session = sessions.find((s) => s.id === sessionId);
+  const session = sessions.find((item) => item.id === sessionId);
 
   if (!session) return;
 
@@ -737,11 +796,11 @@ function loadSavedSession(sessionId) {
 
   chatContainer.innerHTML = "";
 
-  currentChatHistory.forEach((msg) => {
-    if (msg.type === "user") {
-      appendUserMessage(msg.text);
-    } else if (msg.type === "ai") {
-      appendAiResponse(msg.data);
+  currentChatHistory.forEach((message) => {
+    if (message.type === "user") {
+      appendUserMessage(message.text);
+    } else if (message.type === "ai") {
+      appendAiResponse(message.data);
     }
   });
 
@@ -750,7 +809,7 @@ function loadSavedSession(sessionId) {
 
 function clearAllChats() {
   const confirmed = confirm(
-    "Bạn có chắc muốn xóa tất cả lịch sử các đoạn chat cũ đã lưu không?",
+    "Are you sure you want to clear all saved chat history?",
   );
 
   if (!confirmed) return;
@@ -763,7 +822,7 @@ function clearAllChats() {
 }
 
 // ============================================================
-// 6. ĐIỀU KHIỂN NGUỒN TÀI LIỆU
+// 11. DOCUMENT SOURCE CONTROLS
 // ============================================================
 
 function toggleSources(headerEl) {
@@ -787,10 +846,10 @@ function toggleSources(headerEl) {
 }
 
 async function openDocModal(docId) {
-  // Tạm khóa xem toàn văn tài liệu.
-  // api.php?action=document cần kiểm tra RBAC phía server.
+  // Full-document viewing remains disabled until server-side
+  // document-level authorization is implemented.
   appendErrorMessage(
-    "Chức năng xem toàn văn tạm khóa cho đến khi API kiểm tra quyền truy cập tài liệu.",
+    "Full-document viewing is temporarily disabled until the API enforces document-level authorization.",
   );
 }
 
@@ -803,7 +862,7 @@ function closeDocModal() {
 }
 
 // ============================================================
-// 7. TIỆN ÍCH
+// 12. GENERAL UTILITIES
 // ============================================================
 
 function scrollToBottom() {
