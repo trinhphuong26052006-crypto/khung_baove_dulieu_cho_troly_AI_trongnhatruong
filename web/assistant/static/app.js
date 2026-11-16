@@ -447,64 +447,62 @@ function normalizeOutputFilterStatus(data) {
   return "UNVERIFIED";
 }
 
-
 function normalizeSecurityStatus(status, action) {
-  const statusMap = {
-    PASSED: "PASSED",
+  const normalize = (value) =>
+    String(value || "")
+      .trim()
+      .toUpperCase();
+
+  const s = normalize(status);
+  const a = normalize(action);
+
+  const validStatuses = [
+    "DENIED",
+    "BLOCKED",
+    "REDACTED",
+    "UNVERIFIED",
+    "PASSED",
+    "ERROR",
+  ];
+
+  // Security failure or restriction takes priority
+  // over a generic PASSED/ALLOWED status.
+  const priority = [
+    "ERROR",
+    "BLOCKED",
+    "DENIED",
+    "REDACTED",
+    "UNVERIFIED",
+    "PASSED",
+  ];
+
+  const aliases = {
     PASS: "PASSED",
     ALLOWED: "PASSED",
     ALLOW: "PASSED",
-
-    UNVERIFIED: "UNVERIFIED",
-    UNKNOWN: "UNVERIFIED",
-    OTHER: "UNVERIFIED",
-
-    REDACTED: "REDACTED",
-    REDACT: "REDACTED",
-    FILTERED: "REDACTED",
-
-    BLOCKED: "BLOCKED",
+    DENY: "DENIED",
     BLOCK: "BLOCKED",
     BLOCKED_INPUT: "BLOCKED",
     REJECTED_INPUT: "BLOCKED",
-
-    DENIED: "DENIED",
-    DENY: "DENIED",
-    FORBIDDEN: "DENIED"
+    REDACT: "REDACTED",
+    FILTERED: "REDACTED",
   };
 
-  const normalizedStatus = String(status || "")
-    .trim()
-    .toUpperCase();
+  const normalizedStatus = aliases[s] || s;
+  const normalizedAction = aliases[a] || a;
 
-  const normalizedAction = String(action || "")
-    .trim()
-    .toUpperCase();
+  const candidates = [normalizedStatus, normalizedAction].filter((value) =>
+    validStatuses.includes(value),
+  );
 
-  // Explicit backend status always has priority.
-  // UNVERIFIED must never fall through to ALLOW/PASS.
-  if (
-    Object.prototype.hasOwnProperty.call(
-      statusMap,
-      normalizedStatus
-    )
-  ) {
-    return statusMap[normalizedStatus];
+  if (candidates.length === 0) {
+    return "UNVERIFIED";
   }
 
-  // Use action only when status is missing or unknown.
-  if (
-    Object.prototype.hasOwnProperty.call(
-      statusMap,
-      normalizedAction
-    )
-  ) {
-    return statusMap[normalizedAction];
-  }
-
-  return "UNVERIFIED";
+  return candidates.sort(
+    (x, y) => priority.indexOf(x) - priority.indexOf(y),
+  )[0];
 }
-
 
 // ============================================================
 // 8. RENDER AI RESPONSE AND SECURITY STATUS
