@@ -161,12 +161,12 @@ def initialize_system() -> SystemComponents:
     print("[KHỞI TẠO] Đang nạp các module bảo mật và cơ sở dữ liệu...")
     
     role_manager = RoleManager()
-    permission_checker = PermissionChecker()
-    retriever = DocumentRetriever()
     rag_engine = RAGEngine(
         ollama_model=CONFIG["OLLAMA_MODEL"],
         ollama_base_url=CONFIG["OLLAMA_BASE_URL"]
     )
+    permission_checker = rag_engine.checker
+    retriever = rag_engine.retriever
     output_filter = OutputFilter(strict_mode=CONFIG.get("STRICT_OUTPUT_FILTER", True))
     
     # Đảm bảo thư mục lưu log tồn tại
@@ -266,74 +266,6 @@ def p2_validate_input(user_input: str) -> Tuple[bool, str]:
 # ==============================================================================
 
 # Danh sách các từ thể loại văn bản chung (không dùng để xác định chủ đề chuyên môn)
-GENRE_WORDS = {
-    "báo cáo", "kế hoạch", "hướng dẫn", "thông báo", "quy chế", 
-    "quy định", "biên bản", "hồ sơ", "danh sách", "chính sách", "sổ tay"
-}
-
-# Hư từ, từ nối thông dụng trong tiếng Việt
-STOPWORDS = {
-    "về", "của", "cho", "và", "các", "những", "trong", "theo", "là", 
-    "có", "được", "tại", "ở", "với", "báo", "cáo", "việc", "xin", 
-    "hỏi", "tôi", "em", "thầy", "cô", "làm", "sao", "thế", "nào", "gì"
-}
-
-# Các chủ đề nghiệp vụ chuyên biệt cốt lõi
-SPECIALIZED_DOMAINS = [
-    "kiểm toán", "bảng điểm", "kết quả học tập", "học phí", "học bổng", "lịch thi", "kỷ luật", 
-    "ký túc xá", "nội trú", "đồ án", "khóa luận", "bảo lưu", 
-    "khiếu nại", "tốt nghiệp", "chuẩn đầu ra", "ngoại ngữ", "tin học",
-    "miễn giảm", "vay vốn", "bảo hiểm y tế", "phòng máy", "thực tập",
-    "quyền truy cập"
-]
-
-
-def is_document_relevant(query: str, doc: Dict[str, Any], user_role: Optional[str] = None) -> bool:
-    """
-    Đánh giá xem tài liệu trích xuất có thực sự liên quan và hỗ trợ câu hỏi hay không.
-    Ngăn chặn Retriever trả về tài liệu sai chủ đề (False Positives) do trùng các từ đơn lẻ.
-    """
-    q_clean = query.lower()
-    title_lower = doc.get("title", "").lower()
-    desc_lower = doc.get("description", "").lower()
-    content_lower = doc.get("content", "").lower()
-    doc_text = f"{title_lower} {desc_lower} {content_lower}"
-
-    # Kiểm tra ý định hỏi dữ liệu cá nhân của vai trò SinhVien (Personal Data Intent)
-    if user_role == "SinhVien":
-        personal_terms = ["của tôi", "của em", "cá nhân", "của mình"]
-        if any(pt in q_clean for pt in personal_terms) and any(k in q_clean for k in ["bảng điểm", "điểm", "kết quả học tập"]):
-            return False
-
-    # 1. Rào chắn từ khóa chuyên biệt:
-    # Nếu câu hỏi nhắm vào một chủ đề nghiệp vụ đặc thù (như 'bảng điểm', 'kiểm toán', 'học phí'...)
-    # thì tài liệu BẮT BUỘC phải thực sự xoay quanh chủ đề đó (ở tiêu đề, mô tả hoặc xuất hiện nhiều lần).
-    for kw in SPECIALIZED_DOMAINS:
-        if kw in q_clean:
-            has_kw = (kw in title_lower or kw in desc_lower or content_lower.count(kw) >= 3)
-            if not has_kw:
-                return False
-
-    # 2. Tách các cụm 2 từ (bigrams) trong query
-    words = [w for w in re.findall(r"\b\w+\b", q_clean) if len(w) > 1 and w not in STOPWORDS]
-    if not words:
-        return True
-
-    bigrams = [" ".join(words[i:i+2]) for i in range(len(words)-1)]
-    subject_bigrams = [bg for bg in bigrams if bg not in GENRE_WORDS]
-
-    # Nếu có cụm chủ đề 2 từ, yêu cầu khớp ít nhất 1 cụm trong tài liệu
-    if subject_bigrams:
-        return any(bg in doc_text for bg in subject_bigrams)
-
-    # 3. Với câu hỏi ngắn, kiểm tra sự xuất hiện của ít nhất 1 từ đơn có ý nghĩa
-    meaningful_singles = [w for w in words if w not in GENRE_WORDS and len(w) >= 3]
-    if meaningful_singles:
-        return any(re.search(r"\b" + re.escape(w) + r"\b", doc_text) for w in meaningful_singles)
-
-    return True
-
-
 # --- [P3.0] TRUY XUẤT TÀI LIỆU CÓ PHÂN QUYỀN (RBAC-AWARE RETRIEVAL) ----------
 
 def p3_retrieve_authorized_documents(
@@ -357,16 +289,11 @@ def p3_retrieve_authorized_documents(
     candidate_docs = rag_engine.retrieve_context(
         query=query, 
         user_role=effective_role, 
-        top_k=CONFIG["TOP_K_DOCUMENTS"]
+        top_k=CONFIG["TOP_K_DOCUMENTS"],
+        use_relevance_gate=CONFIG.get("ENABLE_RELEVANCE_GATE", True)
     )
     
-    # Lọc chỉ giữ lại các tài liệu thực sự phù hợp với câu hỏi nếu bật Relevance Gate
-    if CONFIG.get("ENABLE_RELEVANCE_GATE", True):
-        relevant_docs = [doc for doc in candidate_docs if is_document_relevant(query, doc, user_role)]
-    else:
-        relevant_docs = candidate_docs
-
-    return relevant_docs
+    return candidate_docs
 
 
 # --- [P4.0] XỬ LÝ SINH CÂU TRẢ LỜI BẰNG AI / RAG (SAFE AI GENERATION) ---------
@@ -382,7 +309,8 @@ def p4_generate_safe_answer(
     prompt = rag_engine.build_prompt(
         query=query,
         user_role=user_role,
-        retrieved_docs=retrieved_docs
+        retrieved_docs=retrieved_docs,
+        enforce_context=CONFIG.get("ENABLE_RBAC_PRERETRIEVAL", True),
     )
     t1 = time.perf_counter()
     print(
@@ -546,7 +474,7 @@ def execute_end_to_end_pipeline(
     else:
         # Chế độ Baseline: Không áp dụng RBAC Pre-retrieval, coi như được truy cập toàn bộ tài liệu
         allowed_classifications = ["Public", "Internal", "Restricted"]
-        allowed_doc_ids = set(components.permission_checker._metadata_by_id.keys())
+        allowed_doc_ids = components.permission_checker.get_allowed_doc_ids("QuanTri")
 
     cls_str = ", ".join(allowed_classifications) if allowed_classifications else "Không có"
     print(f"[Bước 2 - PermissionChecker]: Mức tài liệu được phép truy cập: [{cls_str}] ({len(allowed_doc_ids)} tài liệu hợp lệ)")
@@ -566,18 +494,10 @@ def execute_end_to_end_pipeline(
     # Defense-in-depth: dù Retriever phải lọc quyền trước retrieval, main.py vẫn
     # kiểm tra lại ID tài liệu trước khi đưa context sang LLM (chỉ áp dụng ở Controlled mode).
     if enable_rbac:
-        unauthorized_docs = [
-            d for d in retrieved_docs
-            if d.get("doc_id") not in allowed_doc_ids
-        ]
-        if unauthorized_docs:
-            blocked_ids = [d.get("doc_id") for d in unauthorized_docs]
-            print(f"[CẢNH BÁO RBAC] Retriever trả về tài liệu ngoài quyền: {blocked_ids}. Đã loại bỏ.")
-            retrieved_docs = [
-                d for d in retrieved_docs
-                if d.get("doc_id") in allowed_doc_ids
-            ]
-    
+        retrieved_docs, _ = components.permission_checker.filter_retrieved_results(
+            user_role, retrieved_docs
+        )
+
     mark_perf("P3 - Retrieval + RBAC")
 
     # -------------------------------------------------------------------------
@@ -660,7 +580,8 @@ def execute_end_to_end_pipeline(
     print("\n" + "=" * 76)
     print(f"🤖 TRỢ LÝ AI TRẢ LỜI (Thời gian xử lý: {elapsed_time:.2f}s):")
     print("=" * 76)
-    print(final_answer)
+    if __name__ == "__main__":
+        print(final_answer)
     
     # CHỈ HIỂN THỊ NGUỒN THAM KHẢO KHI CÓ TÀI LIỆU PHÙ HỢP VÀ ĐƯỢC OUTPUT FILTER CHẤP THUẬN
     if retrieved_docs and filter_result.is_safe and filter_result.action_taken != "BLOCKED":

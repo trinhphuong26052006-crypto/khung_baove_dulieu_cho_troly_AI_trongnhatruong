@@ -6,6 +6,7 @@
 let rolesData = {};
 let sampleQueries = [];
 let currentChatHistory = [];
+let inMemorySessions = [];
 let currentSessionId = "session_" + Date.now();
 
 // ============================================================
@@ -17,6 +18,12 @@ function getChatStorageKey() {
   const userEmail = emailEl ? emailEl.value : "default";
 
   return "ai_chat_sessions_" + userEmail;
+}
+
+try {
+  localStorage.removeItem(getChatStorageKey());
+} catch {
+  // Browser storage may be unavailable.
 }
 
 function getApiUrl(endpoint, params = {}) {
@@ -230,8 +237,6 @@ async function handleSendMessage(e) {
 
   if (!query || sendBtn.disabled) return;
 
-  const role = document.getElementById("roleSelect")?.value || "SinhVien";
-
   document.querySelector(".zynovate-hero-canvas")?.remove();
 
   appendUserMessage(query);
@@ -254,7 +259,7 @@ async function handleSendMessage(e) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ query, role }),
+      body: JSON.stringify({ query }),
     });
 
     const responseText = await res.text();
@@ -537,7 +542,8 @@ function appendAiResponse(data) {
   const sourcesAuthorized =
     !isDenied &&
     !isBlocked &&
-    Array.isArray(data.sources) && data.sources.length > 0 &&
+    Array.isArray(data.sources) &&
+    data.sources.length > 0 &&
     ["SUCCESS", "PASSED"].includes(String(data.status || "").toUpperCase());
 
   const sources = sourcesAuthorized
@@ -566,11 +572,6 @@ function appendAiResponse(data) {
     answer =
       "Yêu cầu đã bị chặn bởi cơ chế kiểm soát bảo mật. " +
       "Hệ thống không cung cấp nội dung bị hạn chế.";
-  } else if (accessStatus === "UNVERIFIED") {
-    answer =
-      answer +
-      "\n\n[UNVERIFIED] Hệ thống chưa có đủ bằng chứng để xác nhận quyền truy cập. " +
-      "Không thể kết luận yêu cầu đã được cấp quyền thành công.";
   }
 
   // ----------------------------------------------------------
@@ -616,9 +617,7 @@ function appendAiResponse(data) {
 
           </div>
 
-          <div class="source-snippet">
-            ${escapeHtml(source.snippet || "")}
-          </div>
+          ${source.snippet ? `<div class="source-snippet">${escapeHtml(source.snippet)}</div>` : ""}
 
           <div class="source-actions">
             <span class="source-preview-note">
@@ -741,7 +740,7 @@ function appendErrorMessage(message) {
 
 function readSavedSessions() {
   try {
-    const data = JSON.parse(localStorage.getItem(getChatStorageKey()) || "[]");
+    const data = inMemorySessions;
 
     return Array.isArray(data) ? data : [];
   } catch (err) {
@@ -823,7 +822,7 @@ function saveCurrentSessionToStorage() {
   }
 
   try {
-    localStorage.setItem(getChatStorageKey(), JSON.stringify(sessions));
+    inMemorySessions = sessions;
   } catch (err) {
     console.warn("Unable to save chat history:", err);
   }
@@ -924,6 +923,7 @@ function clearAllChats() {
 
   if (!confirmed) return;
 
+  inMemorySessions = [];
   localStorage.removeItem(getChatStorageKey());
 
   currentChatHistory = [];

@@ -30,33 +30,16 @@ header('X-Frame-Options: DENY');
 
 function esc($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 
-$root = dirname(__DIR__, 2);
-
-$cfgPath = $root . '/data/xampp_config.json';
-
-$cfg = ['ENABLE_RBAC_PRERETRIEVAL'=>true, 'ENABLE_OUTPUT_FILTER'=>true];
-
-if (is_file($cfgPath)) {
-
-    $loaded = json_decode((string)@file_get_contents($cfgPath), true);
-
-    if (is_array($loaded)) {
-
-        foreach ($cfg as $key=>$default) {
-
-            if (array_key_exists($key,$loaded)) $cfg[$key] = ($loaded[$key] === true);
-
-        }
-
-    }
-
+require_once __DIR__ . '/project_paths.php';
+$root = attt_project_root();
+if ($root === null) {
+    http_response_code(503);
+    exit('Không tìm thấy thư mục dự án chứa src/main.py.');
 }
 
-$rbac = $cfg['ENABLE_RBAC_PRERETRIEVAL'];
-
-$filter = $cfg['ENABLE_OUTPUT_FILTER'];
-
-$mode = $rbac && $filter ? 'Controlled' : (!$rbac && !$filter ? 'Baseline' : 'Custom');
+$rbac = true;
+$filter = true;
+$mode = 'Controlled';
 
 $logPath = $root . '/logs/security_audit.jsonl';
 
@@ -2742,7 +2725,6 @@ button:focus-visible,a:focus-visible{outline:3px solid rgba(98,82,236,.35);outli
 
     <a href="security.php" class="active" aria-current="page"><span class="nav-ico">🛡️</span>Security Dashboard</a>
 
-    <a href="setup.php"><span class="nav-ico">⚙️</span>Settings</a>
 
   </nav>
 
@@ -2766,7 +2748,6 @@ button:focus-visible,a:focus-visible{outline:3px solid rgba(98,82,236,.35);outli
 
       <a href="index.php">💬 &nbsp;Back to Chat AI</a>
 
-      <a href="setup.php">⚙️ &nbsp;System Settings</a>
 
       <a class="logout" href="logout.php">↪ &nbsp;Sign Out</a>
 

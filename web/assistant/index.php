@@ -6,18 +6,7 @@ require_once __DIR__ . '/auth_check.php';
 check_auth();
 
 $user = is_array($_SESSION['user'] ?? null) ? $_SESSION['user'] : [];
-$config = is_array($_SESSION['app_config'] ?? null) ? $_SESSION['app_config'] : [];
-// Fallback to the same server configuration used by the Security Dashboard.
-$cfgPath = dirname(__DIR__, 2) . '/data/xampp_config.json';
-$serverCfg = is_file($cfgPath) ? json_decode((string)@file_get_contents($cfgPath), true) : null;
-if (is_array($serverCfg)) {
-    $rbacEnabled = ($serverCfg['ENABLE_RBAC_PRERETRIEVAL'] ?? true) === true;
-    $filterEnabled = ($serverCfg['ENABLE_OUTPUT_FILTER'] ?? true) === true;
-    $displayMode = $rbacEnabled && $filterEnabled ? 'Controlled' : (!$rbacEnabled && !$filterEnabled ? 'Baseline' : 'Custom');
-} else {
-    $sessionMode = strtolower((string)($config['mode'] ?? ''));
-    $displayMode = in_array($sessionMode, ['controlled', 'baseline'], true) ? ucfirst($sessionMode) : 'Unknown';
-}
+$displayMode = 'Controlled';
 $isControlled = ($displayMode === 'Controlled');
 // Release the PHP session lock before loading assets or sending chat requests.
 if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
@@ -69,7 +58,7 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
             <div id="chatHistorySection" style="display: none; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--zyn-border);">
                 <div class="recent-header-row" style="padding: 2px 6px 6px;">
                     <span class="recent-title" style="color: var(--zyn-primary);">CHATS</span>
-                    <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Clear all saved chats">Clear all</span>
+                    <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Clear current page history">Clear all</span>
                 </div>
                 <div id="savedChatList" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;"></div>
             </div>
@@ -124,11 +113,6 @@ if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
                         <span>🛡️</span> Security Dashboard
                     </a>
                     <?php endif; ?>
-                    <!-- Configure Baseline / Controlled mode -->
-                    <a href="setup.php" class="header-action-btn" title="Configure security mode">
-                        <span>⚙️</span> Settings
-                    </a>
-
                     <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>">
                         <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>
                     </span>

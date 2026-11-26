@@ -56,7 +56,14 @@ from typing import Any, Dict, List, Optional
 # ==============================================================================
 
 # runner.py nằm tại: project_root/web/assistant/runner.py
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+WEB_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = next(
+    (root for root in (WEB_ROOT, WEB_ROOT.parent) if (root / "src" / "main.py").is_file()),
+    None,
+)
+if PROJECT_ROOT is None:
+    print("Missing project root containing src/main.py", file=sys.stderr)
+    raise SystemExit(1)
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -142,6 +149,17 @@ def parse_arguments() -> Dict[str, Any]:
     """
     Đọc các tham số được truyền từ PHP hoặc CLI.
     """
+
+    if sys.argv[1:] == ["--web-stdin"]:
+        payload = json.loads(sys.stdin.read(16385))
+        query = payload.get("query")
+        role = payload.get("role")
+        if not isinstance(query, str) or not query.strip() or len(query) > 500:
+            raise ValueError("Invalid query.")
+        if not isinstance(role, str) or role not in VALID_ROLES:
+            raise ValueError("Invalid authenticated role.")
+        return {"query": query.strip(), "role": role, "enable_rbac": True,
+                "enable_filter": True, "test_id": None, "web_request": True}
 
     if len(sys.argv) < 3:
         raise ValueError(
@@ -256,14 +274,9 @@ def collect_sources(
     try:
         effective_role = user_role if enable_rbac else "QuanTri"
 
-        # Sử dụng retriever thuộc RAGEngine thực tế.
-        retriever = components.rag_engine.retriever
-
-        authorized_docs = retriever.get_authorized_documents(
-            effective_role
-        )
-
+        checker = components.permission_checker
         retrieved_id_set = set(retrieved_doc_ids)
+        authorized_docs = checker.get_allowed_documents(effective_role, "read")
 
         sources = []
 
@@ -405,6 +418,8 @@ def process_request(arguments: Dict[str, Any]) -> Dict[str, Any]:
         flush=True,
     )
 
+    if not arguments.get("web_request"):
+        CONFIG["AUDIT_LOG_FILE"] = str(PROJECT_ROOT / "logs" / "experiment_audit.jsonl")
     components = initialize_system()
 
     # --------------------------------------------------------------------------
@@ -482,12 +497,15 @@ def process_request(arguments: Dict[str, Any]) -> Dict[str, Any]:
     # STEP 5: COLLECT SOURCE DOCUMENTS
     # --------------------------------------------------------------------------
 
-    sources = collect_sources(
-        components=components,
-        retrieved_doc_ids=retrieved_doc_ids,
-        user_role=role,
-        enable_rbac=enable_rbac,
+    blocked = action_taken in {"BLOCKED", "BLOCKED_INPUT", "DENIED"} or (
+        pipeline_result.get("is_safe") is not True
     )
+    sources = [] if blocked else collect_sources(
+        components, retrieved_doc_ids, role, enable_rbac
+    )
+    retrieved_doc_ids = [source["doc_id"] for source in sources]
+    if arguments.get("web_request"):
+        violations = []
 
     # --------------------------------------------------------------------------
     # STEP 6: BUILD RESPONSE
@@ -520,6 +538,12 @@ def process_request(arguments: Dict[str, Any]) -> Dict[str, Any]:
         file=sys.stderr,
         flush=True,
     )
+
+    if arguments.get("web_request"):
+        response["access_status"] = "AUTHORIZED" if sources else "NOT_VERIFIED"
+        response["output_filter_status"] = (
+            action_taken if action_taken in {"PASSED", "BLOCKED", "REDACTED"} else "NOT_RUN"
+        )
 
     return response
 
