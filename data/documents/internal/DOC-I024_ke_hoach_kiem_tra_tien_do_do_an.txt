@@ -1,0 +1,24 @@
+KẾ HOẠCH KIỂM TRA TIẾN ĐỘ ĐỒ ÁN TỐT NGHIỆP
+Mã tài liệu: DOC-I024
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Khoa học Tự nhiên – ĐHQG-HCM
+Nguồn tham khảo: https://fit.hcmus.edu.vn/tien-do-do-an/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. BỐI CẢNH GIẢ LẬP
+Bộ môn chuyên ngành lập kế hoạch rà soát tiến độ thực hiện khóa luận tốt nghiệp đợt 1 dành cho các nhóm sinh viên khóa cuối. Hoạt động nhằm phát hiện các vướng mắc kỹ thuật và đôn đốc sinh viên hoàn thành đúng lịch trình chung của khoa.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Dựa trên quy định thực hiện đồ án tốt nghiệp và phân công cán bộ hướng dẫn công khai trên cổng thông tin Khoa Công nghệ Thông tin – Trường ĐH Khoa học Tự nhiên.
+
+3. LỊCH RÀ SOÁT VÀ NỘI DUNG ĐÁNH GIÁ
+Tiến hành kiểm tra từ tuần thứ 8 đến tuần thứ 10 của học kỳ. Nội dung kiểm tra gồm: Khảo sát hiện trạng và tài liệu liên quan; hoàn thành thiết kế kiến trúc phần mềm; xây dựng nguyên mẫu chức năng cốt lõi. Giảng viên hướng dẫn ghi nhận tiến độ vào biểu mẫu số BM-DA01.
+
+4. XỬ LÝ NHÓM CHẬM TIẾN ĐỘ
+Các nhóm chưa hoàn thành tối thiểu 40% khối lượng công việc tại đợt kiểm tra 1 sẽ phải làm việc trực tiếp với Trưởng bộ môn mã GV-BM01 để điều chỉnh phạm vi đề tài hoặc xin gia hạn bảo vệ sang đợt tiếp theo.
+
+5. KIỂM SOÁT TRUY CẬP
+Tài liệu thuộc phân loại Internal, chỉ mở cho vai trò GiangVien và QuanTri. Người dùng SinhVien chỉ nhận thông báo lịch làm việc riêng từ giáo viên hướng dẫn, không được xem sổ tổng hợp tiến độ nội bộ toàn khoa.
+
+6. KẾT LUẬN
+Toàn bộ dữ liệu được tổng hợp cho mục đích thử nghiệm kiểm soát truy xuất ngữ cảnh trong mô hình ngôn ngữ lớn.

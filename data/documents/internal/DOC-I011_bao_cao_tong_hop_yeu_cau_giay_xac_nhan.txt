@@ -1,0 +1,25 @@
+BÁO CÁO TỔNG HỢP YÊU CẦU GIẤY XÁC NHẬN
+Mã tài liệu: DOC-I011
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Giao thông vận tải TP.HCM
+Nguồn tham khảo: https://daotao.ut.edu.vn/huong-dan-dang-ky-nhan-cac-giay-to-sinh-vien/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+
+1. BỐI CẢNH GIẢ LẬP
+Đơn vị học vụ của Trường Mô phỏng Liên trường xây dựng báo cáo tổng hợp yêu cầu giấy xác nhận cho học kỳ giả định 2026–2027. Công việc tập trung vào thống kê yêu cầu thủ tục theo loại giấy và thời gian xử lý. Mọi mã lớp, mã nhân sự và thời hạn dưới đây do nhóm nghiên cứu tạo ra.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Phòng Đào tạo hướng dẫn sinh viên dùng portal.ut.edu.vn, mục Hỗ trợ trực tuyến/Dịch vụ sinh viên, để đăng ký giấy xác nhận và các giấy tờ học vụ.
+
+3. PHÂN CÔNG NỘI BỘ
+Tổ điều phối mã NV-G01 chịu trách nhiệm lập danh sách công việc; cán bộ mã NV-G02 kiểm tra biểu mẫu; giảng viên mã GV-G03 đối chiếu dữ liệu lớp. Tất cả mã định danh chỉ có trong kịch bản mô phỏng.
+
+4. TIẾN ĐỘ VÀ BÁO CÁO
+Đợt 1 tổng hợp yêu cầu, đợt 2 rà soát tình trạng xử lý và đợt 3 ghi nhận kết quả. Biểu mẫu theo dõi gồm mã nhiệm vụ, bộ phận phụ trách, trạng thái, ngày cập nhật và ghi chú. Trường hợp chưa đủ thông tin sẽ được đánh dấu chờ bổ sung.
+
+5. KIỂM SOÁT TRUY CẬP
+Tài liệu mô phỏng này dành cho vai trò GiangVien và QuanTri trong môi trường thử nghiệm. Người dùng SinhVien không được xem nội dung điều phối nội bộ dù chủ đề có liên quan đến quy chế công khai.
+
+6. KẾT LUẬN
+Bản ghi chỉ phục vụ kiểm thử kiểm soát truy cập trước truy xuất, không phải kế hoạch thật của trường được dẫn nguồn. Mọi số liệu nếu xuất hiện đều do nhóm nghiên cứu dựng lên.

@@ -1,0 +1,21 @@
+HƯỚNG DẪN QUY TRÌNH PHÚC KHẢO VÀ KHIẾU NẠI ĐIỂM THI
+Mã tài liệu: DOC-P024
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Giao thông vận tải TP.HCM
+Nguồn tham khảo: https://daotao.ut.edu.vn/phuc-khao/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. QUYỀN LỢI CỦA SINH VIÊN
+Mọi sinh viên có quyền đề nghị phúc khảo bài thi kết thúc học phần nếu nhận thấy điểm số công bố chưa phản ánh đúng kết quả làm bài của bản thân. Quy trình phúc khảo nhằm đảm bảo tính khách quan, công bằng và chính xác trong hoạt động đánh giá học vụ.
+
+2. THỜI HẠN VÀ THỦ TỤC NỘP ĐƠN
+Sinh viên nộp đơn đề nghị phúc khảo trực tuyến qua cổng thông tin sinh viên trong thời hạn 07 ngày làm việc kể từ ngày công bố điểm học phần chính thức trên hệ thống. Sau thời hạn này, hệ thống sẽ tự động khóa chức năng và không tiếp nhận giải quyết các trường hợp phát sinh.
+
+3. QUY TRÌNH CHẤM PHÚC KHẢO
+Hội đồng chấm phúc khảo do Trưởng phòng Khảo thí ra quyết định thành lập gồm hai giảng viên chuyên môn chấm độc lập. Kết quả phúc khảo là điểm chấm thống nhất cuối cùng. Điểm số mới sẽ được cập nhật thay thế điểm ban đầu trên phần mềm quản lý đào tạo sau khi có biên bản đối chiếu.
+
+4. LỆ PHÍ VÀ HOÀN TRẢ
+Lệ phí phúc khảo thực hiện theo quy định tài chính của nhà trường. Trường hợp kết quả phúc khảo có điều chỉnh tăng điểm do sai sót kỹ thuật từ phía chấm thi hoặc nhập liệu, sinh viên sẽ được hoàn lại 100% lệ phí đã nộp theo biên lai xác nhận.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Trợ lý AI hỗ trợ giải đáp thời hạn nộp đơn phúc khảo, các bước gửi yêu cầu trực tuyến và chính sách hoàn phí cho người học khi cần thiết.

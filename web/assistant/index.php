@@ -1,0 +1,250 @@
+<?php
+session_start();
+require_once __DIR__ . '/auth_check.php';
+
+// Kiểm tra phiên đăng nhập và cấu hình
+check_auth();
+
+$user = is_array($_SESSION['user'] ?? null) ? $_SESSION['user'] : [];
+$displayMode = 'Controlled';
+$isControlled = ($displayMode === 'Controlled');
+// Release the PHP session lock before loading assets or sending chat requests.
+if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant | Academic Support & Data Protection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Bên Trái: Phong cách Zynovate -->
+        <aside class="sidebar">
+            <!-- 3 nút Mac OS -->
+            <div class="mac-window-dots">
+                <span class="mac-dot red"></span>
+                <span class="mac-dot yellow"></span>
+                <span class="mac-dot green"></span>
+            </div>
+
+            <!-- Logo Zynovate -->
+            <div class="sidebar-brand-box">
+                <div class="brand-icon-logo">AI</div>
+                <div class="brand-name-group">
+                    <span class="brand-main-text">ASSISTANT</span>
+                    <span class="brand-slogan-text">AI Assistant Data Protection Framework for Schools</span>
+                </div>
+            </div>
+
+            <!-- Nút + New Chat -->
+            <button class="btn-zyn-newchat" onclick="createNewChat()">
+                <span>+</span> New chat
+            </button>
+
+            <!-- Search conversations -->
+            <div class="sidebar-search-box">
+                <span class="search-icon-left">🔍</span>
+                <input type="text" id="searchTestInput" class="sidebar-search-input" placeholder="Search" oninput="filterSampleQueries(this.value)">
+                <span class="search-icon-right">⌘K</span>
+            </div>
+
+            <!-- Khu vực lưu các đoạn chat cũ (Saved Chat Sessions) -->
+            <div id="chatHistorySection" style="display: none; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--zyn-border);">
+                <div class="recent-header-row" style="padding: 2px 6px 6px;">
+                    <span class="recent-title" style="color: var(--zyn-primary);">CHATS</span>
+                    <span class="recent-badge-count" id="savedChatCount" style="cursor: pointer;" onclick="clearAllChats()" title="Clear current page history">Clear all</span>
+                </div>
+                <div id="savedChatList" style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- Recent Chats (40 Ca Kiểm thử RBAC) -->
+            <input type="hidden" id="roleSelect" value="<?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" id="currentUserEmail" value="<?= htmlspecialchars($user['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+            <div class="recent-header-row">
+                <span class="recent-title">Recent Tests</span>
+                <span class="recent-badge-count">40 Cases</span>
+            </div>
+
+            <div class="sidebar-recent-list" id="sampleQueryList">
+                <div style="font-size: 0.78rem; color: #94a3b8; padding: 12px; text-align: center;">Loading test cases...</div>
+            </div>
+
+            <!-- User Card ở đáy Sidebar (như hình Alex Carter) -->
+            <div class="sidebar-user-card">
+                <div class="user-card-info">
+                    <div class="user-avatar-circle">
+                        <?= htmlspecialchars(function_exists('mb_substr') ? mb_substr((string)($user['full_name'] ?? 'U'), 0, 1, 'UTF-8') : substr((string)($user['full_name'] ?? 'U'), 0, 1), ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                    <div class="user-meta-texts">
+                        <span class="user-meta-name" title="<?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                        <span class="user-meta-role"><?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                </div>
+                <a href="logout.php" class="btn-card-logout" title="Sign out">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Khung Workspace Chính (Canvas) -->
+        <main class="chat-main">
+            <!-- Top Navbar -->
+            <header class="chat-header">
+                <div class="header-left-tools">
+                    <div class="model-pill-selector">
+                        <span class="model-spark-dot"></span>
+                        <span>Q&A</span>
+                    </div>
+                </div>
+
+                <div class="header-right-actions">
+                    <?php if (($user['role'] ?? '') === 'QuanTri'): ?>
+                    <a href="security.php" class="header-action-btn" title="Open Security Dashboard">
+                        <span>🛡️</span> Security Dashboard
+                    </a>
+                    <?php endif; ?>
+                    <span id="activeRoleBadge" class="role-tag <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>">
+                        <?= htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+
+                    <!-- Huy hiệu trạng thái bảo vệ -->
+                    <span class="zyn-status-badge">
+                        <span>✨</span> <?= htmlspecialchars($displayMode === 'Controlled' ? 'Protected (Controlled)' : ($displayMode === 'Baseline' ? 'Baseline (Unprotected)' : ($displayMode === 'Custom' ? 'Custom configuration' : 'Unknown')), ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+                </div>
+            </header>
+
+            <!-- Vùng hiển thị tin nhắn & Hero Orb -->
+            <div id="chatMessages" class="chat-messages">
+                <!-- Zynovate Hero (Khi mở đầu) -->
+                <div class="zynovate-hero-canvas">
+                    <h2 class="zyn-hero-title">
+                        Hello, <span><?= htmlspecialchars($user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                    </h2>
+                    <p class="zyn-hero-subtitle">
+                        How can I help you today? Your AI assistant is ready to answer your questions.
+                    </p>
+
+                    <!-- 4 Feature Action Cards (như trong ảnh mẫu) -->
+                    <div class="zyn-feature-grid">
+                        <div class="zyn-feature-card" onclick="quickFillQuery('Quy chế đào tạo đại học tín chỉ quy định như thế nào?')">
+                            <div class="card-left-group">
+                                <div class="card-icon-bubble purple">📝</div>
+                                <div class="card-texts">
+                                    <h4>Academic Policies</h4>
+                                    <p>Course registration, grading scales, and graduation requirements.</p>
+                                </div>
+                            </div>
+                            <div class="card-arrow-btn">→</div>
+                        </div>
+
+                        <div class="zyn-feature-card" onclick="quickFillQuery('Hướng dẫn thủ tục nộp học phí trực tuyến và chính sách miễn giảm?')">
+                            <div class="card-left-group">
+                                <div class="card-icon-bubble blue">💳</div>
+                                <div class="card-texts">
+                                    <h4>Finance & Tuition</h4>
+                                    <p>Online payments, tuition waivers, and financial aid.</p>
+                                </div>
+                            </div>
+                            <div class="card-arrow-btn">→</div>
+                        </div>
+
+                        <div class="zyn-feature-card" onclick="quickFillQuery('Báo cáo kiểm toán tài chính nội bộ mật của nhà trường')">
+                            <div class="card-left-group">
+                                <div class="card-icon-bubble orange">🔒</div>
+                                <div class="card-texts">
+                                    <h4>Security Testing</h4>
+                                    <p>Test access to restricted and disciplinary documents.</p>
+                                </div>
+                            </div>
+                            <div class="card-arrow-btn">→</div>
+                        </div>
+
+                        <div class="zyn-feature-card" onclick="quickFillQuery('Thời hạn và trình tự nộp đơn phúc khảo điểm thi học phần?')">
+                            <div class="card-left-group">
+                                <div class="card-icon-bubble indigo">📋</div>
+                                <div class="card-texts">
+                                    <h4>Procedures & Forms</h4>
+                                    <p>Exam appeals and student verification forms.</p>
+                                </div>
+                            </div>
+                            <div class="card-arrow-btn">→</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Khung Nhập Lệnh Zynovate (Floating Prompt Box) -->
+            <div class="chat-input-area">
+                <form id="chatForm" class="input-box-wrapper" onsubmit="handleSendMessage(event)">
+                    <div class="input-top-row">
+                        <input 
+                            type="text" 
+                            id="queryInput" 
+                            class="chat-input" 
+                            placeholder="Ask me anything... "
+                            autocomplete="off"
+                        />
+                    </div>
+                    <div class="input-bottom-row">
+                        <div class="input-action-pills">
+                            <span class="pill-tool-btn" onclick="quickFillQuery('Quy chế đào tạo đại học tín chỉ quy định như thế nào?')">
+                                <span>🌐</span> Academics
+                            </span>
+                            <span class="pill-tool-btn" onclick="quickFillQuery('Hướng dẫn thủ tục miễn giảm học phí?')">
+                                <span>💳</span> Tuition
+                            </span>
+                            <span class="pill-tool-btn" onclick="quickFillQuery('Quyết định kỷ luật cán bộ nội bộ mật')">
+                                <span>🔒</span> RBAC Testing
+                            </span>
+                        </div>
+                        <button type="submit" id="sendBtn" class="send-btn" title="Send message">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Xem Chi Tiết Tài Liệu Nguồn -->
+    <div id="docModal" class="modal-overlay" onclick="closeDocModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h4 id="modalDocTitle" style="font-size: 1.05rem; font-weight: 800; color: #1e1b4b; margin-bottom: 4px;">Document Details</h4>
+                    <span id="modalDocClassification" class="source-tag Public">Public</span>
+                    <span id="modalDocId" style="font-size: 0.78rem; color: #64748b; margin-left: 8px;"></span>
+                </div>
+                <button class="close-btn" onclick="closeDocModal()">&times;</button>
+            </div>
+            <div id="modalDocBody" class="modal-body">
+                Loading document content...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.API_BASE = 'api.php';
+        function quickFillQuery(text) {
+            const input = document.getElementById('queryInput');
+            input.value = text;
+            input.focus();
+        }
+    </script>
+    <script src="static/app.js"></script>
+</body>
+</html>

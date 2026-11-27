@@ -1,0 +1,21 @@
+QUY ĐỊNH SỬ DỤNG EMAIL TRƯỜNG VÀ AN TOÀN THÔNG TIN MẠNG
+Mã tài liệu: DOC-P035
+Mức phân loại: Public
+Trường nguồn tham khảo: Trường Đại học Giao thông vận tải TP.HCM
+Nguồn tham khảo: https://it.ut.edu.vn/an-toan-thong-tin/
+Loại dữ liệu: Diễn giải từ thông tin công khai
+
+1. CẤP VÀ QUẢN LÝ TÀI KHOẢN
+Mỗi sinh viên và cán bộ khi nhập học hoặc nhận công tác được cấp một tài khoản thư điện tử gắn với tên miền chính thức của nhà trường. Tài khoản này là kênh liên lạc duy nhất phục vụ các thông báo học vụ, tài chính, điểm thi và quyết định hành chính.
+
+2. TRÁCH NHIỆM BẢO MẬT TÀI KHOẢN
+Người dùng phải bảo quản mật khẩu, kích hoạt tính năng xác thực hai yếu tố (2FA), không chia sẻ thông tin đăng nhập cho người khác. Mật khẩu phải có độ dài tối thiểu 8 ký tự bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt; nên đổi định kỳ 6 tháng một lần.
+
+3. CÁC HÀNH VI BỊ NGHIÊM CẤM
+Tuyệt đối không sử dụng email trường để phát tán thư rác (spam), chia sẻ phần mềm độc hại, vi phạm bản quyền hoặc tuyên truyền các nội dung chống phá, vi phạm pháp luật. Nhà trường có quyền tạm khóa tài khoản nếu phát hiện dấu hiệu bất thường.
+
+4. XỬ LÝ SỰ CỐ AN NINH MẠNG
+Khi phát hiện nghi ngờ tài khoản bị lộ lọt thông tin hoặc nhận được email giả mạo lừa đảo, người dùng lập tức liên hệ Trung tâm Công nghệ Thông tin qua đường dây nóng hỗ trợ để được hướng dẫn cô lập và xử lý kịp thời.
+
+5. ỨNG DỤNG TRONG TRỢ LÝ AI
+Hệ thống AI hướng dẫn các bước khôi phục mật khẩu email bị quên, cách cài đặt xác thực 2FA và nhận diện các chiêu thức lừa đảo qua email.

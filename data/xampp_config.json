@@ -1,0 +1,6 @@
+{
+    "mode": "controlled",
+    "ENABLE_RBAC_PRERETRIEVAL": true,
+    "ENABLE_OUTPUT_FILTER": true,
+    "configured_at": "2026-11-26 04:39:09"
+}

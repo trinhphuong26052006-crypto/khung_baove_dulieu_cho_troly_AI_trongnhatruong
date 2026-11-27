@@ -1,0 +1,24 @@
+BIÊN BẢN KIỂM KÊ THIẾT BỊ PHÒNG THÍ NGHIỆM CHUYÊN SÂU
+Mã tài liệu: DOC-I029
+Mức phân loại: Internal
+Trường nguồn tham khảo: Trường Đại học Mở TP.HCM
+Nguồn tham khảo: https://ou.edu.vn/phong-thi-nghiem/
+Loại dữ liệu: Hồ sơ giả lập dựa trên bối cảnh nghiệp vụ công khai
+
+1. BỐI CẢNH GIẢ LẬP
+Tổ kiểm kê tài sản khoa chuyên môn thực hiện rà soát thực tế tình trạng thiết bị đo lường quang phổ, máy ly tâm và hóa chất nghiên cứu tại phòng Lab L304 trước khi bước vào học kỳ thực hành chuyên sâu.
+
+2. CƠ SỞ THAM KHẢO CÔNG KHAI
+Dựa theo thông tư quy định tiêu chuẩn định mức trang thiết bị phòng thí nghiệm trường đại học của Bộ Giáo dục và Đào tạo.
+
+3. KẾT QUẢ KIỂM KÊ TỔNG HỢP
+Tổng số máy móc hoạt động tốt: 24/26 máy. Máy đo quang phổ mã TB-04 bị lỗi hiệu chuẩn ống kính và đã đề nghị bảo hành; máy sắc ký lỏng TB-07 vận hành bình thường. Kho hóa chất được bảo quản ở nhiệt độ 22 độ C đúng tiêu chuẩn phòng cháy nổ.
+
+4. ĐỀ XUẤT CỦA TỔ KIỂM KÊ
+Thanh lý 10 bình hút ẩm cũ nứt vỡ; đặt hàng bổ sung dung môi phân tích loại tinh khiết cao phục vụ các đề tài nghiên cứu sinh viên; thay thế màng lọc khí cho tủ hút khí độc độc lập.
+
+5. KIỂM SOÁT TRUY CẬP
+Mức phân loại: Internal. Được phép xem: GiangVien, QuanTri. Bị từ chối: SinhVien. Trợ lý AI bảo đảm tài liệu lưu hành nội bộ về tài sản không bị khai thác ngoài phạm vi cho phép.
+
+6. KẾT LUẬN
+Bản ghi phục vụ kiểm thử kiểm soát quyền truy xuất dữ liệu kỹ thuật và tài sản nội bộ trường học.
